@@ -21,6 +21,9 @@ CREATE TABLE role (
 	role_name VARCHAR(20) NOT NULL,
     role_description LONGTEXT NOT NULL,
     listed_by INT NOT NULL,
+    no_of_pax INT NOT NULL,
+    department varchar(50) not null,
+    location varchar(50) not null,
     expiry_timestamp INT NOT NULL 
 );
 
@@ -34,7 +37,8 @@ CREATE TABLE role_skill (
     role_id INT NOT NULL,
 	skill_id INT NOT NULL,
     PRIMARY KEY (role_id, skill_id),
-    FOREIGN KEY (role_id) REFERENCES role(role_id)
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (skill_id) REFERENCES skill(skill_id)
 );
 
 CREATE TABLE staff_skill (
@@ -72,11 +76,11 @@ INSERT INTO staff VALUES
 (00123460, 'Gallywix', 'Howdy','Admin','gallywixh@aio.com', '1');
 
 INSERT INTO role VALUES
-(00001, 'Account Manager', 'Handle customer account under the Sales Division', '00123459', 1701388800),
-(00002, 'Support Team', 'Provide IT support under the System Solutioning Division', '00123459', 1701388800),
-(00003, 'Junior Engineer', 'Junior Software Engineer under the Engineering Division', '00123459', 1701388800),
-(00004, 'Senior Engineer', 'Senior Software Engineer under the Engineering Division', '00123459', 1701388800),
-(00005, 'Finance Executive', 'Assist with payroll-related matters under the Finance Division', '00123459', 1701388800);
+(00001, 'Account Manager', 'Handle customer account under the Sales Division', '00123459', 3, 'Sales', 'Singapore', 1701388800),
+(00002, 'Support Team', 'Provide IT support under the System Solutioning Division', '00123459', 1, 'IT', 'Singapore', 1701388800),
+(00003, 'Junior Engineer', 'Junior Software Engineer under the Engineering Division', '00123459', 2, 'IT', 'India', 1701388800),
+(00004, 'Senior Engineer', 'Senior Software Engineer under the Engineering Division', '00123459', 2, 'IT', 'India', 1701388800),
+(00005, 'Finance Executive', 'Assist with payroll-related matters under the Finance Division', '00123459', 1, 'Sales', 'Malaysia', 1701388800);
 
 INSERT INTO skill VALUES 
 (00001, 'Microsoft Excel', 'Comfortable with creating and debugging simple Macro'),
