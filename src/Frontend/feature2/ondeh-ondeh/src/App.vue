@@ -1,6 +1,10 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Ondeh Ondeh App"/>
+  <HelloWorld msg="Welcome to Your Ondeh Ondeh App" />
+  
+  <router-link to="/browseroles">About</router-link>
+  
+  <RouterView></RouterView>
 </template>
 
 <script>
