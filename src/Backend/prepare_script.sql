@@ -37,7 +37,8 @@ CREATE TABLE role_skill (
     role_id INT NOT NULL,
 	skill_id INT NOT NULL,
     PRIMARY KEY (role_id, skill_id),
-    FOREIGN KEY (role_id) REFERENCES role(role_id)
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (skill_id) REFERENCES skill(skill_id)
 );
 
 CREATE TABLE staff_skill (

@@ -3,8 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import getenv
 from dotenv import load_dotenv
-import os
+import time
+from datetime import datetime
 
+# Loading from .env file
 load_dotenv()
 DB_URL = getenv('DB_URL')
 
@@ -15,7 +17,40 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
-# Define Reward Object
+# Calculate Days Left From Unix
+def days_left_from_unix(unix_timestamp):
+    current_time = int(time.time())
+    seconds_left = unix_timestamp - current_time
+    days_left = seconds_left // (60 * 60 * 24)
+    return days_left
+
+# Date Formatter Function to dd-MMM-yyyy from Unix
+def convert_unix_to_custom_format(unix_timestamp):
+    # Convert the Unix timestamp to a datetime object
+    datetime_obj = datetime.utcfromtimestamp(unix_timestamp)
+
+    # Format the datetime object in the desired format
+    formatted_date = datetime_obj.strftime('%d-%b-%Y')  # e.g., 12-Dec-2023
+
+    return formatted_date
+
+# Define Access Right Object
+class Access_Rights(db.Model):
+    __tablename__ = 'access_rights'
+
+    access_id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)
+
+    def __init__ (self, access_id, type):
+        self.access_id = access_id
+        self.type = type
+
+
+    def json(self):
+        return {"access_id": self.access_id, "type": self.type}
+    
+# Define Staff Object
+# Added backref so you can reference all the staff_list under an access_id thr access_rights.staff_list
 class Staff(db.Model):
     __tablename__ = 'staff'
 
@@ -24,7 +59,10 @@ class Staff(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     department = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    access_rights = db.Column(db.Integer, nullable=False)
+    access_rights = db.Column(db.Integer, db.ForeignKey('access_rights.access_id'), nullable=False)
+
+    # Add a relationship to the Access_Right class
+    access_right = db.relationship('Access_Rights', backref='staff_list', lazy=True)
 
     def __init__ (self, staff_id, first_name, last_name, department, email, access_rights):
         self.staff_id = staff_id
@@ -38,11 +76,123 @@ class Staff(db.Model):
     def json(self):
         return {"staff_id": self.staff_id, "first_name": self.first_name, "last_name": self.last_name,
                 "department": self.department, "email": self.email, "access_rights": self.access_rights
-                }
+        }
+    
+# Define Role Object
+class Role(db.Model):
+    __tablename__ = 'role'
+
+    role_id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(50), nullable=False)
+    role_description = db.Column(db.String(256), nullable=False)
+    listed_by = db.Column(db.Integer, nullable=False)
+    no_of_pax = db.Column(db.Integer, nullable=False)
+    department = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(50), nullable=False)
+    expiry_timestamp = db.Column(db.Integer, nullable=False)
+
+    def __init__ (self, role_id, role_name, role_description, listed_by, no_of_pax, department, location, expiry_timestamp):
+        self.role_id = role_id
+        self.role_name = role_name
+        self.role_description = role_description
+        self.listed_by = listed_by
+        self.no_of_pax = no_of_pax
+        self.department = department
+        self.location = location
+        self.expiry_timestamp = expiry_timestamp
+
+    def json(self):
+        return {"role_id": self.role_id, 
+                "role_name": self.role_name, 
+                "role_description": self.role_description,
+                "listed_by": self.listed_by, 
+                "no_of_pax": self.no_of_pax, 
+                "department": self.department,
+                "location": self.location, 
+                "expiry_date": self.expiry_timestamp,
+        }
+
+# Define Skill Object
+class Skill(db.Model):
+    __tablename__ = 'skill'
+
+    skill_id = db.Column(db.Integer, primary_key=True)
+    skill_name = db.Column(db.String(50), nullable=False)
+    skill_description = db.Column(db.String(256), nullable=False)
+
+
+    def __init__ (self, skill_id, skill_name, skill_description):
+        self.skill_id = skill_id
+        self.skill_name = skill_name
+        self.skill_description = skill_description
+
+    def json(self):
+        return {"skill_id": self.skill_id, "skill_name": self.skill_name, "skill_description": self.skill_description}
+
+# Define Role_Skill Object
+# Added backref so you can access all the skills_needed for the role thru role.skills_needed
+class Role_Skill(db.Model):
+    __tablename__ = 'role_skill'
+
+    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), primary_key=True)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), primary_key=True)
+
+    # Add a relationship to the foreign class
+    role = db.relationship('Role', backref='skills_needed', lazy=True)
+    skill = db.relationship('Skill', backref='skills_in_roles', lazy=True)
+
+    def __init__ (self, role_id, skill_id):
+        self.role_id = role_id
+        self.skill_id = skill_id
+
+    def json(self):
+        return {"role_id": self.role_id, "skill_id": self.skill_id}
+
+# Define Staff_Skill Object
+# Added backref so you can access all the skills staff has thru staff.staff_skills
+class Staff_Skill(db.Model):
+    __tablename__ = 'staff_skill'
+
+    staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'), primary_key=True)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), primary_key=True)
+
+    # Add a relationship to the foreign class
+    staff = db.relationship('Staff', backref='staff_skills', lazy=True)
+    skill = db.relationship('Skill', lazy=True)
+
+    def __init__ (self, staff_id, skill_id):
+        self.staff_id = staff_id
+        self.skill_id = skill_id
+
+    def json(self):
+        return {"staff_id": self.staff_id, "skill_id": self.skill_id}
+    
+# Define Role_Applicant Object
+# Added backref so you can access staff info for a specific role thru role.applicants
+class Role_Applicant(db.Model):
+    __tablename__ = 'role_applicant'
+
+    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), primary_key=True)
+    staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'), primary_key=True)
+    comments = db.Column(db.String(50), nullable=True)
+    creation_timestamp = db.Column(db.Integer, nullable=False)
+
+    # Add a relationship to the foreign class
+    role = db.relationship('Role', backref='applicants', lazy=True)
+    staff = db.relationship('Staff', lazy=True)
+
+    def __init__ (self, role_id, staff_id, comments, creation_timestamp):
+        self.role_id = role_id
+        self.staff_id = staff_id
+        self.comments = comments
+        self.creation_timestamp = creation_timestamp
+
+    def json(self):
+        return {"role_id": self.role_id, "staff_id": self.staff_id, "comments": self.comments, "creation_timestamp": self.creation_timestamp}
 
 # Retrieving all staff data
 @app.route("/staff")
-def get_all():
+def get_all_staff():
     staff_list = Staff.query.all()
     if len(staff_list) != 0:
 
@@ -78,6 +228,107 @@ def find_by_staff_id(staff_id):
             "message": "Staff not found."
         }
     ), 404
+
+# Retrieving all access data
+@app.route("/access_rights")
+def get_all_access():
+    access_list = Access_Rights.query.all()
+    if len(access_list) != 0:
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "accesses": [access.json() for access in access_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no access rights"
+        }
+    ), 404
+
+# Retrieving specific access data
+@app.route("/access_rights/<int:access_id>")
+def find_by_access_id(access_id):
+    access = Access_Rights.query.filter_by(access_id=access_id).first()
+    if access_id:
+        return jsonify(
+            {
+                "code": 200,
+                "data": access.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Access not found."
+        }
+    ), 404
+
+# Retrieving all role data
+@app.route("/roles")
+def get_all_roles():
+    roles = Role.query.all()
+    role_list = []
+    if len(roles) != 0:
+        for role in roles:
+            skills_required = [skill.skill.skill_name for skill in role.skills_needed]
+            count_of_applicant = Role_Applicant.query.filter_by(role_id=role.role_id).count()
+            role_data = {
+                "role_id": role.role_id,
+                "role_name": role.role_name,
+                "role_description": role.role_description,
+                "listed_by": role.listed_by,
+                "no_of_pax": role.no_of_pax,
+                "department": role.department,
+                "location": role.location,
+                "days_left": days_left_from_unix(role.expiry_timestamp),
+                "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+                # 1. Missing number of people that applied
+                # Select count(role_id) from role_applicant where role_id = ?
+                "count_applicant": count_of_applicant,
+                # 2. Skills required for this role (should be multiple)
+                "skills_required": skills_required
+
+            }
+            role_list.append(role_data)
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "roles": [role_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no roles"
+        }
+    ), 404
+
+# Retrieving specific access data
+@app.route("/roles/<int:role_id>")
+def find_by_role_id(role_id):
+    role = Role.query.filter_by(role_id=role_id).first()
+    if role_id:
+        return jsonify(
+            {
+                "code": 200,
+                "data": role.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Role not found."
+        }
+    ), 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
