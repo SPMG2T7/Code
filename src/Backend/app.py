@@ -210,14 +210,28 @@ class Role_Applicant(db.Model):
 # Retrieving all staff data
 @app.route("/staff/get_all")
 def get_all_staff():
-    staff_list = Staff.query.all()
-    if len(staff_list) != 0:
+    staffs = Staff.query.all()
+    staff_list = []
+    if len(staffs) != 0:
+        for staff in staffs:
+            staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+            staff_data = {
+                "staff_id": staff.staff_id,
+                "first_name": staff.first_name,
+                "last_name": staff.last_name,
+                "email": staff.email,
+                "department": staff.department,
+                "access_rights": staff.access_rights,
+                "staff_skills": staff_skills
+
+            }
+            staff_list.append(staff_data)
 
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "staffs": [staff.json() for staff in staff_list]
+                    "roles": staff_list
                 }
             }
         )
@@ -232,11 +246,23 @@ def get_all_staff():
 @app.route("/staff/<int:staff_id>")
 def find_by_staff_id(staff_id):
     staff = Staff.query.filter_by(staff_id=staff_id).first()
-    if staff_id:
+    staff_data = {}
+    if staff:
+        staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+        staff_data = {
+            "staff_id": staff.staff_id,
+            "first_name": staff.first_name,
+            "last_name": staff.last_name,
+            "email": staff.email,
+            "department": staff.department,
+            "access_rights": staff.access_rights,
+            "staff_skills": staff_skills
+        }
+
         return jsonify(
             {
                 "code": 200,
-                "data": staff.json()
+                "data": staff_data
             }
         )
     return jsonify(
