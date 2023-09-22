@@ -4,7 +4,9 @@ from flask_cors import CORS
 from os import getenv
 from dotenv import load_dotenv
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+from sqlalchemy import func
+
 
 # Loading from .env file
 load_dotenv()
@@ -34,11 +36,27 @@ def convert_unix_to_custom_format(unix_timestamp):
 
     return formatted_date
 
+# Date Formatter Function to convert FE parse data to Unix
+def convert_to_unix_timestamp(date_str):
+    # Define the format of the input date string
+    date_format = "%a %b %d %Y %H:%M:%S GMT%z (%Z)"
+    
+    # Parse the date string
+    dt = datetime.strptime(date_str, date_format)
+    
+    # Convert to UTC timezone
+    dt = dt.replace(tzinfo=timezone.utc)
+    
+    # Calculate the Unix timestamp
+    unix_timestamp = int(dt.timestamp())
+    
+    return unix_timestamp
+
 # Define Access Right Object
 class Access_Rights(db.Model):
     __tablename__ = 'access_rights'
 
-    access_id = db.Column(db.Integer, primary_key=True)
+    access_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     type = db.Column(db.String(50), nullable=False)
 
     def __init__ (self, access_id, type):
@@ -82,7 +100,7 @@ class Staff(db.Model):
 class Role(db.Model):
     __tablename__ = 'role'
 
-    role_id = db.Column(db.Integer, primary_key=True)
+    role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     role_name = db.Column(db.String(50), nullable=False)
     role_description = db.Column(db.String(256), nullable=False)
     listed_by = db.Column(db.Integer, nullable=False)
@@ -91,8 +109,7 @@ class Role(db.Model):
     location = db.Column(db.String(50), nullable=False)
     expiry_timestamp = db.Column(db.Integer, nullable=False)
 
-    def __init__ (self, role_id, role_name, role_description, listed_by, no_of_pax, department, location, expiry_timestamp):
-        self.role_id = role_id
+    def __init__ (self, role_name, role_description, listed_by, no_of_pax, department, location, expiry_timestamp):
         self.role_name = role_name
         self.role_description = role_description
         self.listed_by = listed_by
@@ -116,7 +133,7 @@ class Role(db.Model):
 class Skill(db.Model):
     __tablename__ = 'skill'
 
-    skill_id = db.Column(db.Integer, primary_key=True)
+    skill_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     skill_name = db.Column(db.String(50), nullable=False)
     skill_description = db.Column(db.String(256), nullable=False)
 
@@ -191,16 +208,30 @@ class Role_Applicant(db.Model):
         return {"role_id": self.role_id, "staff_id": self.staff_id, "comments": self.comments, "creation_timestamp": self.creation_timestamp}
 
 # Retrieving all staff data
-@app.route("/staff")
+@app.route("/staff/get_all")
 def get_all_staff():
-    staff_list = Staff.query.all()
-    if len(staff_list) != 0:
+    staffs = Staff.query.all()
+    staff_list = []
+    if len(staffs) != 0:
+        for staff in staffs:
+            staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+            staff_data = {
+                "staff_id": staff.staff_id,
+                "first_name": staff.first_name,
+                "last_name": staff.last_name,
+                "email": staff.email,
+                "department": staff.department,
+                "access_rights": staff.access_rights,
+                "staff_skills": staff_skills
+
+            }
+            staff_list.append(staff_data)
 
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "staffs": [staff.json() for staff in staff_list]
+                    "roles": staff_list
                 }
             }
         )
@@ -215,11 +246,23 @@ def get_all_staff():
 @app.route("/staff/<int:staff_id>")
 def find_by_staff_id(staff_id):
     staff = Staff.query.filter_by(staff_id=staff_id).first()
-    if staff_id:
+    staff_data = {}
+    if staff:
+        staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+        staff_data = {
+            "staff_id": staff.staff_id,
+            "first_name": staff.first_name,
+            "last_name": staff.last_name,
+            "email": staff.email,
+            "department": staff.department,
+            "access_rights": staff.access_rights,
+            "staff_skills": staff_skills
+        }
+
         return jsonify(
             {
                 "code": 200,
-                "data": staff.json()
+                "data": staff_data
             }
         )
     return jsonify(
@@ -230,7 +273,7 @@ def find_by_staff_id(staff_id):
     ), 404
 
 # Retrieving all access data
-@app.route("/access_rights")
+@app.route("/access_rights/get_all")
 def get_all_access():
     access_list = Access_Rights.query.all()
     if len(access_list) != 0:
@@ -254,7 +297,7 @@ def get_all_access():
 @app.route("/access_rights/<int:access_id>")
 def find_by_access_id(access_id):
     access = Access_Rights.query.filter_by(access_id=access_id).first()
-    if access_id:
+    if access:
         return jsonify(
             {
                 "code": 200,
@@ -269,7 +312,7 @@ def find_by_access_id(access_id):
     ), 404
 
 # Retrieving all role data
-@app.route("/roles")
+@app.route("/roles/get_all")
 def get_all_roles():
     roles = Role.query.all()
     role_list = []
@@ -300,7 +343,7 @@ def get_all_roles():
             {
                 "code": 200,
                 "data": {
-                    "roles": [role_list]
+                    "roles": role_list
                 }
             }
         )
@@ -315,11 +358,31 @@ def get_all_roles():
 @app.route("/roles/<int:role_id>")
 def find_by_role_id(role_id):
     role = Role.query.filter_by(role_id=role_id).first()
-    if role_id:
+    role_data = {}
+    if role:
+        skills_required = [skill.skill.skill_name for skill in role.skills_needed]
+        count_of_applicant = Role_Applicant.query.filter_by(role_id=role.role_id).count()
+        role_data = {
+            "role_id": role.role_id,
+            "role_name": role.role_name,
+            "role_description": role.role_description,
+            "listed_by": role.listed_by,
+            "no_of_pax": role.no_of_pax,
+            "department": role.department,
+            "location": role.location,
+            "days_left": days_left_from_unix(role.expiry_timestamp),
+            "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+            # 1. Missing number of people that applied
+            # Select count(role_id) from role_applicant where role_id = ?
+            "count_applicant": count_of_applicant,
+            # 2. Skills required for this role (should be multiple)
+            "skills_required": skills_required
+
+        }
         return jsonify(
             {
                 "code": 200,
-                "data": role.json()
+                "data": role_data
             }
         )
     return jsonify(
@@ -329,6 +392,100 @@ def find_by_role_id(role_id):
         }
     ), 404
 
+# Create Roles
+@app.route("/roles/create", methods=["POST"])
+def create_role():
+    data = request.get_json()
+    # Retrieve the parameters from the POST request data
+    role_name = data['params']['role_name']
+    role_description = data['params']['role_description']
+    skills_required = data['params']['skills_required']
+    listed_by = data['params']['listed_by']
+    no_of_pax = data['params']['no_of_pax']
+    department = data['params']['department']
+    location = data['params']['location']
+    expiry_timestamp = data['params']['expiry_timestamp']
+
+    try:
+        # Create a new instance of the Role model with the retrieved parameters
+        role = Role(
+            role_name=role_name,
+            role_description=role_description,
+            listed_by=listed_by,
+            no_of_pax=no_of_pax,
+            department=department,
+            location=location,
+            expiry_timestamp=convert_to_unix_timestamp(expiry_timestamp)
+        )
+
+        # Add the new role to the session
+        db.session.add(role)
+
+        # Create Role_Skill object and commit per skill
+        for skill in skills_required:
+            # Get Skill ID per Skill Name
+            skill_id = Skill.query.filter_by(skill_name=skill).with_entities(Skill.skill_id).first()
+            role_skill = Role_Skill(role.role_id, skill_id[0])
+            db.session.add(role_skill)
+
+        # Commit the session to save the new role to the database
+        db.session.commit()
+
+    except Exception as e:
+        error_message = str(e)
+        return jsonify(
+            {
+                "code": 500,
+                "data": error_message,
+                "message": "Internal Server Error: An unexpected error occurred."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": role.json()
+        }
+    ), 201
+
+# Retrieving all skills data
+@app.route("/skills/get_all")
+def get_all_skills():
+    skill_list = Skill.query.all()
+    if len(skill_list) != 0:
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "skills": [skill.json() for skill in skill_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no skills"
+        }
+    ), 404
+
+# Retrieving specific skill data
+@app.route("/skills/<int:skill_id>")
+def find_by_skill_id(skill_id):
+    skill = Skill.query.filter_by(skill_id=skill_id).first()
+    if skill:
+        return jsonify(
+            {
+                "code": 200,
+                "data": skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Skill not found."
+        }
+    ), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
