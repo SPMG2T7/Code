@@ -1,18 +1,21 @@
 <template>
     <h1>HELLO</h1>
     <router-link to="/">Home</router-link>
-    <RouterView></RouterView>>
+    <router-link to="/RoleCreation">Role Creation</router-link>
+    <RouterView>
+        
+    </RouterView>
 </template>
   
 <script>
 // import HelloWorld from "../../HelloWorld.vue"
 
-export default {
-    name: 'App',
-    components: {
-        // HelloWorld
-    }
-}
+// export default {
+//     name: 'App',
+//     components: {
+//         // HelloWorld
+//     }
+// }
 </script>
   
 <style>

@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
-import BrowsingRoles from "../components/views/staff_browsing/RolesListingAll.vue"
+import BrowsingRoles from "../components/views/staff/BrowseRolesListing.vue"
+import CreateRoles from "../components/views/hr/RoleCreation.vue"
 
 const routes = [
     {
         path: '/browseroles',
         name: "Browsing Roles",
         component: BrowsingRoles
+    },
+    {
+        path: '/RoleCreation',
+        name: "Creation of Roles",
+        component: CreateRoles
     }
 ]
 
