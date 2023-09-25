@@ -1,6 +1,11 @@
 CREATE DATABASE IF NOT EXISTS spm_g2t7;
 USE spm_g2t7;
 
+CREATE TABLE access_rights (
+	access_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    type VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE staff (
 	staff_id INT PRIMARY KEY NOT NULL,
     first_name VARCHAR(50) NOT NULL,
@@ -9,11 +14,6 @@ CREATE TABLE staff (
     email VARCHAR(50) NOT NULL,
     access_rights INT NOT NULL,
     FOREIGN KEY (access_rights) REFERENCES access_rights(access_id)
-);
-
-CREATE TABLE access_rights (
-	access_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    type VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE role (
