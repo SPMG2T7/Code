@@ -11,3 +11,7 @@
 3. Install the library dotenv by running 'pip install python-dotenv'
 4. go into src/Backend folder, run 'docker-compose up' <- to start the search container
 5. When running 'python app.py' to start the backend, if there are 'No Modules' error, just run 'pip install <module_name>' based on the error of module name shown
+
+
+!!! IMPORTANT !!!
+If testing backend functions and you are too lazy to use the docker portion, look for the keyword 'MeiliSearch' in app.py and comment those sections out before resuming with your code.

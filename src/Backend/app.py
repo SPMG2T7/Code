@@ -14,7 +14,9 @@ load_dotenv()
 DB_URL = getenv('DB_URL')
 SEARCH_MASTER_KEY = getenv('SEARCH_MASTER_KEY')
 
+# Start-Connecting to MeiliSearch
 client = meilisearch.Client('http://127.0.0.1:7700', SEARCH_MASTER_KEY)
+# End-Connecting to MeiliSearch
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"{DB_URL}"
@@ -480,6 +482,7 @@ def create_role():
         # Commit the session to save the new role to the database
         db.session.commit()
         
+        # Start-Adding to MeiliSearch
         client.index('roles').add_documents([
             {
                 "role_id": role.role_id,
@@ -495,6 +498,7 @@ def create_role():
                 "count_applicant": 0
             }
         ], primary_key='role_id')
+        # End-Adding to MeiliSearch
 
     except Exception as e:
         error_message = str(e)
