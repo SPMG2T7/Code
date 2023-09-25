@@ -58,9 +58,9 @@
 
 
                             <div class="dropdown-menu dropdown-menu-end">
-                        <li v-if="this.cid == 9999 || this.cid == 9998" @click="generateCharts">
+                        <!-- <li v-if="this.cid == 9999 || this.cid == 9998" @click="generateCharts">
                             <a class="dropdown-item">Dashboard</a>
-                        </li>
+                        </li> -->
                         <li><a class="dropdown-item">Settings</a>
                         </li>
 
