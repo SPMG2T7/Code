@@ -558,5 +558,26 @@ def find_by_skill_id(skill_id):
         }
     ), 404
 
+# Retrieve search result from the Search Index
+@app.route("/search/", methods=["POST"])
+def search():
+    req = request.get_json()
+    search_query = req['params']['search_query']
+    search_result = client.index('roles').search(search_query)
+    if len(search_result["hits"]) != 0:
+        return jsonify(
+            {
+                "code": 200,
+                "data": search_result["hits"]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "data": [],
+            "message": "There are no results matching your query"
+        }
+    ), 404
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
