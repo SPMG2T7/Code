@@ -563,21 +563,49 @@ def find_by_skill_id(skill_id):
 def search():
     req = request.get_json()
     search_query = req['params']['search_query']
-    search_result = client.index('roles').search(search_query)
-    if len(search_result["hits"]) != 0:
+    if len(search_query) == 1:
+        search_result = client.index('roles').search(search_query[0])
+        if len(search_result["hits"]) != 0:
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": search_result["hits"]
+                }
+            ), 200
         return jsonify(
             {
-                "code": 200,
-                "data": search_result["hits"]
+                "code": 404,
+                "data": [],
+                "message": "There are no results matching your query"
             }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "data": [],
-            "message": "There are no results matching your query"
-        }
-    ), 404
+        ), 404
+    else:
+        searches = []
+        for query in search_query:
+            # print(query)
+            searches.append({'indexUid': 'roles', 'q': query})
+        # print(searches)
+        search_result = client.multi_search(searches)
+        print(search_result['results'])
+        if len(search_result["results"]) != 0:
+            hits = []
+            for entry in search_result['results']:
+                for hit in entry['hits']:
+                    hits.append(hit)
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": hits
+                }
+            ), 200
+        return jsonify(
+            {
+                "code": 404,
+                "data": [],
+                "message": "There are no results matching your query"
+            }
+        ), 404
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
