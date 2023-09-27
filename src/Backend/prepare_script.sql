@@ -11,6 +11,7 @@ CREATE TABLE staff (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     department VARCHAR(50) NOT NULL,
+    current_role VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
     access_rights INT NOT NULL,
     FOREIGN KEY (access_rights) REFERENCES access_rights(access_id)
@@ -67,13 +68,13 @@ INSERT INTO access_rights VALUES
 (5, 'Director');
 
 INSERT INTO staff VALUES 
-(00123451, 'Kevin', 'Oleary','Director','kevino@aio.com', '5'),
-(00123452, 'Mark', 'Cuban','Director','markc@aio.com', '5'),
-(00123456, 'Johnny', 'Tan','Sales','jonnyt@aio.com', '2'),
-(00123457, 'Sarah', 'Lim','IT','saraht@aio.com', '2'),
-(00123458, 'Bob', 'Toh','Finance','bobt@aio.com', '2'),
-(00123459, 'Shermaine', 'Tee','Human Resource','shermainet@aio.com', '3'),
-(00123460, 'Gallywix', 'Howdy','Admin','gallywixh@aio.com', '1');
+(00123451, 'Kevin', 'Oleary','Director', 'Chief Operating Officer', 'kevino@aio.com', '5'),
+(00123452, 'Mark', 'Cuban','Director','Chief Finance Officer', 'markc@aio.com', '5'),
+(00123456, 'Johnny', 'Tan','Sales', 'Sales Executive', 'jonnyt@aio.com', '2'),
+(00123457, 'Sarah', 'Lim','IT', 'IT Clerk', 'saraht@aio.com', '2'),
+(00123458, 'Bob', 'Toh','Finance', 'Finance Controller', 'bobt@aio.com', '2'),
+(00123459, 'Shermaine', 'Tee','Human Resource', 'Talent Acquisition', 'shermainet@aio.com', '3'),
+(00123460, 'Gallywix', 'Howdy','IT', 'Administrator', 'gallywixh@aio.com', '1');
 
 INSERT INTO role VALUES
 (00001, 'Account Manager', 'Handle customer account under the Sales Division', '00123459', 3, 'Sales', 'Singapore', 1701388800),
@@ -90,16 +91,24 @@ INSERT INTO skill VALUES
 (00005, 'Java', 'Familiar with Java syntax and able to code a simple program');
 
 INSERT INTO staff_skill VALUES
+(00123451, 00002),
+(00123451, 00004),
+(00123452, 00001),
+(00123452, 00004),
 (00123456, 00001),
 (00123456, 00005),
 (00123457, 00001),
 (00123458, 00003),
 (00123458, 00004),
-(00123452, 00001),
-(00123452, 00004),
-(00123459, 00002);
+(00123459, 00004),
+(00123460, 00002),
+(00123460, 00003);
+
 
 INSERT INTO role_skill VALUES 
+(00001, 00004),
+(00002, 00002),
+(00002, 00003),
 (00003, 00001),
 (00003, 00003),
 (00004, 00001),

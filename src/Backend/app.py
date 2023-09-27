@@ -91,6 +91,7 @@ class Staff(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     department = db.Column(db.String(50), nullable=False)
+    current_role = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     access_rights = db.Column(db.Integer, db.ForeignKey(
         'access_rights.access_id'), nullable=False)
@@ -99,17 +100,18 @@ class Staff(db.Model):
     access_right = db.relationship(
         'Access_Rights', backref='staff_list', lazy=True)
 
-    def __init__(self, staff_id, first_name, last_name, department, email, access_rights):
+    def __init__(self, staff_id, first_name, last_name, department, current_role, email, access_rights):
         self.staff_id = staff_id
         self.first_name = first_name
         self.last_name = last_name
         self.department = department
+        self.current_role = current_role
         self.email = email
         self.access_rights = access_rights
 
     def json(self):
         return {"staff_id": self.staff_id, "first_name": self.first_name, "last_name": self.last_name,
-                "department": self.department, "email": self.email, "access_rights": self.access_rights
+                "department": self.department, "current_role": self.current_role, "email": self.email, "access_rights": self.access_rights
                 }
 
 # Define Role Object
@@ -255,6 +257,7 @@ def get_all_staff():
                 "last_name": staff.last_name,
                 "email": staff.email,
                 "department": staff.department,
+                "current_role": staff.current_role,
                 "access_rights": staff.access_rights,
                 "staff_skills": staff_skills
 
@@ -265,7 +268,7 @@ def get_all_staff():
             {
                 "code": 200,
                 "data": {
-                    "roles": staff_list
+                    "staffs": staff_list
                 }
             }
         )
@@ -291,6 +294,7 @@ def find_by_staff_id(staff_id):
             "last_name": staff.last_name,
             "email": staff.email,
             "department": staff.department,
+            "current_role": staff.current_role,
             "access_rights": staff.access_rights,
             "staff_skills": staff_skills
         }
