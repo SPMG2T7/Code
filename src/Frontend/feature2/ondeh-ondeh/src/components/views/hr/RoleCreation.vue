@@ -11,7 +11,9 @@ export default {
         return {
             skills: [],
             allskills: [],
-            skillSelected: ''
+            skillSelected: '',
+            responseData: '',
+            newskills: []
         };
     },
     computed: {
@@ -38,7 +40,8 @@ export default {
                 })
 
                 .then(response => {
-                console.log('sent')
+                console.log('sent');
+                console.log(response);
                 })
 
                 .catch(error => {
@@ -56,7 +59,7 @@ export default {
             const x = this.allskills.splice(index, 1);
 
             console.log('when editing is allowed there has to be a deletion handler also, and it will add back the skill to the allskills array once deleted. but i mean deletion is for a diff function not this one!');
-            
+            console.log(x)
         },
 
         getSkills() {
@@ -65,15 +68,9 @@ export default {
 
                 .then(response => {
                     this.responseData = response.data.data;
-                    this.skills=this.responseData.skills;
-                    for (let i = 0; i < this.skills.length; i++) {
-                        this.skill_name = this.responseData.skill_name;
-                        console.log(this.skill_name);
-                        this.allskills.push(this.skill_name);
-                        
-                        }
-
+                    this.allskills=this.responseData.skills;
                     console.log(this.allskills);
+                    console.log(response);
                 })
 
                 .catch(error => {
@@ -85,6 +82,7 @@ export default {
     mounted: function () {
         this.skills=[];
         this.allskills=[];
+        this.newskills=[];
         this.getSkills();
     }
 }
