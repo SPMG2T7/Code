@@ -611,13 +611,11 @@ def search():
         ), 404
 
 
-@app.route("/application", methods=["GET"])
-def get_application():
+@app.route("/application/<int:role_id>_<int:staff_id>", methods=["GET"])
+def get_application(role_id,staff_id):
 
-    data = request.get_json()
-
-    query_role_id = data['params']['role_id']
-    query_staff_id = data['params']['staff_id']
+    query_role_id = role_id
+    query_staff_id = staff_id
 
     # Ensure that the application exists
 
