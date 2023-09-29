@@ -24,10 +24,26 @@ export default {
         
     },
     methods: {
-        createRole() {
-            console.log(this.skills);
-       
+        convertDateFormat() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const parts = this.closingDate.split('-');
+            const year = parseInt(parts[0], 10);
+            const month = months[parseInt(parts[1], 10) - 1];
+            const day = parseInt(parts[2], 10);
+
+            const dateObj = new Date(this.closingDate);
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const dayOfWeek = daysOfWeek[dateObj.getDay()];
+
+            const formattedDate = `${dayOfWeek} ${month} ${day.toString().padStart(2, '0')} ${year} 00:00:00 GMT+0000 (UTC)`;
+
+            return formattedDate;
+        },
+        createRole() {    
             // Construct the desired format
+            //Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)
+            console.log(this.closingDate)
+            console.log(this.convertDateFormat())
             const params = {
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
@@ -36,9 +52,8 @@ export default {
                         "no_of_pax": this.staffNeededNumber,
                         "department": "Engineering",
                         "location": "San Francisco",
-                        "expiry_timestamp": "Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)"
+                        "expiry_timestamp": this.convertDateFormat()
                     }
-            console.log(params)
             axios
                 .post('http://127.0.0.1:5000/roles/create',{
 
@@ -47,8 +62,7 @@ export default {
                 })
 
                 .then(response => {
-                console.log('sent');
-                console.log(response);
+                    console.log(response);
                 })
 
                 .catch(error => {
@@ -79,8 +93,6 @@ export default {
                     for (let i = 0; i < this.newskills.length; i++) {
                         this.allskills.push(this.newskills[i].skill_name);
                     }
-                    console.log(this.allskills);
-                    console.log(response);
                 })
 
                 .catch(error => {
