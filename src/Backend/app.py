@@ -91,6 +91,7 @@ class Staff(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     department = db.Column(db.String(50), nullable=False)
+    current_role = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     access_rights = db.Column(db.Integer, db.ForeignKey(
         'access_rights.access_id'), nullable=False)
@@ -99,17 +100,18 @@ class Staff(db.Model):
     access_right = db.relationship(
         'Access_Rights', backref='staff_list', lazy=True)
 
-    def __init__(self, staff_id, first_name, last_name, department, email, access_rights):
+    def __init__(self, staff_id, first_name, last_name, department, current_role, email, access_rights):
         self.staff_id = staff_id
         self.first_name = first_name
         self.last_name = last_name
         self.department = department
+        self.current_role = current_role
         self.email = email
         self.access_rights = access_rights
 
     def json(self):
         return {"staff_id": self.staff_id, "first_name": self.first_name, "last_name": self.last_name,
-                "department": self.department, "email": self.email, "access_rights": self.access_rights
+                "department": self.department, "current_role": self.current_role, "email": self.email, "access_rights": self.access_rights
                 }
 
 # Define Role Object
@@ -255,6 +257,7 @@ def get_all_staff():
                 "last_name": staff.last_name,
                 "email": staff.email,
                 "department": staff.department,
+                "current_role": staff.current_role,
                 "access_rights": staff.access_rights,
                 "staff_skills": staff_skills
 
@@ -265,7 +268,7 @@ def get_all_staff():
             {
                 "code": 200,
                 "data": {
-                    "roles": staff_list
+                    "staffs": staff_list
                 }
             }
         )
@@ -291,6 +294,7 @@ def find_by_staff_id(staff_id):
             "last_name": staff.last_name,
             "email": staff.email,
             "department": staff.department,
+            "current_role": staff.current_role,
             "access_rights": staff.access_rights,
             "staff_skills": staff_skills
         }
@@ -605,6 +609,97 @@ def search():
                 "message": "There are no results matching your query"
             }
         ), 404
+
+
+@app.route("/application", methods=["GET"])
+def get_application():
+
+    data = request.get_json()
+
+    query_role_id = data['params']['role_id']
+    query_staff_id = data['params']['staff_id']
+
+    # Ensure that the application exists
+
+    application = Role_Applicant.query.filter_by(role_id=query_role_id,staff_id = query_staff_id).first()
+    if application:
+
+
+        # Get all information regarding the role
+
+        role = Role.query.filter_by(role_id=query_role_id).first()
+        role_data = {}
+        if role:
+            skills_required = [
+                skill.skill.skill_name for skill in role.skills_needed]
+            count_of_applicant = Role_Applicant.query.filter_by(
+                role_id=role.role_id).count()
+            role_data = {
+                "role_id": role.role_id,
+                "role_name": role.role_name,
+                "role_description": role.role_description,
+                "listed_by": role.listed_by,
+                "no_of_pax": role.no_of_pax,
+                "department": role.department,
+                "location": role.location,
+                "days_left": days_left_from_unix(role.expiry_timestamp),
+                "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+                # 1. Missing number of people that applied
+                # Select count(role_id) from role_applicant where role_id = ?
+                "count_applicant": count_of_applicant,
+                # 2. Skills required for this role (should be multiple)
+                "skills_required": skills_required
+
+            }
+
+            # Get all information regarding the staff
+
+            staff = Staff.query.filter_by(staff_id=query_staff_id).first()
+            staff_data = {}
+            if staff:
+                staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+                staff_data = {
+                    "staff_id": staff.staff_id,
+                    "first_name": staff.first_name,
+                    "last_name": staff.last_name,
+                    "email": staff.email,
+                    "department": staff.department,
+                    "current_role": staff.current_role,
+                    "access_rights": staff.access_rights,
+                    "staff_skills": staff_skills
+                }
+
+                return jsonify(
+                    {
+                        "code": 200,
+                        "data": {'role_data': role_data,'staff_data':staff_data}
+                    }
+                )
+            else:
+                return jsonify(
+                    {
+                        "code": 404,
+                        "message": "Staff not found."
+                    }
+                ), 404
+        
+        else:
+            return jsonify(
+                {
+                    "code": 404,
+                    "message": "Role not found."
+                }
+            ), 404
+    else:
+
+        return jsonify(
+            {
+                "code": 404,
+                "message": "Application not found."
+            }
+        ), 404
+
+
     
 
 if __name__ == '__main__':
