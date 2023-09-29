@@ -13,7 +13,11 @@ export default {
             allskills: [],
             skillSelected: '',
             responseData: '',
-            newskills: []
+            newskills: [],
+            roleName:'',
+            roleDescription:'',
+            staffNeededNumber:'',
+            closingDate:''
         };
     },
     computed: {
@@ -21,12 +25,10 @@ export default {
     },
     methods: {
         createRole() {
-            console.log(this.skills)
-
-            axios
-                .post('http://127.0.0.1:5000/roles/create',{
-
-                    "params": {
+            console.log(this.skills);
+       
+            // Construct the desired format
+            const params = {
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
                         "skills_required": this.skills,
@@ -34,8 +36,13 @@ export default {
                         "no_of_pax": this.staffNeededNumber,
                         "department": "Engineering",
                         "location": "San Francisco",
-                        "expiry_timestamp": this.closingDate
+                        "expiry_timestamp": "Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)"
                     }
+            console.log(params)
+            axios
+                .post('http://127.0.0.1:5000/roles/create',{
+
+                    "params": params
 
                 })
 
@@ -68,7 +75,10 @@ export default {
 
                 .then(response => {
                     this.responseData = response.data.data;
-                    this.allskills=this.responseData.skills;
+                    this.newskills=this.responseData.skills;
+                    for (let i = 0; i < this.newskills.length; i++) {
+                        this.allskills.push(this.newskills[i].skill_name);
+                    }
                     console.log(this.allskills);
                     console.log(response);
                 })
@@ -84,6 +94,7 @@ export default {
         this.allskills=[];
         this.newskills=[];
         this.getSkills();
+
     }
 }
 </script>
@@ -93,11 +104,11 @@ export default {
         <Nav />
         <h1>HR_Role Creation</h1>
 
-        <input type="text" placeholder="Role Name" id="roleName">
+        <input type="text" placeholder="Role Name" v-model="roleName">
 
         <br>
         <br>
-        Role Description <input type="text" id="roleDescription" placeholder="Role Description">
+        Role Description <input type="text" v-model="roleDescription" placeholder="Role Description">
         
         <br>
         <br>
@@ -123,18 +134,13 @@ export default {
             </option>
         </select>
 
-        <!--
-            <input type="text" id="skillName" :skillName="skillName" @keypress.enter="searchSkill(skillName)" placeholder="Search Skills by Name">
-            <input type="text" id="searchSkillName" placeholder="Search Skills by Name">
-        -->
+        <br>
+        <br>
+        Number of Staff Needed <input type="number" v-model="staffNeededNumber">
 
         <br>
         <br>
-        Number of Staff Needed <input type="number" id="staffNeededNumber">
-
-        <br>
-        <br>
-        Application Closing Date <input type="date" id="closingDate">
+        Application Closing Date <input type="date" v-model="closingDate">
 
         <br>
         <br>
