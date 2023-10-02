@@ -3,3 +3,9 @@
   <h1>App.vue</h1> -->
   <router-view />
 </template>
+
+<style>
+body {
+  background-color: #EBEBEB;
+}
+</style>

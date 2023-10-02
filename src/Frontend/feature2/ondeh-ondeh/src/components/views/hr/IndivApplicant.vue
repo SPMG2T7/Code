@@ -72,36 +72,52 @@ export default {
 <template>
     <Nav />
 
-    <h2>{{ staffName }}</h2>
-    <p><span class="fw-bold">Current Job Role:&emsp;</span>{{ currentRole }}</p>
-    <p><span class='fw-bold'>Applied for Job Role:&emsp;</span>{{ appliedRole }}</p>
-    <p><span class="fw-bold">Skill Match - </span>{{ percentageMatchingSkills }}%</p>
-    <table class="table w-auto">
-        <thead>
-            <tr>
-                <th scope="col" class="fw-bold">Skill Name</th>
-                <th scope="col" class="fw-bold">Role Requirement</th>
-                <th scope="col" class="fw-bold">My Skill</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="rSkills in roleSkills" :key="rSkills"
-                :class="{ 'table-success': staffSkills.includes(rSkills), 'table-danger': !staffSkills.includes(rSkills) }">
-                <td>{{ rSkills }}</td>
-                <td>✓</td>
-                <td v-if="staffSkills.includes(rSkills)">✓</td>
-                <td v-else>✗</td>
-                <!-- <td>Otto</td>
+    <div class="container m-2">
+        <!-- <img class="rounded" src="../../../assets/profile.jpeg" />
+
+    <h2>{{ staffName }}</h2> -->
+
+        <div class="container mb-3">
+            <div class="row">
+                <div class="col-md-2">
+                    <!-- <img src="your-image.jpg" alt="Image" class="img-fluid"> -->
+                    <img class="rounded" src="../../../assets/profile.jpeg" />
+                </div>
+                <div class="col-md-3 d-flex align-items-center text-center">
+                    <h1 cl>{{ staffName }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <p><span class="fw-bold">Current Job Role:&emsp;</span>{{ currentRole }}</p>
+        <p><span class='fw-bold'>Applied for Job Role:&emsp;</span>{{ appliedRole }}</p>
+        <p><span class="fw-bold">Skill Match - </span>{{ percentageMatchingSkills }}%</p>
+        <table class="table w-auto">
+            <thead>
+                <tr class="table-secondary">
+                    <th scope="col" class="fw-bold">Skill Name</th>
+                    <th scope="col" class="fw-bold">Role Requirement</th>
+                    <th scope="col" class="fw-bold">My Skill</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="rSkills in roleSkills" :key="rSkills"
+                    :class="{ 'table-success': staffSkills.includes(rSkills), 'table-danger': !staffSkills.includes(rSkills) }">
+                    <td>{{ rSkills }}</td>
+                    <td>✓</td>
+                    <td v-if="staffSkills.includes(rSkills)">✓</td>
+                    <td v-else>✗</td>
+                    <!-- <td>Otto</td>
                 <td>{{ skill }}</td> -->
-            </tr>
-        </tbody>
-    </table>
+                </tr>
+            </tbody>
+        </table>
 
-    <p><span class="fw-bold">Other Skills: </span> {{ unmatchedSkills.join(', ') }}</p>
+        <p><span class="fw-bold">Other Skills: </span> {{ unmatchedSkills.join(', ') }}</p>
 
 
 
-    <!-- <p>Staff Skills: </p>
+        <!-- <p>Staff Skills: </p>
     <ul>
         <li v-for="skill in staffSkills" :key="skill">{{ skill }}</li>
     </ul>
@@ -110,10 +126,22 @@ export default {
     <ul>
         <li v-for="rSkills in roleSkills" :key="rSkills">{{ rSkills }}</li>
     </ul> -->
+    </div>
 </template>
 
 <style scoped>
 /* * {
     padding-left: 40px;
 } */
+
+.custom-color {
+    background-color: black;
+}
+
+img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    /* border-radius: 90%; */
+}
 </style>

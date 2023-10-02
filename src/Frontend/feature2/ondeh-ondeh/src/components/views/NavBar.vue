@@ -79,7 +79,7 @@
     </nav>
 </template>
 
-<style>
+<style scoped>
 nav {
     background: linear-gradient(263deg, #946282 0%, #8BC100 100%);
 }
