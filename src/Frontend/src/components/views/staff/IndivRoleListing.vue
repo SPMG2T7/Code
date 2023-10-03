@@ -29,7 +29,6 @@ export default {
         }
     },
     methods: {
-
         fetchData() {
             const roleID = this.getRoleID
             this.roleID = roleID
@@ -86,6 +85,17 @@ export default {
     },
     mounted: function () {
         this.fetchData();
+    },
+    created() {
+        const staffId = sessionStorage.getItem('staff_id');
+        const accessId = sessionStorage.getItem('access_id');
+
+        console.log(staffId, accessId)
+        
+        if (!staffId && !accessId) {
+            // Staff is not logged in, redirect to login page
+            this.$router.push('/Login');
+        }
     }
 
 }
