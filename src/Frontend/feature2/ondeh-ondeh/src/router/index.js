@@ -11,7 +11,7 @@ const routes = [
         component: HomePage
     },
     {
-        path: '/browseroles',
+        path: '/BrowseRoles',
         name: "Browsing Roles",
         component: BrowsingRoles
     },
