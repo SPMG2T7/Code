@@ -42,8 +42,6 @@
 <script>
 import Nav from "../../views/NavBar.vue"
 import axios from 'axios'
-console.log(sessionStorage.getItem('staff_id'));
-console.log(sessionStorage.getItem('access_id'));
 
 export default {
     name: "App",
@@ -53,7 +51,8 @@ export default {
     // we will initialise an empty list here first so we can append the axios return later
     data() {
         return {
-            roles: []
+            roles: [],
+            isLoggedIn: false
         };
     },  
     // think of this as calling the function right when u load the page
@@ -71,6 +70,17 @@ export default {
                 .catch(error => {
                     console.error('Error fetching roles:', error);
                 });
+        }
+    },
+    created() {
+        const staffId = sessionStorage.getItem('staff_id');
+        const accessId = sessionStorage.getItem('access_id');
+
+        console.log(staffId, accessId)
+        
+        if (!staffId && !accessId) {
+            // Staff is not logged in, redirect to login page
+            this.$router.push('/Login');
         }
     }
 };
