@@ -708,7 +708,7 @@ def apply_role():
     comments = data['params']['comments']
 
     try:
-        # Create a new instance of the Role model with the retrieved parameters
+        # Create a new instance of the RoleApplicant model with the retrieved parameters
         role_applicant = Role_Applicant(
             role_id=role_id,
             staff_id=staff_id,
@@ -716,10 +716,10 @@ def apply_role():
             creation_timestamp=int(time.time())
         )
 
-        # Add the new role to the session
+        # Add the new role applicant to the session
         db.session.add(role_applicant)
 
-        # Commit the session to save the new role to the database
+        # Commit the session to save the new role applicant entry to the database
         db.session.commit()
         
     except Exception as e:
@@ -738,6 +738,69 @@ def apply_role():
             "data": role_applicant.json()
         }
     ), 201
+
+
+# Update Roles
+@app.route("/roles/update", methods=["PUT"])
+def update_role():
+    data = request.get_json()
+    # Retrieve the parameters from the PUT request data
+    role_id = data['params']['role_id']
+    role_name = data['params']['role_name']
+    role_description = data['params']['role_description']
+    no_of_pax = data['params']['no_of_pax']
+    department = data['params']['department']
+    location = data['params']['location']
+    skills_name = data['params']['skills_name']
+    expiry_timestamp = data['params']['expiry_timestamp']
+
+    try:
+        # Find the existing role with the given role_id
+        role_obj = Role.query.filter_by(role_id=role_id).first()
+
+        # If role_id is valid, update the Role table with the updated values
+        if role_obj:
+            role_obj.role_name = role_name
+            role_obj.role_description = role_description
+            role_obj.no_of_pax = no_of_pax
+            role_obj.department = department
+            role_obj.location = location
+            role_obj.expiry_timestamp = convert_to_unix_timestamp(expiry_timestamp)
+
+            # Delete all existing skills for the role
+            role_skills_to_delete = Role_Skill.query.filter_by(role_id=role_id).all()
+
+             # Loop through the role_ and delete them
+            for role_skill in role_skills_to_delete:
+                db.session.delete(role_skill)
+
+            # Update the skills table with the updated values
+            for skill in skills_name:
+                # Get Skill ID per Skill Name
+                skill_id = Skill.query.filter_by(
+                    skill_name=skill).with_entities(Skill.skill_id).first()
+                role_skill = Role_Skill(role_id, skill_id[0])
+                db.session.add(role_skill)
+
+            # Commit the session to update the updated values to the database
+            db.session.commit()
+        
+    except Exception as e:
+        error_message = str(e)
+        return jsonify(
+            {
+                "code": 500,
+                "data": error_message,
+                "message": "Internal Server Error: An unexpected error occurred."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "data": role_obj.json()
+        }
+    ), 200
 
 
 if __name__ == '__main__':
