@@ -19,7 +19,7 @@ client = meilisearch.Client('http://127.0.0.1:7700', SEARCH_MASTER_KEY)
 # End-Connecting to MeiliSearch
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"{DB_URL}"
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -451,6 +451,7 @@ def find_by_role_id(role_id):
 @app.route("/roles/create", methods=["POST"])
 def create_role():
     data = request.get_json()
+    print(data)
     # Retrieve the parameters from the POST request data
     role_name = data['params']['role_name']
     role_description = data['params']['role_description']
@@ -537,7 +538,7 @@ def get_all_skills():
                     "skills": [skill.json() for skill in skill_list]
                 }
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 204,
