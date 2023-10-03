@@ -12,25 +12,30 @@ export default {
             responseData: null,
             staffName: "",
             currentRole: "",
-            staffSkills: []
+            staffSkills: [],
+            appliedRole: ""
         };
     },
-    computed: {
-        getID() {
-            return this.$route.query.id
-        }
-    },
+    // computed: {
+    //     getID() {
+    //         return this.$route.query.id
+    //     }
+    // },
     methods: {
         fetchData() {
-            const id = this.getID
+            // const id = this.getID
 
             axios
-                .get('http://127.0.0.1:5000/staff/' + id)
+                .get('http://127.0.0.1:5000/application/2_123456')
                 .then(response => {
-                    this.responseData = response.data.data;
-                    this.staffName = this.responseData.first_name + " " + response.data.data.last_name;
-                    this.staffSkills = this.responseData.staff_skills
-                    console.log(this.staffName)
+                    this.responseData_roleData = response.data.data.role_data;
+                    this.responseData_staffData = response.data.data.staff_data;
+                    this.staffName = this.responseData_staffData.first_name + " " + this.responseData_staffData.last_name;
+                    this.staffSkills = this.responseData_staffData.staff_skills
+                    this.currentRole = this.responseData_staffData.current_role
+                    this.appliedRole = this.responseData_roleData.role_name
+                    console.log(this.responseData_roleData)
+                    console.log(this.responseData_staffData)
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -47,11 +52,9 @@ export default {
 <template>
     <Nav />
     <h1>Individual Applicant</h1>
-    <button @click="fetchData">Fetch Data</button>
-
     <h2>{{ staffName }}</h2>
-    <p>Current Job Role: </p>
-    <p>Applied for Job Role: </p>
+    <p>Current Job Role: {{ currentRole }}</p>
+    <p>Applied for Job Role: {{  appliedRole }}</p>
     <p>Skills: </p>
     <ul>
         <li v-for="skill in staffSkills" :key="skill">{{ skill }}</li>
