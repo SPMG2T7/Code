@@ -537,7 +537,7 @@ def get_all_skills():
                     "skills": [skill.json() for skill in skill_list]
                 }
             }
-        )
+        ),200
     return jsonify(
         {
             "code": 204,
