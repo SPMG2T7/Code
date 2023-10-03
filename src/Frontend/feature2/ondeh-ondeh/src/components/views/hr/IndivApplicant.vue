@@ -29,7 +29,7 @@ export default {
             // const id = this.getID
 
             axios
-                .get('http://127.0.0.1:5000/application/2_123456')
+                .get('http://127.0.0.1:5000/application/3_123457')
                 .then(response => {
                     this.responseData_roleData = response.data.data.role_data;
                     this.responseData_staffData = response.data.data.staff_data;
@@ -57,7 +57,7 @@ export default {
         percentageMatchingSkills() {
             const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
             const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
-            return percentage; // Limit the percentage to two decimal places
+            return percentage;
         }
     },
     mounted: function () {
@@ -72,19 +72,19 @@ export default {
 <template>
     <Nav />
 
-    <div class="container m-2">
+    <div class="container m-2 mt-4">
         <!-- <img class="rounded" src="../../../assets/profile.jpeg" />
 
     <h2>{{ staffName }}</h2> -->
 
         <div class="container mb-3">
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-1">
                     <!-- <img src="your-image.jpg" alt="Image" class="img-fluid"> -->
-                    <img class="rounded" src="../../../assets/profile.jpeg" />
+                    <img class="img-responsive rounded" src="../../../assets/profile.jpeg" />
                 </div>
-                <div class="col-md-3 d-flex align-items-center text-center">
-                    <h1 cl>{{ staffName }}</h1>
+                <div class="col-11 d-flex align-items-center text-center">
+                    <h1>{{ staffName }}</h1>
                 </div>
             </div>
         </div>
@@ -113,7 +113,10 @@ export default {
             </tbody>
         </table>
 
-        <p><span class="fw-bold">Other Skills: </span> {{ unmatchedSkills.join(', ') }}</p>
+        <p>
+            <span class="fw-bold">Other Skills: </span>
+            {{ unmatchedSkills.length > 0 ? unmatchedSkills.join(', ') : 'No Unmatched Skills' }}
+        </p>
 
 
 
@@ -139,8 +142,8 @@ export default {
 }
 
 img {
-    width: 70px;
-    height: 70px;
+    width: 100%;
+    /* height: 70px; */
     object-fit: cover;
     /* border-radius: 90%; */
 }
