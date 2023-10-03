@@ -17,7 +17,9 @@ export default {
             roleName:'',
             roleDescription:'',
             staffNeededNumber:'',
-            closingDate:''
+            closingDate:'',
+            roleLocation:'',
+            roleDepartment:''
         };
     },
     computed: {
@@ -50,8 +52,8 @@ export default {
                         "skills_required": this.skills,
                         "listed_by": 123459,
                         "no_of_pax": this.staffNeededNumber,
-                        "department": "Engineering",
-                        "location": "San Francisco",
+                        "department": this.roleDepartment,
+                        "location": this.roleLocation,
                         "expiry_timestamp": this.convertDateFormat()
                     }
             axios
@@ -79,8 +81,14 @@ export default {
             const index = this.allskills.indexOf(selectedSkill);
             const x = this.allskills.splice(index, 1);
 
-            console.log('when editing is allowed there has to be a deletion handler also, and it will add back the skill to the allskills array once deleted. but i mean deletion is for a diff function not this one!');
             console.log(x)
+        },
+
+        removeSkill(index) {
+            this.allskills.push(this.skills[index])
+            const y = this.skills.splice(index,1)
+
+            console.log(y)
         },
 
         getSkills() {
@@ -121,7 +129,23 @@ export default {
         <br>
         <br>
         Role Description <input type="text" v-model="roleDescription" placeholder="Role Description">
+
+        <br>
+        <br>
+        Role Location <input type="text" v-model="roleLocation" placeholder="Location" >
+
+        <br>
+        <br>
+        Role Department <input type="text" v-model="roleDepartment" placeholder="Department" >
         
+        <br>
+        <br>
+        Number of Staff Needed <input type="number" placeholder="Number of Staff" v-model="staffNeededNumber">
+
+        <br>
+        <br>
+        Application Closing Date <input type="date" placeholder="Closing Date" v-model="closingDate">
+
         <br>
         <br>
         Skills Required
@@ -129,9 +153,11 @@ export default {
         <tr>
             <th colspan="2">Skill</th>
         </tr>
-        <tr v-for="(skill, index) in skills" :key="index">
+        <tr v-if="!skills.length"><td><i>No skills selected yet.</i></td></tr>
+        <tr v-else v-for="(skill, index) in skills" :key="index">
             <td>{{ index+1 }}</td>
             <td>{{ skill }}</td>
+            <td><button @click="removeSkill(index)">Remove</button></td>
         </tr>
         </table>
 
@@ -146,13 +172,6 @@ export default {
             </option>
         </select>
 
-        <br>
-        <br>
-        Number of Staff Needed <input type="number" v-model="staffNeededNumber">
-
-        <br>
-        <br>
-        Application Closing Date <input type="date" v-model="closingDate">
 
         <br>
         <br>
