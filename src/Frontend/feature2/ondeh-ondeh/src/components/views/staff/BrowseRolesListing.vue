@@ -42,6 +42,8 @@
 <script>
 import Nav from "../../views/NavBar.vue"
 import axios from 'axios'
+console.log(sessionStorage.getItem('staff_id'));
+console.log(sessionStorage.getItem('access_id'));
 
 export default {
     name: "App",
