@@ -42,7 +42,7 @@ export default {
       sessionStorage.setItem('access_id', this.staff_select[1])
 
       // Redirect to a specific route using this.$router.push
-      this.$router.push('/');
+      this.$router.push('/browseroles');
     },
   },
   mounted() {
