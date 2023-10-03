@@ -12,14 +12,22 @@
                     think of it as template -->
             <li v-for="role in roles" :key="role.role_id">
 
-                <div class="container-fluid" style="width: 100%; margin: 30px 0px; border: 1px solid black">
-                    <div class="row">
+                <div class="container-fluid rounded" style="width: 100%; margin: 30px 0px; border: 1px solid black">
+                    <div class="row" style="margin: 20px 0px">
                     
-                        <h3>{{ role.role_name }}</h3>
-                        <p>{{ role.no_of_pax }} staff needed</p>
-                        <p>Closing in {{ role.days_left }} days</p>
-                        <button type="apply" class="btn btn-secondary" onclick="apply()">Apply</button>
-                        
+                        <!-- column 1 -->
+                        <div class="col-md-10">
+                            <!-- <img src="https://via.placeholder.com/150" alt="role image" style="width: 100%; height: 100%"> -->
+                            <h3>{{ role.role_name }}</h3>
+                            <p>{{ role.no_of_pax }} staff needed</p>
+                        </div>
+
+                        <!-- column 2 -->
+                        <div class="col-md-2 justify-content-center">
+                            <button type="button" class="btn btn-secondary custom-button" onclick="apply()">Apply</button>
+                            <p>Closing in {{ role.days_left }} days</p>
+                        </div>
+
                     </div>
                 </div>
 
@@ -73,7 +81,13 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #000000;
+    background-color: #EBEBEB;
     margin-top: 60px;
+}
+
+p {
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
 }
 
 h3 {
@@ -86,4 +100,11 @@ h3 {
     padding: 0; /* Remove default padding */
     margin: 0; /* Remove default margin */
 }
+
+.custom-button {
+    width: 140px;
+    background-color: #8BC100;
+    color: #000000;
+  }
+
 </style>
