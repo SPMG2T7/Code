@@ -271,7 +271,8 @@ def get_all_staff():
                     "staffs": staff_list
                 }
             }
-        )
+        ),200
+    
     return jsonify(
         {
             "code": 404,
@@ -303,7 +304,7 @@ def find_by_staff_id(staff_id):
             {
                 "code": 200,
                 "data": staff_data
-            }
+            },200
         )
     return jsonify(
         {
@@ -327,13 +328,13 @@ def get_all_access():
                     "accesses": [access.json() for access in access_list]
                 }
             }
-        )
+        ),200
     return jsonify(
         {
-            "code": 404,
+            "code": 204,
             "message": "There are no access rights"
         }
-    ), 404
+    ), 204
 
 # Retrieving specific access data
 
@@ -347,7 +348,7 @@ def find_by_access_id(access_id):
                 "code": 200,
                 "data": access.json()
             }
-        )
+        ),200
     return jsonify(
         {
             "code": 404,
@@ -394,13 +395,13 @@ def get_all_roles():
                     "roles": role_list
                 }
             }
-        )
+        ),200
     return jsonify(
         {
-            "code": 404,
+            "code": 204,
             "message": "There are no roles"
         }
-    ), 404
+    ), 204
 
 # Retrieving specific access data
 
@@ -436,7 +437,7 @@ def find_by_role_id(role_id):
                 "code": 200,
                 "data": role_data
             }
-        )
+        ),200
     return jsonify(
         {
             "code": 404,
@@ -539,10 +540,10 @@ def get_all_skills():
         )
     return jsonify(
         {
-            "code": 404,
+            "code": 204,
             "message": "There are no skills"
         }
-    ), 404
+    ), 204
 
 # Retrieving specific skill data
 @app.route("/skills/<int:skill_id>")
@@ -554,7 +555,7 @@ def find_by_skill_id(skill_id):
                 "code": 200,
                 "data": skill.json()
             }
-        )
+        ),200
     return jsonify(
         {
             "code": 404,
@@ -610,7 +611,7 @@ def search():
             }
         ), 404
 
-# Retrieve all applications for a specific role
+# Retrieve a specific application 
 @app.route("/application/<int:role_id>_<int:staff_id>", methods=["GET"])
 def get_application(role_id,staff_id):
 
@@ -672,7 +673,7 @@ def get_application(role_id,staff_id):
                         "code": 200,
                         "data": {'role_data': role_data,'staff_data':staff_data}
                     }
-                )
+                ),200
             else:
                 return jsonify(
                     {
@@ -801,6 +802,86 @@ def update_role():
             "data": role_obj.json()
         }
     ), 200
+
+
+# Retrieve all applications for a specific role
+@app.route("/role_application/get_all/<int:role_id>", methods=["GET"])
+def get_role_applications(role_id):
+
+    query_role_id = role_id
+
+    # Ensure that the application exists
+
+    applications = Role_Applicant.query.filter_by(role_id=query_role_id).all()
+
+    if applications:
+
+        # get list of staff and their info
+
+        staff_list = []
+
+        for application in applications:
+            
+            staff_id = application.staff_id
+
+            staff = Staff.query.filter_by(staff_id=staff_id).first()
+            staff_data = {}
+
+            staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+            staff_data = {
+                "staff_id": staff.staff_id,
+                "first_name": staff.first_name,
+                "last_name": staff.last_name,
+                "email": staff.email,
+                "department": staff.department,
+                "current_role": staff.current_role,
+                "access_rights": staff.access_rights,
+                
+                "staff_skills": staff_skills
+            }
+            
+            staff_list.append(staff_data)
+
+        # get info of the role 
+
+        role = Role.query.filter_by(role_id=query_role_id).first()
+
+        skills_required = [skill.skill.skill_name for skill in role.skills_needed]
+        count_of_applicant = len(applications)
+
+        role_data = {
+            "role_id": role.role_id,
+            "role_name": role.role_name,
+            "role_description": role.role_description,
+            "listed_by": role.listed_by,
+            "no_of_pax": role.no_of_pax,
+            "department": role.department,
+            "location": role.location,
+            "days_left": days_left_from_unix(role.expiry_timestamp),
+            "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+            # 1. Missing number of people that applied
+            # Select count(role_id) from role_applicant where role_id = ?
+            "count_applicant": count_of_applicant,
+            # 2. Skills required for this role (should be multiple)
+            "skills_required": skills_required
+        }
+
+        return jsonify(
+                {
+                    "code": 200,
+                    "data": {'role_data': role_data,'staff_data':staff_list}
+                }
+            ),200
+
+
+    else:
+
+        return jsonify(
+            {
+                "code": 204,
+                "message": "No applications found for this role."
+            }
+        ), 204
 
 
 if __name__ == '__main__':
