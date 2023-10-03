@@ -538,7 +538,7 @@ def get_all_skills():
                     "skills": [skill.json() for skill in skill_list]
                 }
             }
-        ), 200
+        ),200
     return jsonify(
         {
             "code": 204,
@@ -622,8 +622,17 @@ def get_application(role_id,staff_id):
     # Ensure that the application exists
 
     application = Role_Applicant.query.filter_by(role_id=query_role_id,staff_id = query_staff_id).first()
+
+
     if application:
 
+        # Get all information regarding the application
+
+        application_data = {
+
+            "comments": application.comments,
+            "creation_timestamp": application.creation_timestamp
+        }
 
         # Get all information regarding the role
 
@@ -672,7 +681,7 @@ def get_application(role_id,staff_id):
                 return jsonify(
                     {
                         "code": 200,
-                        "data": {'role_data': role_data,'staff_data':staff_data}
+                        "data": {'application_data':application_data, 'role_data': role_data,'staff_data':staff_data}
                     }
                 ),200
             else:
