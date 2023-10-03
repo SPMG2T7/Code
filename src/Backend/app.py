@@ -610,7 +610,7 @@ def search():
             }
         ), 404
 
-
+# Retrieve all applications for a specific role
 @app.route("/application/<int:role_id>_<int:staff_id>", methods=["GET"])
 def get_application(role_id,staff_id):
 
@@ -698,7 +698,47 @@ def get_application(role_id,staff_id):
         ), 404
 
 
-    
+# Apply for Role
+@app.route("/roles/apply", methods=["POST"])
+def apply_role():
+    data = request.get_json()
+    # Retrieve the parameters from the POST request data
+    role_id = data['params']['role_id']
+    staff_id = data['params']['staff_id']
+    comments = data['params']['comments']
+
+    try:
+        # Create a new instance of the Role model with the retrieved parameters
+        role_applicant = Role_Applicant(
+            role_id=role_id,
+            staff_id=staff_id,
+            comments=comments,
+            creation_timestamp=int(time.time())
+        )
+
+        # Add the new role to the session
+        db.session.add(role_applicant)
+
+        # Commit the session to save the new role to the database
+        db.session.commit()
+        
+    except Exception as e:
+        error_message = str(e)
+        return jsonify(
+            {
+                "code": 500,
+                "data": error_message,
+                "message": "Internal Server Error: An unexpected error occurred."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": role_applicant.json()
+        }
+    ), 201
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
