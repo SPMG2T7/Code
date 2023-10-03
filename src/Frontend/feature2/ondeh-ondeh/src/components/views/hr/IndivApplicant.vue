@@ -14,6 +14,7 @@ export default {
             currentRole: "",
             staffSkills: [],
             roleSkills: [],
+            comments: "",
             unmatchedSkills: [],
             appliedRole: ""
         };
@@ -31,6 +32,8 @@ export default {
             axios
                 .get('http://127.0.0.1:5000/application/3_123457')
                 .then(response => {
+                    this.responseData_appData = response.data.data.application_data;
+                    this.comments = this.responseData_appData.comments;
                     this.responseData_roleData = response.data.data.role_data;
                     this.responseData_staffData = response.data.data.staff_data;
                     this.staffName = this.responseData_staffData.first_name + " " + this.responseData_staffData.last_name;
@@ -45,7 +48,7 @@ export default {
                         (skill) => !this.roleSkills.includes(skill)
                     );
 
-                    console.log(this.responseData_roleData)
+                    console.log(this.comments)
                     console.log(this.responseData_staffData)
                 })
                 .catch(error => {
@@ -117,6 +120,9 @@ export default {
             <span class="fw-bold">Other Skills: </span>
             {{ unmatchedSkills.length > 0 ? unmatchedSkills.join(', ') : 'No Unmatched Skills' }}
         </p>
+
+        <h3>Remarks from Applicant</h3>
+        <p>{{ comments }}</p>
 
 
 
