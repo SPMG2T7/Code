@@ -592,12 +592,14 @@ def search():
             searches.append({'indexUid': 'roles', 'q': query})
         # print(searches)
         search_result = client.multi_search(searches)
-        print(search_result['results'])
         if len(search_result["results"]) != 0:
             hits = []
+            role_id_set = set()
             for entry in search_result['results']:
                 for hit in entry['hits']:
-                    hits.append(hit)
+                    if hit['role_id'] not in role_id_set:
+                        role_id_set.add(hit['role_id'])
+                        hits.append(hit)
             return jsonify(
                 {
                     "code": 200,
