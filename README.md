@@ -20,6 +20,8 @@
 5. Copy the search.env file to /src/Backend
 6. Go to src/Backend folder, run 'docker-compose up' to start the search container
 7. Go to src/Backend folder, run 'python app.py' to start the backend, if there are 'No Modules' error, just run 'pip install <module_name>' based on the error of module name shown
+8. To ensure that the meili search is working, there is a need to create new roles everytime the docker starts up.
+9. use the endpoint /role/create to create a new role
 
 
 !!! IMPORTANT !!!
