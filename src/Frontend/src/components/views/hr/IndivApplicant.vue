@@ -73,7 +73,7 @@ export default {
         const accessId = sessionStorage.getItem('access_id');
 
         console.log(staffId, accessId)
-        
+
         if (!staffId && !accessId) {
             // Staff is not logged in, redirect to login page
             this.$router.push('/Login');
@@ -86,7 +86,8 @@ export default {
 <template>
     <Nav />
 
-    <div class="container m-2 mt-4">
+    <div class="container container-style">
+
         <!-- <img class="rounded" src="../../../assets/profile.jpeg" />
 
     <h2>{{ staffName }}</h2> -->
@@ -146,6 +147,7 @@ export default {
     <ul>
         <li v-for="rSkills in roleSkills" :key="rSkills">{{ rSkills }}</li>
     </ul> -->
+
     </div>
 </template>
 
@@ -163,5 +165,12 @@ img {
     /* height: 70px; */
     object-fit: cover;
     /* border-radius: 90%; */
+}
+
+
+
+.container {
+    background-color: white;
+    
 }
 </style>
