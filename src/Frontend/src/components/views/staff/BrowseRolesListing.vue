@@ -3,7 +3,7 @@
         <Nav/>
     </div>
     
-    <div>
+    <div class="container">
         <!-- v-if here means the v-for below will only run if the length of roles.length is not 0 -->
         <ul class="role-list" v-if="roles.length">
             
@@ -12,19 +12,19 @@
                     think of it as template -->
             <li v-for="role in roles" :key="role.role_id">
 
-                <div class="container-fluid rounded" style="width: 100%; margin: 30px 0px; border: 1px solid black">
-                    <div class="row" style="margin: 20px 0px">
+                <div class="container-fluid listing">
+                    <div class="row justify-content-between" style="margin: 20px 0px">
                     
                         <!-- column 1 -->
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             <!-- <img src="https://via.placeholder.com/150" alt="role image" style="width: 100%; height: 100%"> -->
                             <h3>{{ role.role_name }}</h3>
                             <p>{{ role.no_of_pax }} staff needed</p>
                         </div>
 
                         <!-- column 2 -->
-                        <div class="col-md-2 justify-content-center">
-                            <button type="button" class="btn btn-secondary custom-button" onclick="apply()">Apply</button>
+                        <div class="col-md-3 text-end">
+                            <button type="button" class="btn btn-secondary custom-button" onclick="apply()">APPLY</button>
                             <p>Closing in {{ role.days_left }} days</p>
                         </div>
 
@@ -85,7 +85,8 @@ export default {
     }
 };
 </script>
-  
+
+
 <style scoped>
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -114,9 +115,19 @@ h3 {
 }
 
 .custom-button {
-    width: 140px;
+    width: 130px;
     background-color: #8BC100;
     color: #000000;
-  }
+    font-weight: bold;
+}
+
+.listing{
+    width: 100%; 
+    margin: 30px 0px; 
+    border: 1px solid #EBEBEB; 
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.2);
+}
 
 </style>
