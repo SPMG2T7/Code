@@ -12,4 +12,6 @@
     border-radius: 10px;
     margin-top: 24px;
 }
+
+
 </style>
