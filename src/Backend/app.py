@@ -357,8 +357,6 @@ def find_by_access_id(access_id):
     ), 404
 
 # Retrieving all role data
-
-
 @app.route("/roles/get_all")
 def get_all_roles():
     roles = Role.query.all()
@@ -402,6 +400,86 @@ def get_all_roles():
             "message": "There are no roles"
         }
     ), 204
+
+# Retrieve two list of applied and not applied for roles by staff
+@app.route("/roles/get_all_by_staff/<int:staff_id>")
+def get_all_roles_by_staff(staff_id):
+    roles_list = []
+    roles = Role.query.all()
+    applied_role_ids = [int(row[0]) for row in Role_Applicant.query.filter_by(staff_id=staff_id).with_entities(Role_Applicant.role_id).all()]
+    
+    # Get information regarding roles applied for
+    if len(applied_role_ids) != 0:
+        for applied_id in applied_role_ids:
+            role = Role.query.filter_by(role_id=applied_id).first()
+
+            # Get all information regarding the role
+            skills_required = [
+                skill.skill.skill_name for skill in role.skills_needed]
+            count_of_applicant = Role_Applicant.query.filter_by(
+                role_id=role.role_id).count()
+            role_data = {
+                "role_id": role.role_id,
+                "role_name": role.role_name,
+                "role_description": role.role_description,
+                "listed_by": role.listed_by,
+                "no_of_pax": role.no_of_pax,
+                "department": role.department,
+                "location": role.location,
+                "days_left": days_left_from_unix(role.expiry_timestamp),
+                "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+                # 1. Missing number of people that applied
+                # Select count(role_id) from role_applicant where role_id = ?
+                "count_applicant": count_of_applicant,
+                # 2. Skills required for this role (should be multiple)
+                "skills_required": skills_required,
+                "applied": True
+            }
+            roles_list.append(role_data)
+
+    # Get information regarding roles not applied for
+    if len(roles) != 0:
+        for role in roles:
+            if role.role_id not in applied_role_ids:
+                skills_required = [
+                    skill.skill.skill_name for skill in role.skills_needed]
+                count_of_applicant = Role_Applicant.query.filter_by(
+                    role_id=role.role_id).count()
+                role_data = {
+                    "role_id": role.role_id,
+                    "role_name": role.role_name,
+                    "role_description": role.role_description,
+                    "listed_by": role.listed_by,
+                    "no_of_pax": role.no_of_pax,
+                    "department": role.department,
+                    "location": role.location,
+                    "days_left": days_left_from_unix(role.expiry_timestamp),
+                    "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+                    # 1. Missing number of people that applied
+                    # Select count(role_id) from role_applicant where role_id = ?
+                    "count_applicant": count_of_applicant,
+                    # 2. Skills required for this role (should be multiple)
+                    "skills_required": skills_required,
+                    "applied": False
+                }
+                roles_list.append(role_data) 
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "roles": roles_list
+                }
+            }
+        ),200
+    
+    return jsonify(
+        {
+            "code": 204,
+            "message": "There are no roles"
+        }
+    ), 204
+
 
 # Retrieving specific access data
 

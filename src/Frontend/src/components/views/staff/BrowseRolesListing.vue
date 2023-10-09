@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Nav/>
+        <Nav />
     </div>
     
     <div>
@@ -13,12 +13,16 @@
         </select>
 
         <table v-if="filter_skills.length">
-        <tr>
-        <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid white;border-right:5px solid white">
-        {{skill}} <button @click="removeFilter(index)">x</button>
-        </td>
-        </tr></table>
+            <tr>
+                <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid white;border-right:5px solid white">
+                {{skill}} <button @click="removeFilter(index)">x</button>
+            </td>
+            </tr>
+        </table>
 
+
+
+        <div class="container">
 
         <!-- v-if here means the v-for below will only run if the length of roles.length is not 0 -->
         <ul class="role-list" v-if="roles.length && !filter_skills.length">
@@ -28,32 +32,80 @@
                     think of it as template -->
             <li v-for="role in roles" :key="role.role_id">
 
-                <div class="container-fluid rounded" style="width: 100%; margin: 30px 0px; border: 1px solid black">
-                    <div class="row" style="margin: 20px 0px">
-                    
+                <div class="container-fluid listing">
+                    <div class="row justify-content-between" style="margin: 20px 0px">
+
                         <!-- column 1 -->
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             <!-- <img src="https://via.placeholder.com/150" alt="role image" style="width: 100%; height: 100%"> -->
                             <h3>{{ role.role_name }}</h3>
                             <p>{{ role.no_of_pax }} staff needed</p>
                         </div>
 
                         <!-- column 2 -->
-                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-2 justify-content-center">
+                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-3 text-end">
                             <a href=""><button type="button" class="btn btn-secondary custom-button">View Applicants</button></a>
                             <a href="/RoleEditing"><button type="button" class="btn btn-secondary custom-button" @click="setRoleId(role.role_id)">Edit Role</button></a>
                         </div>
 
                         <div v-else class="col-md-2 justify-content-center">
-                            <button type="button" class="btn btn-secondary custom-button" onclick="apply()">Apply</button>
+                            <button type="button" class="btn btn-success btn-apply custom-button" v-if="!role.applied" data-bs-toggle="modal"
+                                :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
+
+                            <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied" data-bs-toggle="modal"
+                                :data-bs-target="'#exampleModal-' + role.role_id" disabled>APPLIED</button>
                             <p>Closing in {{ role.days_left }} days</p>
                         </div>
 
                     </div>
+
+                    <!-- START OF MODAL -->
+
+                    <!-- <button type="button" class="btn btn-secondary btn-apply custom-button" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">Apply</button>
+                    <button type="button" class="btn btn-apply btn-secondary" data-bs-toggle="modal"
+                        disabled>Applied</button> -->
+
+                    <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
+                                        role.role_name }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">Any Comments?</label>
+                                            <textarea class="form-control" :id="'message-text-' + role.role_id"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
+                                        application</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- END OF MODAL -->
                 </div>
 
+
+            
             </li>
-        </ul>
+            </ul>
+        
 
         <!-- If there are roles, there are filtered skills, and there are NO roles within the filtered skills -->
         <ul class="role-list" v-else-if="roles.length && filter_skills.length && !filtered_roles.length">
@@ -100,6 +152,9 @@
 
     </div>
 
+
+
+    </div>
 </template>
   
 <script>
@@ -122,9 +177,13 @@ export default {
             skillSelected:'',
             filtered_roles: [],
             access_rights:'',
-            roleId:''
+            roleId:'',
+            applied: [],
+            notApplied: [],
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id'),
         };
-    },  
+    },
     // think of this as calling the function right when u load the page
     mounted() {
         this.fetchRoles();
@@ -141,10 +200,13 @@ export default {
     methods: {
         // the function that helps us call the endpoint and retrieve the data
         fetchRoles() {
-            const apiUrl = 'http://127.0.0.1:5000/roles/get_all';
+            const apiUrl = 'http://127.0.0.1:5000/roles/get_all_by_staff/' + this.staffId;
             axios.get(apiUrl)
                 .then(response => {
                     this.roles = response.data.data.roles;
+
+                    console.log(response.data.data);
+                    console.log(this.roles)
                 })
                 .catch(error => {
                     console.error('Error fetching roles:', error);
@@ -220,23 +282,52 @@ export default {
         setRoleId(role_id) {
             sessionStorage.setItem('role_id', role_id);
             console.log(sessionStorage.getItem('role_id'));
-        }
+        },
+        // START TO APPLY ROLE FOR MODAL
+
+        applyRole(roleID) {
+            const commentsTextBox = document.getElementById('message-text-' + roleID).value;
+
+            axios
+                .post('http://127.0.0.1:5000/roles/apply', {
+                    params: {
+                        role_id: roleID,
+                        staff_id: this.staffId,
+                        comments: commentsTextBox,
+                    },
+                })
+                .then(() => {
+                    // alert(response.data['data']);
+                    alert('Successfully applied for role!');
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    if (error.response.status == 500) {
+                        alert(error.message);
+                    } else {
+                        alert('An error occured redeeming the reward');
+                    }
+                    // window.location.reload();
+                });
+        },
+        // END TO APPLY ROLE FOR MODAL
     },
 
     created() {
-        const staffId = sessionStorage.getItem('staff_id');
-        const accessId = sessionStorage.getItem('access_id');
+        // const staffId = sessionStorage.getItem('staff_id');
+        // const accessId = sessionStorage.getItem('access_id');
 
-        console.log(staffId, accessId)
-        
-        if (!staffId && !accessId) {
+        console.log(this.staffId, this.accessId)
+
+        if (!this.staffId && !this.accessId) {
             // Staff is not logged in, redirect to login page
             this.$router.push('/Login');
         }
     }
 };
 </script>
-  
+
+
 <style scoped>
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -249,8 +340,10 @@ export default {
 }
 
 p {
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0;
+    /* Remove default margin */
 }
 
 h3 {
@@ -259,15 +352,27 @@ h3 {
 }
 
 .role-list {
-    list-style: none; /* Remove bullet points */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
+    list-style: none;
+    /* Remove bullet points */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0;
+    /* Remove default margin */
 }
 
 .custom-button {
-    width: 140px;
-    background-color: #8BC100;
+    width: 130px;
+    /* background-color: #8BC100; */
     color: #000000;
-  }
+    font-weight: bold;
+}
 
+.listing {
+    width: 100%;
+    margin: 30px 0px;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.2);
+}
 </style>

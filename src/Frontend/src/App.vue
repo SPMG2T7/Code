@@ -1,11 +1,17 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png">
   <h1>App.vue</h1> -->
-  <router-view />
+  <div class="hello">
+    <router-view />
+  </div>
 </template>
 
 <style>
-body {
-  background-color: #EBEBEB;
+.container-style {
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 24px;
 }
+
+
 </style>
