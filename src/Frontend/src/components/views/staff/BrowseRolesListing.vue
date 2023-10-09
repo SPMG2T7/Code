@@ -130,7 +130,7 @@
                         </div>
 
                         <!-- column 2 -->
-                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-2 justify-content-center">
+                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-3 text-end">
                             <a href=""><button type="button" class="btn btn-secondary custom-button">View Applicants</button></a>
                             <a href="/RoleEditing"><button type="button" class="btn btn-secondary custom-button" @click="setRoleId(role.role_id)">Edit Role</button></a>
                         </div>
