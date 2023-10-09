@@ -10,7 +10,7 @@
             <!-- What this does is to create a <li> for each entry of role that it finds in the db
                 e.g. if there are five entries in the DB, it will create this same <li> five times
                     think of it as template -->
-            <li v-for="role in roles" :key="role.role_id">
+            <li v-for="role in sortedRoles" :key="role.role_id">
 
                 <div class="container-fluid listing">
                     <div class="row justify-content-between" style="margin: 20px 0px">
@@ -24,11 +24,13 @@
 
                         <!-- column 2 -->
                         <div class="col-md-3 text-end">
-                            <button type="button" class="btn btn-success btn-apply custom-button" v-if="!role.applied" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                                v-if="!role.applied" data-bs-toggle="modal"
                                 :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
 
-                            <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied" data-bs-toggle="modal"
-                                :data-bs-target="'#exampleModal-' + role.role_id" disabled>APPLIED</button>
+                            <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied"
+                                data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
+                                disabled>APPLIED</button>
 
                             <p>Closing in {{ role.days_left }} days</p>
                         </div>
@@ -36,11 +38,6 @@
                     </div>
 
                     <!-- START OF MODAL -->
-
-                    <!-- <button type="button" class="btn btn-secondary btn-apply custom-button" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Apply</button>
-                    <button type="button" class="btn btn-apply btn-secondary" data-bs-toggle="modal"
-                        disabled>Applied</button> -->
 
                     <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
                         aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -102,8 +99,6 @@ export default {
     data() {
         return {
             roles: [],
-            applied: [],
-            notApplied: [],
             isLoggedIn: false,
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
@@ -133,40 +128,51 @@ export default {
         applyRole(roleID) {
             const commentsTextBox = document.getElementById('message-text-' + roleID).value;
 
-            axios
-                .post('http://127.0.0.1:5000/roles/apply', {
-                    params: {
-                        role_id: roleID,
-                        staff_id: this.staffId,
-                        comments: commentsTextBox,
-                    },
-                })
-                .then(() => {
-                    // alert(response.data['data']);
-                    alert('Successfully applied for role!');
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    if (error.response.status == 500) {
-                        alert(error.message);
-                    } else {
-                        alert('An error occured redeeming the reward');
-                    }
-                    // window.location.reload();
-                });
+            if (commentsTextBox.length == 0) {
+                alert("Please enter a comment")
+            }
+            else {
+                axios
+                    .post('http://127.0.0.1:5000/roles/apply', {
+                        params: {
+                            role_id: roleID,
+                            staff_id: this.staffId,
+                            comments: commentsTextBox,
+                        },
+                    })
+                    .then(() => {
+                        alert('You have successfully applied for the role!');
+                        window.location.reload();
+                    })
+                    .catch((error) => {
+                        if (error.response.status == 500) {
+                            alert(error.message);
+                        } else {
+                            alert('An error occured');
+                        }
+                    });
+            }
         },
         // END TO APPLY ROLE FOR MODAL
     },
     created() {
-        // const staffId = sessionStorage.getItem('staff_id');
-        // const accessId = sessionStorage.getItem('access_id');
 
         console.log(this.staffId, this.accessId)
 
         if (!this.staffId && !this.accessId) {
-            // Staff is not logged in, redirect to login page
             this.$router.push('/Login');
         }
+    },
+    computed: {
+
+        // this is to sort the roles by applied and not applied
+        sortedRoles() {
+            return this.roles.slice().sort((a, b) => {
+                if (a.applied === false && b.applied === true) return -1;
+                if (a.applied === true && b.applied === false) return 1;
+                return 0;
+            });
+        },
     }
 };
 </script>
@@ -206,9 +212,12 @@ h3 {
 
 .custom-button {
     width: 130px;
-    /* background-color: #8BC100; */
     color: #000000;
     font-weight: bold;
+}
+
+.apply-button {
+    background-color: #8BC100;
 }
 
 .listing {
