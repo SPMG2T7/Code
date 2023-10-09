@@ -400,11 +400,11 @@ def get_all_roles():
             "message": "There are no roles"
         }
     ), 204
+
 # Retrieve two list of applied and not applied for roles by staff
 @app.route("/roles/get_all_by_staff/<int:staff_id>")
 def get_all_roles_by_staff(staff_id):
-    applied_list = []
-    not_applied_list = []
+    roles_list = []
     roles = Role.query.all()
     applied_role_ids = [int(row[0]) for row in Role_Applicant.query.filter_by(staff_id=staff_id).with_entities(Role_Applicant.role_id).all()]
     
@@ -432,10 +432,10 @@ def get_all_roles_by_staff(staff_id):
                 # Select count(role_id) from role_applicant where role_id = ?
                 "count_applicant": count_of_applicant,
                 # 2. Skills required for this role (should be multiple)
-                "skills_required": skills_required
-
+                "skills_required": skills_required,
+                "applied": True
             }
-            applied_list.append(role_data)
+            roles_list.append(role_data)
 
     # Get information regarding roles not applied for
     if len(roles) != 0:
@@ -459,17 +459,16 @@ def get_all_roles_by_staff(staff_id):
                     # Select count(role_id) from role_applicant where role_id = ?
                     "count_applicant": count_of_applicant,
                     # 2. Skills required for this role (should be multiple)
-                    "skills_required": skills_required
-
+                    "skills_required": skills_required,
+                    "applied": False
                 }
-                not_applied_list.append(role_data) 
+                roles_list.append(role_data) 
 
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "applied": applied_list,
-                    "not_applied": not_applied_list
+                    "roles": roles_list
                 }
             }
         ),200
