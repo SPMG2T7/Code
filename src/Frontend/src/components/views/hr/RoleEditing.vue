@@ -19,7 +19,9 @@ export default {
             staffNeededNumber:'',
             closingDate:'',
             roleLocation:'',
-            roleDepartment:''
+            roleDepartment:'',
+            role_id:'',
+            truthy:''
         };
     },
     computed: {
@@ -42,22 +44,21 @@ export default {
             return formattedDate;
         },
         updateRole() {    
-            // Construct the desired format
-            //Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)
-            console.log(this.closingDate)
-            console.log(this.convertDateFormat())
+            
             const params = {
+                        "role_id":this.role_id,
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
-                        "skills_required": this.skills,
-                        "listed_by": 123459,
                         "no_of_pax": this.staffNeededNumber,
                         "department": this.roleDepartment,
                         "location": this.roleLocation,
+                        "skills_name": this.skills,
                         "expiry_timestamp": this.convertDateFormat()
                     }
+
+            console.log(params);
             axios
-                .post('http://127.0.0.1:5000/roles/update',{
+                .put('http://127.0.0.1:5000/roles/update',{
 
                     "params": params
 
@@ -79,16 +80,29 @@ export default {
             console.log(selectedSkill);
 
             const index = this.allskills.indexOf(selectedSkill);
-            const x = this.allskills.splice(index, 1);
+            this.allskills.splice(index, 1);
 
-            console.log(x)
         },
 
         removeSkill(index) {
-            this.allskills.push(this.skills[index])
-            const y = this.skills.splice(index,1)
+            const y = this.skills.splice(index,1);
+            const mynewallskills = JSON.parse(JSON.stringify(this.allskills));
 
-            console.log(y)
+            this.truthy = false;
+            for (const i in mynewallskills) {
+                const thisskill = mynewallskills[i];
+                if (thisskill == y[0]) {
+                    this.truthy = true;
+                }
+            }
+
+            if (this.truthy) {
+                console.log('pass')
+            }
+            else {
+                this.allskills.push(y[0]);
+            }
+
         },
 
         getSkills() {
@@ -109,8 +123,9 @@ export default {
         },
 
         getThisRole() {
+            console.log(this.role_id);
             axios
-                .get('http://127.0.0.1:5000/roles/1')
+                .get('http://127.0.0.1:5000/roles/' + this.role_id)
 
                 .then(response => {
                     const responseData = response.data.data;
@@ -118,7 +133,6 @@ export default {
                     this.roleName=responseData.role_name;
                     this.roleDescription=responseData.role_description;
                     this.skills=responseData.skills_required;
-                    // this.listed_by
                     this.staffNeededNumber=responseData.no_of_pax;
                     this.roleDepartment=responseData.department;
                     this.roleLocation=responseData.location;
@@ -138,8 +152,8 @@ export default {
             var dd = date.getDate(); 
             var mm = date.getMonth()+1;
             var yyyy = date.getFullYear(); 
-            if(dd<10){dd='0'+dd} 
-            if(mm<10){mm='0'+mm};
+            if(dd<10){dd='0'+dd;} 
+            if(mm<10){mm='0'+mm;}
             return closingDate=yyyy+'-'+mm+'-'+dd;
 
         }
@@ -150,8 +164,10 @@ export default {
         this.allskills=[];
         this.newskills=[];
         this.getSkills();
+        this.role_id=sessionStorage.getItem('role_id');
+        console.log(this.role_id);
         this.getThisRole();
-
+        this.truthy='';
     }
 }
 </script>
