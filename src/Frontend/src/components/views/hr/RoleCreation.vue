@@ -56,6 +56,7 @@ export default {
                         "location": this.roleLocation,
                         "expiry_timestamp": this.convertDateFormat()
                     }
+            console.log(params);
             axios
                 .post('http://127.0.0.1:5000/roles/create',{
 
