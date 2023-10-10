@@ -70,9 +70,12 @@ INSERT INTO staff VALUES
 (00123452, 'Mark', 'Cuban','Director','Secretary', 'markc@aio.com', 1),
 (00123456, 'Johnny', 'Tan','Sales', 'Sales Associate', 'jonnyt@aio.com', 1),
 (00123457, 'Sarah', 'Lim','IT', 'IT Associate', 'saraht@aio.com', 1),
-(00123458, 'Bob', 'Toh','Finance', 'Finance Manager', 'bobt@aio.com', 2),
-(00123459, 'Shermaine', 'Tee','Human Resource', 'Talent Acquisition', 'shermainet@aio.com', 2),
-(00123460, 'Gallywix', 'Howdy','IT', 'Administrator', 'gallywixh@aio.com', 2);
+(00123458, 'Bob', 'Toh','Finance', 'Finance Manager', 'bobt@aio.com', 1),
+(001234588, 'Bob', 'Toh','Finance', 'Finance Manager', 'bobt@aio.com', 2),
+(00123459, 'Shermaine', 'Tee','Human Resource', 'Talent Acquisition', 'shermainet@aio.com', 1),
+(001234599, 'Shermaine', 'Tee','Human Resource', 'Talent Acquisition', 'shermainet@aio.com', 2),
+(00123460, 'Gallywix', 'Howdy','IT', 'Administrator', 'gallywixh@aio.com', 1),
+(001234600, 'Gallywix', 'Howdy','IT', 'Administrator', 'gallywixh@aio.com', 2);
 
 INSERT INTO role VALUES
 (00001, 'Account Manager', 'Handle customer account under the Sales Division', '00123459', 3, 'Sales', 'Singapore', 1701388800),
