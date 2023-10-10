@@ -5,7 +5,8 @@
     
     <div>
 
-        <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC"><button @click="addSearch()">Search</button>
+        <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC" v-on:keyup.enter="filterSkills()">
+        <button @click="filterSkills()">Search</button>
 
         <select v-model="skillSelected" @change="addFilter()" style="background-color:#E9C4DC">
             <option value="" disabled selected>Find Skill by Name</option>
@@ -22,12 +23,10 @@
             </tr>
         </table>
 
-
-
         <div class="container">
 
         <!-- v-if here means the v-for below will only run if the length of roles.length is not 0 -->
-        <ul class="role-list" v-if="roles.length && !filter_skills.length">
+        <ul class="role-list" v-if="roles.length && !search_query_values.length">
             
             <!-- What this does is to create a <li> for each entry of role that it finds in the db
                 e.g. if there are five entries in the DB, it will create this same <li> five times
@@ -100,22 +99,20 @@
 
                     <!-- END OF MODAL -->
                 </div>
-
-
             
             </li>
             </ul>
         
 
         <!-- If there are roles, there are filtered skills, and there are NO roles within the filtered skills -->
-        <ul class="role-list" v-else-if="roles.length && filter_skills.length && !filtered_roles.length">
+        <ul class="role-list" v-else-if="roles.length && search_query_values.length && !filtered_roles.length">
 
             <p>No roles available</p>
 
         </ul>
 
         <!-- If there are roles, there are filtered skills, and there are roles within the filtered skills -->
-        <ul class="role-list" v-else-if="roles.length && filter_skills.length && filtered_roles.length">
+        <ul class="role-list" v-else-if="roles.length && search_query_values.length && filtered_roles.length">
 
             <li v-for="role in filtered_roles" :key="role.role_id">
 
@@ -136,7 +133,13 @@
                         </div>
 
                         <div v-else class="col-md-2 justify-content-center">
-                            <button type="button" class="btn btn-secondary custom-button" onclick="apply()">Apply</button>
+                            <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                                v-if="!role.applied" data-bs-toggle="modal"
+                                :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
+
+                            <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied"
+                                data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
+                                disabled>APPLIED</button>
                             <p>Closing in {{ role.days_left }} days</p>
                         </div>
 
@@ -152,11 +155,10 @@
 
     </div>
 
-
-
     </div>
+
 </template>
-  
+
 <script>
 import Nav from "../../views/NavBar.vue"
 import axios from 'axios'
@@ -209,8 +211,6 @@ export default {
                 .then(response => {
                     this.roles = response.data.data.roles;
 
-                    console.log(response.data.data);
-                    console.log(this.roles)
                 })
                 .catch(error => {
                     console.error('Error fetching roles:', error);
@@ -227,13 +227,6 @@ export default {
 
             this.filterSkills();
             
-
-        },
-
-        addSearch() {
-
-            console.log(this.searchBar);
-            this.filterSkills();
 
         },
 
@@ -273,11 +266,9 @@ export default {
 
             if(this.searchBar.length) {
                 this.search_query_values=this.filter_skills.concat(this.searchBar.split(" "));
-                console.log(this.search_query_values);
             }
             else {
                 this.search_query_values=this.filter_skills;
-                console.log(this.search_query_values);
             }
 
             const params = {
@@ -357,7 +348,6 @@ export default {
     }
 };
 </script>
-
 
 <style scoped>
 #app {
