@@ -231,7 +231,7 @@ export default {
                 </div>
             </div>
     
-        <router-link to="/browseroles">BrowseRoles</router-link>
+        <router-link to="/">Browse All Roles</router-link>
         <RouterView></RouterView>
 
         </div> 

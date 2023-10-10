@@ -354,6 +354,93 @@ export default {
 };
 </script>
 
+<template>
+    <div>
+        <Nav />
+    </div>
+
+    <div class="container">
+        <!-- v-if here means the v-for below will only run if the length of roles.length is not 0 -->
+        <ul class="role-list" v-if="roles.length">
+
+            <!-- What this does is to create a <li> for each entry of role that it finds in the db
+                e.g. if there are five entries in the DB, it will create this same <li> five times
+                    think of it as template -->
+            <li v-for="role in sortedRoles" :key="role.role_id">
+
+                <div class="container-fluid listing">
+                    <div class="row justify-content-between" style="margin: 20px 0px">
+
+                        <!-- column 1 -->
+                        <div class="col-md-9">
+                            <!-- <img src="https://via.placeholder.com/150" alt="role image" style="width: 100%; height: 100%"> -->
+                            <h3>{{ role.role_name }}</h3>
+                            <p>{{ role.no_of_pax }} staff needed</p>
+                        </div>
+
+                        <!-- column 2 -->
+                        <div class="col-md-3 text-end">
+                            <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                                v-if="!role.applied" data-bs-toggle="modal"
+                                :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
+
+                            <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied"
+                                data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
+                                disabled>APPLIED</button>
+
+                            <p>Closing in {{ role.days_left }} days</p>
+                        </div>
+
+                    </div>
+
+                    <!-- START OF MODAL -->
+
+                    <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
+                                        role.role_name }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">Any Comments?</label>
+                                            <textarea class="form-control" :id="'message-text-' + role.role_id"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
+                                        application</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- END OF MODAL -->
+                </div>
+
+
+
+            </li>
+        </ul>
+        <!-- if the number of entries is 0, v-else will run -->
+        <p v-else>No roles available</p>
+
+
+
+    </div>
+</template>
 
 <style scoped>
 #app {
