@@ -391,15 +391,7 @@ h3 {
     /* Remove default margin */
 }
 
-.custom-button {
-    width: 130px;
-    color: #000000;
-    font-weight: bold;
-}
 
-.apply-button {
-    background-color: #8BC100;
-}
 
 .listing {
     width: 100%;

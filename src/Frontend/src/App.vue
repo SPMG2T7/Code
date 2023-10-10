@@ -12,4 +12,14 @@
     border-radius: 10px;
     margin-top: 24px;
 }
+
+.custom-button {
+    width: 130px !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+.apply-button {
+    background-color: #8BC100 !important;
+}
 </style>
