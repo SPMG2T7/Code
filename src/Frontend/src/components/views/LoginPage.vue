@@ -23,7 +23,8 @@ export default {
   data() {
     return {
       staff_names: [],
-      staff_select: null
+      staff_select: null,
+      access_right: ''
     };
   },
   methods: {
@@ -31,7 +32,12 @@ export default {
       try {
         const response = await axios.get('http://127.0.0.1:5000/staff/get_all');
         for (const staff of response.data.data.staffs) {
-          this.staff_names.push([`${staff.first_name} (${staff.current_role})`, [staff.staff_id, staff.access_rights]]);
+          if (staff.access_rights == '1') {
+            this.access_right = 'Staff'
+          } else {
+            this.access_right = 'Human Resources'
+          }
+          this.staff_names.push([`${staff.first_name} (${this.access_right})`, [staff.staff_id, staff.access_rights]]);
         }
       } catch (error) {
         console.error('Error fetching staffs:', error);
