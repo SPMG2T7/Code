@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import BrowsingRoles from "../components/views/staff/BrowseRolesListing.vue"
 import CreateRoles from "../components/views/hr/RoleCreation.vue"
+import RoleEditing from "../components/views/hr/RoleEditing.vue"
 import IndivApplicant from "../components/views/hr/IndivApplicant.vue"
 import IndivRoleListing from "../components/views/staff/IndivRoleListing.vue"
 import LoginPage from "../components/views/LoginPage.vue"
@@ -36,6 +37,11 @@ const routes = [
         path: '/Login',
         name: "Login",
         component: LoginPage
+    },
+    {
+        path: '/RoleEditing',
+        name: "Role Editing",
+        component: RoleEditing
     }
 ]
 
