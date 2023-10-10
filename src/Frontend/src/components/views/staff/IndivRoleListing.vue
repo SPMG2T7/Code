@@ -9,25 +9,23 @@ export default {
     },
     data() {
         return {
-            responseData: null,
-            roleID: 0,
-            count_applicant: 0,
-            days_left: 0,
-            department: "",
-            expiry_date: "",
-            listed_by: "",
-            location: "",
-            no_of_pax: 0,
-            role_description: "",
-            role_name: "",
-            skills_required: [],
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
+            responseData_staff: [],
+            responseData: [],
+            staffSkills: [],
+            roleSkills: [],
+            unmatchedSkills: [],
         };
     },
     computed: {
         getRoleID() {
             return this.$route.query.roleID
+        },
+        percentageMatchingSkills() {
+            const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
+            const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
+            return Math.round(percentage);
         }
     },
     methods: {
@@ -38,16 +36,7 @@ export default {
                 .get('http://127.0.0.1:5000/roles/' + roleID)
                 .then(response => {
                     this.responseData = response.data.data;
-                    this.count_applicant = this.responseData.count_applicant;
-                    this.days_left = this.responseData.days_left;
-                    this.department = this.responseData.department;
-                    this.expiry_date = this.responseData.expiry_date;
-                    this.listed_by = this.responseData.listed_by;
-                    this.location = this.responseData.location;
-                    this.no_of_pax = this.responseData.no_of_pax;
-                    this.role_description = this.responseData.role_description;
-                    this.role_name = this.responseData.role_name;
-                    this.skills_required = this.responseData.skills_required;
+                    this.roleSkills = this.responseData.skills_required
                     console.log(this.responseData)
                     console.log(this.roleID)
 
@@ -55,6 +44,31 @@ export default {
                 .catch(error => {
                     console.error('Error:', error);
                 });
+
+            axios
+                .get("http://127.0.0.1:5000/staff/123458")
+                .then(response => {
+                    this.responseData_staff = response.data[0].data;
+                    this.staffSkills = this.responseData_staff.staff_skills
+                    console.log(this.responseData_staff)
+                    console.log(this.staffSkills)
+                    console.log(this.roleSkills)
+                    // Calculate unmatchedSkills here after fetching data
+                    this.unmatchedSkills = this.staffSkills.filter(
+                        (skill) => !this.roleSkills.includes(skill)
+                    );
+
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+
+
+
+            console.log(this.unmatchedSkills)
+
         },
         // START TO APPLY ROLE FOR MODAL
 
@@ -100,27 +114,58 @@ export default {
 
 <template>
     <Nav />
-    <div class="container m-2 mt-4">
+    <div class="container container-style">
         <div class="container mb-3">
             <div class="row">
                 <div class="col-1">
                     <!-- <img src="your-image.jpg" alt="Image" class="img-fluid"> -->
                     <img class="img-responsive rounded" src="../../../assets/profile.jpeg" />
                 </div>
-                <div class="col-11 d-flex align-items-center text-center">
-                    <h1>{{ role_name }}</h1>
+                <div class="col-md-6 d-flex align-items-center text-center">
+                    <h1>{{ responseData.role_name }}</h1>
+                </div>
+                <div class="col-3 align-items-center text-center">
+                    <p class="h6">{{ responseData.no_of_pax }} staff needed</p>
+                    <p style="margin: 0px;">Closing in {{ responseData.days_left }} days</p>
+                </div>
+
+                <div class="col-2 d-flex align-items-center justify-content-end">
+                    <button type="button" class="btn btn-primary custom-button apply-button" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">Apply</button>
                 </div>
             </div>
         </div>
 
-        <h3>Role Description</h3>
+        <h5>Role Description</h5>
 
-        {{ role_description }}
+        <p>{{ responseData.role_description }}</p>
+
+        <p class="fw-bold"><span>Skill Match - </span>{{ percentageMatchingSkills }}%</p>
+        <table class="table w-auto">
+            <thead>
+                <tr class="table-secondary">
+                    <th scope="col" class="fw-bold">Skill Name</th>
+                    <th scope="col" class="fw-bold">Role Requirement</th>
+                    <th scope="col" class="fw-bold">My Skill</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="rSkills in roleSkills" :key="rSkills"
+                    :class="{ 'table-success': staffSkills.includes(rSkills), 'table-danger': !staffSkills.includes(rSkills) }">
+                    <td>{{ rSkills }}</td>
+                    <td>✓</td>
+                    <td v-if="staffSkills.includes(rSkills)">✓</td>
+                    <td v-else>✗</td>
+                </tr>
+
+
+            </tbody>
+        </table>
 
 
         <!-- START OF MODAL -->
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Apply</button>
+
 
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -162,5 +207,10 @@ img {
     /* height: 70px; */
     object-fit: cover;
     /* border-radius: 90%; */
+}
+
+.container {
+    background-color: white;
+
 }
 </style>

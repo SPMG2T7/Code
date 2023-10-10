@@ -9,6 +9,9 @@ export default {
     },
     data() {
         return {
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id'),
+            roleId: 3,
             responseData: null,
             staffName: "",
             currentRole: "",
@@ -17,15 +20,15 @@ export default {
             comments: "",
             unmatchedSkills: [],
             appliedRole: "",
-            staffId: sessionStorage.getItem('staff_id'),
-            accessId: sessionStorage.getItem('access_id')
         };
     },
     methods: {
         fetchData() {
             axios
+                // .get('http://127.0.0.1:5000/application/' + this.roleId + '_' + this.staffId)
                 .get('http://127.0.0.1:5000/application/3_123457')
                 .then(response => {
+
                     this.responseData_appData = response.data.data.application_data;
                     this.comments = this.responseData_appData.comments;
                     this.responseData_roleData = response.data.data.role_data;
@@ -54,7 +57,7 @@ export default {
         percentageMatchingSkills() {
             const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
             const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
-            return percentage;
+            return Math.round(percentage);
         }
     },
     mounted: function () {
@@ -78,9 +81,7 @@ export default {
 
     <div class="container container-style">
 
-        <!-- <img class="rounded" src="../../../assets/profile.jpeg" />
-
-    <h2>{{ staffName }}</h2> -->
+        <!-- <img class="rounded" src="../../../assets/profile.jpeg" /> -->
 
         <div class="container mb-3">
             <div class="row">
@@ -96,7 +97,7 @@ export default {
 
         <p><span class="fw-bold">Current Job Role:&emsp;</span>{{ currentRole }}</p>
         <p><span class='fw-bold'>Applied for Job Role:&emsp;</span>{{ appliedRole }}</p>
-        <p><span class="fw-bold">Skill Match - </span>{{ percentageMatchingSkills }}%</p>
+        <p class="fw-bold"><span>Skill Match - </span>{{ percentageMatchingSkills }}%</p>
         <table class="table w-auto">
             <thead>
                 <tr class="table-secondary">
@@ -112,8 +113,6 @@ export default {
                     <td>✓</td>
                     <td v-if="staffSkills.includes(rSkills)">✓</td>
                     <td v-else>✗</td>
-                    <!-- <td>Otto</td>
-                <td>{{ skill }}</td> -->
                 </tr>
             </tbody>
         </table>
@@ -126,30 +125,10 @@ export default {
         <h3>Remarks from Applicant</h3>
         <p>{{ comments }}</p>
 
-
-
-        <!-- <p>Staff Skills: </p>
-    <ul>
-        <li v-for="skill in staffSkills" :key="skill">{{ skill }}</li>
-    </ul>
-
-    <p>Role Skills: </p>
-    <ul>
-        <li v-for="rSkills in roleSkills" :key="rSkills">{{ rSkills }}</li>
-    </ul> -->
-
     </div>
 </template>
 
 <style scoped>
-/* * {
-    padding-left: 40px;
-} */
-
-.custom-color {
-    background-color: black;
-}
-
 img {
     width: 100%;
     /* height: 70px; */
@@ -157,10 +136,8 @@ img {
     /* border-radius: 90%; */
 }
 
-
-
 .container {
     background-color: white;
-    
+
 }
 </style>
