@@ -5,6 +5,8 @@
     
     <div>
 
+        <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC"><button @click="addSearch()">Search</button>
+
         <select v-model="skillSelected" @change="addFilter()" style="background-color:#E9C4DC">
             <option value="" disabled selected>Find Skill by Name</option>
             <option v-for="(skill,index) in allskills" :key="index" :value="skill">
@@ -180,6 +182,8 @@ export default {
             notApplied: [],
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
+            searchBar: '',
+            search_query_values:[]
         };
     },
     // think of this as calling the function right when u load the page
@@ -193,6 +197,8 @@ export default {
         this.roleId='';
         this.filtered_roles=[];
         this.access_rights=sessionStorage.getItem('access_id');
+        this.searchBar='';
+        this.search_query_values=[];
     },
 
     methods: {
@@ -221,6 +227,13 @@ export default {
 
             this.filterSkills();
             
+
+        },
+
+        addSearch() {
+
+            console.log(this.searchBar);
+            this.filterSkills();
 
         },
 
@@ -257,8 +270,18 @@ export default {
             },
 
         filterSkills() {
+
+            if(this.searchBar.length) {
+                this.search_query_values=this.filter_skills.concat(this.searchBar.split(" "));
+                console.log(this.search_query_values);
+            }
+            else {
+                this.search_query_values=this.filter_skills;
+                console.log(this.search_query_values);
+            }
+
             const params = {
-                "search_query": this.filter_skills
+                "search_query": this.search_query_values
             };
 
             axios
