@@ -13,6 +13,7 @@ export default {
             accessId: sessionStorage.getItem('access_id'),
             responseData_staff: [],
             responseData: [],
+            roles: [],
             staffSkills: [],
             roleSkills: [],
             unmatchedSkills: [],
@@ -29,20 +30,24 @@ export default {
         }
     },
     methods: {
-        fetchData() {
+        // the function that helps us call the endpoint and retrieve the data
+        fetchRoles() {
             const roleID = this.getRoleID
             this.roleID = roleID
-            axios
-                .get('http://127.0.0.1:5000/roles/' + roleID)
+            const apiUrl = 'http://127.0.0.1:5000/roles/get_all_by_staff/' + this.staffId;
+            axios.get(apiUrl)
                 .then(response => {
-                    this.responseData = response.data.data;
-                    this.roleSkills = this.responseData.skills_required
-                    console.log(this.responseData)
-                    console.log(this.roleID)
+                    this.roles = response.data.data.roles;
+                    console.log(this.roles[3])
+                    const index = this.roles.findIndex(role => role.role_id == this.roleID);
+                    console.log(this.roles[index])
+                    this.roles = this.roles[index]
+                    this.roleSkills = this.roles.skills_required
+                    console.log(this.roles.applied)
 
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error fetching roles:', error);
                 });
 
             axios
@@ -50,26 +55,19 @@ export default {
                 .then(response => {
                     this.responseData_staff = response.data[0].data;
                     this.staffSkills = this.responseData_staff.staff_skills
-                    console.log(this.responseData_staff)
-                    console.log(this.staffSkills)
-                    console.log(this.roleSkills)
+
                     // Calculate unmatchedSkills here after fetching data
                     this.unmatchedSkills = this.staffSkills.filter(
                         (skill) => !this.roleSkills.includes(skill)
                     );
-
-
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
 
 
-
-
-            console.log(this.unmatchedSkills)
-
         },
+
         // START TO APPLY ROLE FOR MODAL
 
         applyRole() {
@@ -79,27 +77,26 @@ export default {
                 .post('http://127.0.0.1:5000/roles/apply', {
                     params: {
                         role_id: this.roleID,
-                        staff_id: 123457,
+                        staff_id: this.staffId,
                         comments: commentsTextBox,
                     },
                 })
-                .then((response) => {
-                    alert(response.data['data']);
+                .then(() => {
+                    alert('You have successfully applied for the role!');
                     window.location.reload();
                 })
                 .catch((error) => {
                     if (error.response.status == 500) {
-                        alert('An error occured redeeming the reward');
-                    } else {
                         alert(error.message);
+                    } else {
+                        alert('An error occured');
                     }
-                    window.location.reload();
                 });
         },
         // END TO APPLY ROLE FOR MODAL
     },
     mounted: function () {
-        this.fetchData();
+        this.fetchRoles();
     },
     created() {
 
@@ -122,23 +119,26 @@ export default {
                     <img class="img-responsive rounded" src="../../../assets/profile.jpeg" />
                 </div>
                 <div class="col-md-6 d-flex align-items-center text-center">
-                    <h1>{{ responseData.role_name }}</h1>
+                    <h1>{{ roles.role_name }}</h1>
                 </div>
                 <div class="col-3 align-items-center text-center">
-                    <p class="h6">{{ responseData.no_of_pax }} staff needed</p>
-                    <p style="margin: 0px;">Closing in {{ responseData.days_left }} days</p>
+                    <p class="h6">{{ roles.no_of_pax }} staff needed</p>
+                    <p>Closing in {{ roles.days_left }} days</p>
                 </div>
 
                 <div class="col-2 d-flex align-items-center justify-content-end">
-                    <button type="button" class="btn btn-primary custom-button apply-button" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Apply</button>
+                    <button v-if="!roles.applied" type="button" class="btn btn-primary custom-button apply-button"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal">Apply</button>
+
+                    <button v-if="roles.applied" type="button" class="btn btn-secondary btn-apply custom-button"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal" disabled>APPLIED</button>
                 </div>
             </div>
         </div>
 
         <h5>Role Description</h5>
 
-        <p>{{ responseData.role_description }}</p>
+        <p>{{ roles.role_description }}</p>
 
         <p class="fw-bold"><span>Skill Match - </span>{{ percentageMatchingSkills }}%</p>
         <table class="table w-auto">
@@ -164,16 +164,14 @@ export default {
 
 
         <!-- START OF MODAL -->
-
-
-
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
 
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">New Application</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
+                            roles.role_name }}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -188,13 +186,13 @@ export default {
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" @click='applyRole()' class="btn btn-primary">Send message</button>
+                        <button type="button" @click='applyRole()' class="btn btn-primary">Send
+                            application</button>
                     </div>
 
                 </div>
             </div>
         </div>
-
         <!-- END OF MODAL -->
 
     </div>
@@ -204,9 +202,7 @@ export default {
 <style scoped>
 img {
     width: 100%;
-    /* height: 70px; */
     object-fit: cover;
-    /* border-radius: 90%; */
 }
 
 .container {
