@@ -1,3 +1,47 @@
+<script>
+import axios from 'axios'
+
+export default {
+    name: "App",
+    components: {
+
+    },
+    data() {
+        return {
+            staffId: sessionStorage.getItem('staff_id'),
+            roleID: null,
+            accessId: sessionStorage.getItem('access_id'),
+            staffDetails: [],
+        };
+    },
+    computed: {
+       
+    },
+    methods: {
+        // the function that helps us call the endpoint and retrieve the data
+        fetchData() {
+            axios
+                .get("http://127.0.0.1:5000/staff/" + this.staffId)
+                .then(response => {
+                    this.staffDetails = response.data[0].data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
+    },
+    mounted: function () {
+        this.fetchData();
+    },
+    created() {
+        console.log(this.staffId, this.accessId)
+        if (!this.staffId && !this.accessId) {
+            this.$router.push('/Login');
+        }
+    },
+}
+</script>
+
 <template>
     <!-- START OF REFERENCE NAVBAR -->
     <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -47,7 +91,7 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item profile-name">
                         <!-- Welcome, {{ name }} ({{ balance_points }} Points) -->
-                        Welcome, Jeffry Tan!
+                        Welcome, {{ staffDetails.first_name}}!
                     </li>
 
                     <div class="nav-link p-0" data-bs-toggle="dropdown">
