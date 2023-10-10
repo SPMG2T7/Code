@@ -4,6 +4,7 @@ import CreateRoles from "../components/views/hr/RoleCreation.vue"
 import IndivApplicant from "../components/views/hr/IndivApplicant.vue"
 import IndivRoleListing from "../components/views/staff/IndivRoleListing.vue"
 import LoginPage from "../components/views/LoginPage.vue"
+import ViewAllApplicants from "../components/views/hr/ViewAllApplicants.vue"
 
 const routes = [
     {
@@ -20,6 +21,11 @@ const routes = [
         path: '/IndivApplicant',
         name: "Individual Applicant",
         component: IndivApplicant
+    },
+    {
+        path: '/ViewAllApplicants',
+        name: "View All Applicants",
+        component: ViewAllApplicants
     },
     {
         path: '/IndivRoleListing',
