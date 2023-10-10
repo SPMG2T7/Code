@@ -63,7 +63,7 @@ CREATE TABLE role_applicant (
 
 INSERT INTO access_rights VALUES 
 (1, 'Staff'),
-(2, 'Administrator'),
+(2, 'Administrator');
 
 INSERT INTO staff VALUES 
 (00123451, 'Kevin', 'Oleary','Director', 'Personal Assistant', 'kevino@aio.com', 1),
