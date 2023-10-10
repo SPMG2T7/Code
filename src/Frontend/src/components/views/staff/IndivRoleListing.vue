@@ -21,6 +21,8 @@ export default {
             role_description: "",
             role_name: "",
             skills_required: [],
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id'),
         };
     },
     computed: {
@@ -33,7 +35,6 @@ export default {
             const roleID = this.getRoleID
             this.roleID = roleID
             axios
-                // .get('http://127.0.0.1:5000/roles/00004')
                 .get('http://127.0.0.1:5000/roles/' + roleID)
                 .then(response => {
                     this.responseData = response.data.data;
@@ -87,17 +88,13 @@ export default {
         this.fetchData();
     },
     created() {
-        const staffId = sessionStorage.getItem('staff_id');
-        const accessId = sessionStorage.getItem('access_id');
 
-        console.log(staffId, accessId)
-        
-        if (!staffId && !accessId) {
-            // Staff is not logged in, redirect to login page
+        console.log(this.staffId, this.accessId)
+
+        if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
-    }
-
+    },
 }
 </script>
 

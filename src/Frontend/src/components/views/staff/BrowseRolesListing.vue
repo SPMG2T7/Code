@@ -99,7 +99,6 @@ export default {
     data() {
         return {
             roles: [],
-            isLoggedIn: false,
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
         };
@@ -156,7 +155,6 @@ export default {
         // END TO APPLY ROLE FOR MODAL
     },
     created() {
-
         console.log(this.staffId, this.accessId)
 
         if (!this.staffId && !this.accessId) {
