@@ -6,11 +6,10 @@
 3. prepare_script.sql (Refer to Telegram Pinned)
 
 ### To setup frontend
-1. Navigate to src/Frontend/feature2/ondeh-ondeh
+1. Navigate to src/Frontend/feature2/ondeh-ondeh/src
 2. Run 'npm install'
-3. Run 'npm install axios'
-4. Run 'npm run serve'
-5. Click on the link generated once the command has been run successfully to open the index page
+3. Run 'npm run serve'
+4. Click on the link generated once the command has been run successfully to open the index page
 
 ### To setup backend
 1. Copy the respective .env file based on OS to the root directory of the repo (Refer to Telegram Pinned)
