@@ -10,9 +10,9 @@ export default {
     data() {
         return {
             staffId: sessionStorage.getItem('staff_id'),
+            roleID: null,
             accessId: sessionStorage.getItem('access_id'),
             responseData_staff: [],
-            responseData: [],
             roles: [],
             staffSkills: [],
             roleSkills: [],
@@ -32,26 +32,23 @@ export default {
     methods: {
         // the function that helps us call the endpoint and retrieve the data
         fetchRoles() {
-            const roleID = this.getRoleID
-            this.roleID = roleID
             const apiUrl = 'http://127.0.0.1:5000/roles/get_all_by_staff/' + this.staffId;
             axios.get(apiUrl)
                 .then(response => {
                     this.roles = response.data.data.roles;
-                    console.log(this.roles[3])
-                    const index = this.roles.findIndex(role => role.role_id == this.roleID);
-                    console.log(this.roles[index])
+                    const index = this.roles.findIndex(role => role.role_id == this.roleID);                    
                     this.roles = this.roles[index]
                     this.roleSkills = this.roles.skills_required
                     console.log(this.roles.applied)
+                    console.log(this.roles[3])
+                    console.log(this.roles[index])
 
                 })
                 .catch(error => {
                     console.error('Error fetching roles:', error);
                 });
-
             axios
-                .get("http://127.0.0.1:5000/staff/123458")
+                .get("http://127.0.0.1:5000/staff/" + this.staffId)
                 .then(response => {
                     this.responseData_staff = response.data[0].data;
                     this.staffSkills = this.responseData_staff.staff_skills
@@ -64,12 +61,9 @@ export default {
                 .catch(error => {
                     console.error('Error:', error);
                 });
-
-
         },
 
         // START TO APPLY ROLE FOR MODAL
-
         applyRole() {
             const commentsTextBox = document.getElementById('message-text').value;
 
@@ -97,11 +91,10 @@ export default {
     },
     mounted: function () {
         this.fetchRoles();
+        this.roleID = this.getRoleID; // REMOVE THIS IF YOU ARE PASSING ROLE_ID VIA SESSION
     },
     created() {
-
         console.log(this.staffId, this.accessId)
-
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
@@ -118,14 +111,16 @@ export default {
                     <!-- <img src="your-image.jpg" alt="Image" class="img-fluid"> -->
                     <img class="img-responsive rounded" src="../../../assets/profile.jpeg" />
                 </div>
-                <div class="col-md-6 d-flex align-items-center text-center">
+                <div class="col-md-7 d-flex align-items-center text-center">
                     <h1>{{ roles.role_name }}</h1>
                 </div>
-                <div class="col-3 align-items-center text-center">
-                    <p class="h6">{{ roles.no_of_pax }} staff needed</p>
-                    <p>Closing in {{ roles.days_left }} days</p>
+                <div class="col-2 d-flex align-items-center text-center justify-content-center">
+                    
+                    <div class="align-items-center ">
+                        <p class="h6">{{ roles.no_of_pax }} staff needed</p>
+                        Closing in {{ roles.days_left }} days
+                    </div>
                 </div>
-
                 <div class="col-2 d-flex align-items-center justify-content-end">
                     <button v-if="!roles.applied" type="button" class="btn btn-primary custom-button apply-button"
                         data-bs-toggle="modal" data-bs-target="#exampleModal">Apply</button>
@@ -157,24 +152,19 @@ export default {
                     <td v-if="staffSkills.includes(rSkills)">✓</td>
                     <td v-else>✗</td>
                 </tr>
-
-
             </tbody>
         </table>
-
 
         <!-- START OF MODAL -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
 
                 <div class="modal-content">
-
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
                             roles.role_name }}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
@@ -183,7 +173,6 @@ export default {
                             </div>
                         </form>
                     </div>
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="button" @click='applyRole()' class="btn btn-primary">Send
@@ -197,7 +186,6 @@ export default {
 
     </div>
 </template>
-
 
 <style scoped>
 img {
