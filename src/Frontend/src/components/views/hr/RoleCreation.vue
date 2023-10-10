@@ -19,11 +19,10 @@ export default {
             staffNeededNumber:'',
             closingDate:'',
             roleLocation:'',
-            roleDepartment:''
+            roleDepartment:'',
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id')
         };
-    },
-    computed: {
-        
     },
     methods: {
         convertDateFormat() {
@@ -50,7 +49,7 @@ export default {
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
                         "skills_required": this.skills,
-                        "listed_by": 123459,
+                        "listed_by": this.staffId,
                         "no_of_pax": this.staffNeededNumber,
                         "department": this.roleDepartment,
                         "location": this.roleLocation,
@@ -118,13 +117,9 @@ export default {
 
     },
     created() {
-        const staffId = sessionStorage.getItem('staff_id');
-        const accessId = sessionStorage.getItem('access_id');
+        console.log(this.staffId, this.accessId)
 
-        console.log(staffId, accessId)
-        
-        if (!staffId && !accessId) {
-            // Staff is not logged in, redirect to login page
+        if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
     }
@@ -142,6 +137,7 @@ export default {
                 <div class="row">
                     <div class="col-md-12">
                         <h1>Role Creation</h1>
+                        <br/>
                     </div>
                 </div>
             
@@ -161,7 +157,7 @@ export default {
                     <div class="col-md-12">
                         <h4>Role Description</h4>
                         <!-- <input type="text" placeholder="Role Description" v-model="roleDescription"> -->
-                        <textarea placeholder="Role Description" rows="10" v-model="roleDescription"></textarea>
+                        <textarea class="role-desc" placeholder="Role Description" v-model="roleDescription"></textarea>
                     </div>
                 </div>
             </div>
@@ -169,10 +165,10 @@ export default {
             <div class="info section">
                 <div class="row">
     
-                    <div class="col-md-9" style="padding:0px">
+                    <div class="col-md-8" style="padding:0px">
                         <table class="table">
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <h4>Role Location</h4>
                                 </div>
                                 <div class="col-md-4">
@@ -181,7 +177,7 @@ export default {
                             </div>
     
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <h4>Role Department</h4>
                                 </div>
                                 <div class="col-md-4">
@@ -190,7 +186,7 @@ export default {
                             </div>
     
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <h4>Number of Staff Needed</h4>
                                 </div>
                                 <div class="col-md-4">
@@ -199,7 +195,7 @@ export default {
                             </div>
     
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <h4>Application Closing Date</h4>
                                 </div>
                                 <div class="col-md-4">
@@ -210,11 +206,11 @@ export default {
                         </table>
                     </div>
     
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <h4>Skills Required</h4>
-                        <table border="1">
+                        <table>
                         <tr>
-                            <th colspan="2">Skill</th>
+                            <th colspan="4" style="text-decoration:underline;">Skill</th>
                         </tr>
                         <tr v-if="!skills.length"><td><i>No skills selected yet.</i></td></tr>
                         <tr v-else v-for="(skill, index) in skills" :key="index">
@@ -224,8 +220,8 @@ export default {
                         </tr>
                         </table>
     
-                        <p>Add Skill</p>
-                        <select v-model="skillSelected" @change="addSkill()">
+                        <br><p>Add Skill</p>
+                        <select class="custom-dropdown" v-model="skillSelected" @change="addSkill()">
                             <option value="" disabled selected>Find Skill by Name</option>
                             <option v-for="(skill,index) in allskills" :key="index" :value="skill">
                                 {{ skill }}
@@ -255,7 +251,7 @@ export default {
 
 h4 {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
     background-color: transparent;
 }
 
@@ -267,7 +263,7 @@ h4 {
     border: none; 
     border-radius: 12px;
     font-style: italic;
-    padding: 5px;
+    padding: 10px;
     font-size: 24px;
     font-weight: bold;
 }
@@ -275,10 +271,10 @@ h4 {
 .role-desc {
     border: none; 
     border-radius: 12px;
+    padding: 10px;
     font-style: italic;
-    padding: 5px;
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 14px;
+    height: 200px;
     width: 100%;
 }
 
@@ -291,6 +287,13 @@ h4 {
 .custom-input {
     border: none; 
     font-style: italic;
+}
+
+.custom-dropdown {
+    background-color: white;
+    border: none; 
+    border-radius: 8px;
+    padding: 5px;
 }
 
 </style>
