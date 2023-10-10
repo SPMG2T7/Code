@@ -16,19 +16,13 @@ export default {
             roleSkills: [],
             comments: "",
             unmatchedSkills: [],
-            appliedRole: ""
+            appliedRole: "",
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id')
         };
     },
-
-    // computed: {
-    //     getID() {
-    //         return this.$route.query.id
-    //     }
-    // },
     methods: {
         fetchData() {
-            // const id = this.getID
-
             axios
                 .get('http://127.0.0.1:5000/application/3_123457')
                 .then(response => {
@@ -69,13 +63,9 @@ export default {
         console.log(this.unmatchedSkills)
     },
     created() {
-        const staffId = sessionStorage.getItem('staff_id');
-        const accessId = sessionStorage.getItem('access_id');
+        console.log(this.staffId, this.accessId)
 
-        console.log(staffId, accessId)
-
-        if (!staffId && !accessId) {
-            // Staff is not logged in, redirect to login page
+        if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
     }

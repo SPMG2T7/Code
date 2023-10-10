@@ -19,11 +19,10 @@ export default {
             staffNeededNumber:'',
             closingDate:'',
             roleLocation:'',
-            roleDepartment:''
+            roleDepartment:'',
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id')
         };
-    },
-    computed: {
-        
     },
     methods: {
         convertDateFormat() {
@@ -50,7 +49,7 @@ export default {
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
                         "skills_required": this.skills,
-                        "listed_by": 123459,
+                        "listed_by": this.staffId,
                         "no_of_pax": this.staffNeededNumber,
                         "department": this.roleDepartment,
                         "location": this.roleLocation,
@@ -117,13 +116,9 @@ export default {
 
     },
     created() {
-        const staffId = sessionStorage.getItem('staff_id');
-        const accessId = sessionStorage.getItem('access_id');
+        console.log(this.staffId, this.accessId)
 
-        console.log(staffId, accessId)
-        
-        if (!staffId && !accessId) {
-            // Staff is not logged in, redirect to login page
+        if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
     }
