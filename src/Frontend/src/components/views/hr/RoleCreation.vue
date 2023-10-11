@@ -40,11 +40,14 @@ export default {
 
             return formattedDate;
         },
+        
         createRole() {    
-            // Construct the desired format
-            //Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)
-            console.log(this.closingDate)
-            console.log(this.convertDateFormat())
+            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
+                
+                alert("Please fill in all fields, otherwise role listing cannot be created!");
+            }
+            else {
+
             const params = {
                         "role_name": this.roleName,
                         "role_description": this.roleDescription,
@@ -55,7 +58,7 @@ export default {
                         "location": this.roleLocation,
                         "expiry_timestamp": this.convertDateFormat()
                     }
-            console.log(params);
+
             axios
                 .post('http://127.0.0.1:5000/roles/create',{
 
@@ -64,31 +67,31 @@ export default {
                 })
 
                 .then(response => {
-                    console.log(response);
+                    alert("Role was created successfully!");
+                    window.location.assign('/');
                 })
 
                 .catch(error => {
                     console.error('Error:', error);
+                    alert("Role was not created due to an error on our server's part. Please try again!");
                 });
+            }
 
         },
 
         addSkill() {
             const selectedSkill = this.skillSelected;
             this.skills.push(selectedSkill);
-            console.log(selectedSkill);
 
             const index = this.allskills.indexOf(selectedSkill);
-            const x = this.allskills.splice(index, 1);
+            this.allskills.splice(index, 1);
 
-            console.log(x)
         },
 
         removeSkill(index) {
             this.allskills.push(this.skills[index])
-            const y = this.skills.splice(index,1)
+            this.skills.splice(index,1)
 
-            console.log(y)
         },
 
         getSkills() {
@@ -117,7 +120,7 @@ export default {
 
     },
     created() {
-        console.log(this.staffId, this.accessId)
+        // console.log(this.staffId, this.accessId)
 
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
@@ -146,8 +149,7 @@ export default {
                         <input type="text" class="role-name" placeholder="Role Name" v-model="roleName">
                     </div>
                     <div class="col-md-3 text-end">
-                        <button type="button" class="btn btn-success btn-apply custom-button">CREATE</button>
-                        <!-- <button @click="createRole">Create Role</button> -->
+                        <button type="button" class="btn btn-success btn-apply custom-button" @click="createRole">CREATE</button>
                     </div>
                 </div>
             </div>
@@ -230,9 +232,6 @@ export default {
                     </div>
                 </div>
             </div>
-    
-        <router-link to="/">Browse All Roles</router-link>
-        <RouterView></RouterView>
 
         </div> 
     </div>
@@ -262,7 +261,6 @@ h4 {
 .role-name {
     border: none; 
     border-radius: 12px;
-    font-style: italic;
     padding: 10px;
     font-size: 24px;
     font-weight: bold;
@@ -272,7 +270,6 @@ h4 {
     border: none; 
     border-radius: 12px;
     padding: 10px;
-    font-style: italic;
     font-size: 14px;
     height: 200px;
     width: 100%;
@@ -286,7 +283,6 @@ h4 {
 
 .custom-input {
     border: none; 
-    font-style: italic;
 }
 
 .custom-dropdown {
