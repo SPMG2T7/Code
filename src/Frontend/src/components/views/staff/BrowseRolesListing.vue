@@ -5,19 +5,32 @@
     
     <div>
 
-        <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC" v-on:keyup.enter="filterSkills()">
-        <button @click="filterSkills()">Search</button>
-
-        <select v-model="skillSelected" @change="addFilter()" style="background-color:#E9C4DC">
-            <option value="" disabled selected>Find Skill by Name</option>
-            <option v-for="(skill,index) in allskills" :key="index" :value="skill">
-                {{ skill }}
-            </option>
-        </select>
-
-        <table v-if="filter_skills.length">
+        <table class="center" style="margin-top:20px;margin-bottom:20px;margin-left:auto;margin-right:auto;">
             <tr>
-                <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid white;border-right:5px solid white">
+                <td style="border-left:5px solid #EBEBEB;border-right:0px solid #EBEBEB;">
+                    <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC;border-radius:10px;padding:2px 10px" v-on:keyup.enter="filterSkills()">
+                </td>
+                <td style="border-left:0px solid #EBEBEB;border-right:20px solid #EBEBEB;">
+                    <button @click="filterSkills()" style="border-radius: 10px">Search</button>
+                </td>
+                <td style="border-left:0px solid #EBEBEB;border-right:5px solid #EBEBEB;">
+                    <select v-model="skillSelected" @change="addFilter()" style="background-color:#E9C4DC;padding:5px 10px;border-radius:10px">
+                        <option value="" disabled selected>Find Skill by Name</option>
+                        <option v-for="(skill,index) in allskills" :key="index" :value="skill">
+                            {{ skill }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+
+        
+
+
+
+        <table v-if="filter_skills.length" style="margin:5px auto">
+            <tr>
+                <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid #EBEBEB;border-right:5px solid #EBEBEB; border-radius:10px">
                 {{skill}} <button @click="removeFilter(index)">x</button>
             </td>
             </tr>
@@ -46,13 +59,13 @@
                         </div>
 
                         <!-- column 2 -->
-                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-3 text-end">
-                            <a href=""><button type="button" class="btn btn-secondary custom-button">View Applicants</button></a>
-                            <a href="/RoleEditing"><button type="button" class="btn btn-secondary custom-button" @click="setRoleId(role.role_id)">Edit Role</button></a>
+                        <div v-if="access_rights == 2" class="col-md-3 text-end">
+                            <a href=""><button type="button" class="btn btn-purple custom-button viewbutton">View Applicants</button></a>
+                            <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
                         </div>
 
                         <div v-else class="col-md-2 justify-content-center">
-                            <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                            <button type="button" class="btn btn-apply custom-button apply-button"
                                 v-if="!role.applied" data-bs-toggle="modal"
                                 :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
 
@@ -111,7 +124,7 @@
         <!-- If there are roles, there are filtered skills, and there are NO roles within the filtered skills -->
         <ul class="role-list" v-else-if="roles.length && search_query_values.length && !filtered_roles.length">
 
-            <p>No roles available</p>
+            <p class="noroles">No roles available</p>
 
         </ul>
 
@@ -124,20 +137,20 @@
                     <div class="row" style="margin: 20px 0px">
                     
                         <!-- column 1 -->
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                             <!-- <img src="https://via.placeholder.com/150" alt="role image" style="width: 100%; height: 100%"> -->
                             <h3>{{ role.role_name }}</h3>
                             <p>{{ role.no_of_pax }} staff needed</p>
                         </div>
 
                         <!-- column 2 -->
-                        <div v-if="access_rights == 1 | access_rights == 3 | access_rights == 4" class="col-md-3 text-end">
-                            <a href=""><button type="button" class="btn btn-secondary custom-button">View Applicants</button></a>
-                            <a href="/RoleEditing"><button type="button" class="btn btn-secondary custom-button" @click="setRoleId(role.role_id)">Edit Role</button></a>
+                        <div v-if="access_rights == 2" class="col-md-4 text-end">
+                            <a href=""><button type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
+                            <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
                         </div>
 
                         <div v-else class="col-md-2 justify-content-center">
-                            <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                            <button type="button" class="btn btn-apply custom-button apply-button"
                                 v-if="!role.applied" data-bs-toggle="modal"
                                 :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
 
@@ -149,13 +162,49 @@
 
 
                     </div>
+
+                                        <!-- START OF MODAL -->
+
+                    <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
+                                        role.role_name }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">Any Comments?</label>
+                                            <textarea class="form-control" :id="'message-text-' + role.role_id"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
+                                        application</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- END OF MODAL -->
                 </div>
 
             </li>
         </ul>
 
         <!-- if the number of entries is 0, v-else will run -->
-        <p v-else>No roles available</p>
+        <p v-else class="noroles">No roles available</p>
 
     </div>
 
@@ -388,13 +437,13 @@ h3 {
 }
 
 .custom-button {
-    width: 130px;
     color: #000000;
     font-weight: bold;
 }
 
 .apply-button {
     background-color: #8BC100;
+    width:130px;
 }
 
 .listing {
@@ -404,5 +453,22 @@ h3 {
     border-radius: 20px;
     background-color: white;
     box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.2);
+}
+
+.noroles {
+    margin:10px;
+    text-align:center;
+    font-weight:bold;
+    font-size: 20px
+}
+
+.buttonspacing {
+    margin: 5px 5px
+}
+
+.viewbutton {
+    background-color: #946383;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 </style>
