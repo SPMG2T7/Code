@@ -14,6 +14,7 @@ export default {
             roleId: 2,
             responseData_staff: null,
             responseData_role: null, 
+            roleName: "",
             staff_list: [],
         }
     },
@@ -53,7 +54,8 @@ export default {
             const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
             const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
             return percentage;
-        }
+        },
+
     },
     mounted: function () {
         this.fetchData();
@@ -73,8 +75,51 @@ export default {
 
 <template>
     <div>
-        <Nav/>
-        <h1>View All Applicants</h1>
+        <Nav />
+
+        <div class="container">
+            
+            <div class="title section">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h1>{{ roleName }}</h1>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
+                    </div>
+                </div>
+            </div>
+                    
+            <div class="applicants section">
+                <div class="row">
+                    <h4>Applicant Overview</h4>
+                    <table class="table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Applicant Name</th>
+                                <th>Skill Match</th>
+                                <th>Current Department</th>
+                                <th>See More</th>
+                            </tr>
+                        </thead>
+
+                        <tr v-for="(staff, indx) in this.staff_list" :value=staff[1] :key=staff[0]>
+                            <td>{{ indx+1 }}</td>
+                            <td>{{ staff[0] }}</td>
+                            <td>{{ percentageMatchingSkills }}% </td>
+                            <td>{{ staff[2] }}</td>
+                            <td><a class="btn" href="/IndivApplicant" role="button">
+                                <i class="fa-solid fa-caret-right"></i>
+                            </a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <router-link to="/">Browse All Roles</router-link>
+            
+        </div>
     </div>
 </template>
 
@@ -89,4 +134,36 @@ export default {
     background-color: #EBEBEB;
     margin-top: 60px;
 }
+
+h4 {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: transparent;
+}
+
+.section {
+    margin: 20px 0px;
+}
+
+.custom-button {
+    width: 130px;
+    color: #000000;
+    font-weight: bold;
+}
+
+tr {
+    border: 1px lightgray solid;
+}
+
+thead, th {
+    background-color: lightgray;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+}
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css');
+
 </style>

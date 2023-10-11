@@ -36,8 +36,6 @@
             </tr>
         </table>
 
-
-
         <div class="container">
 
         <!-- v-if here means the v-for below will only run if the length of roles.length is not 0 -->
@@ -114,8 +112,6 @@
 
                     <!-- END OF MODAL -->
                 </div>
-
-
             
             </li>
             </ul>
@@ -208,11 +204,10 @@
 
     </div>
 
-
-
     </div>
+
 </template>
-  
+
 <script>
 import Nav from "../../views/NavBar.vue"
 import axios from 'axios'
@@ -402,7 +397,6 @@ export default {
     }
 };
 </script>
-
 
 <style scoped>
 #app {
