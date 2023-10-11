@@ -175,67 +175,165 @@ export default {
 <template>
     <div>
         <Nav />
-        <h1>HR_Role Editing</h1>
 
-        <input type="text" placeholder="Role Name" v-model="roleName">
+        <div class="container">
 
-        <br>
-        <br>
-        Role Description <input type="text" v-model="roleDescription" placeholder="Role Description">
+            <div class="title section">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Role Editing</h1>
+                        <br/>
+                    </div>
+                </div>
+            
+                <div class="row">
+                    <div class="col-md-9">
+                        <input type="text" class="role-name" placeholder="Role Name" v-model="roleName">
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-success btn-apply custom-button" @click="updateRole">UPDATE</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="desc section">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Role Description</h4>
+                        <textarea class="role-desc" placeholder="Role Description" v-model="roleDescription"></textarea>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="info section">
+                <div class="row">
+    
+                    <div class="col-md-8" style="padding:0px">
+                        <table class="table">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Role Location</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control custom-input" placeholder="Location" v-model="roleLocation"><br/>
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Role Department</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control custom-input" placeholder="Department" v-model="roleDepartment"><br/>
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Number of Staff Needed</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" class="form-control custom-input" placeholder="Number of Staff" v-model="staffNeededNumber"><br/>
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Application Closing Date</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="date" class="form-control custom-input" placeholder="Closing Date" v-model="closingDate"><br/>
+                                </div>
+                            </div>
+    
+                        </table>
+                    </div>
+    
+                    <div class="col-md-4">
+                        <h4>Skills Required</h4>
+                        <table>
+                        <tr>
+                            <th colspan="4" style="text-decoration:underline;">Skill</th>
+                        </tr>
+                        <tr v-if="!skills.length"><td><i>No skills selected yet.</i></td></tr>
+                        <tr v-else v-for="(skill, index) in skills" :key="index">
+                            <td>{{ index+1 }}</td>
+                            <td>{{ skill }}</td>
+                            <td><button @click="removeSkill(index)">Remove</button></td>
+                        </tr>
+                        </table>
+    
+                        <br><p>Add Skill</p>
+                        <select class="custom-dropdown" v-model="skillSelected" @change="addSkill()">
+                            <option value="" disabled selected>Find Skill by Name</option>
+                            <option v-for="(skill,index) in allskills" :key="index" :value="skill">
+                                {{ skill }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-        <br>
-        <br>
-        Role Location <input type="text" v-model="roleLocation" placeholder="Location" >
-
-        <br>
-        <br>
-        Role Department <input type="text" v-model="roleDepartment" placeholder="Department" >
-        
-        <br>
-        <br>
-        Number of Staff Needed <input type="number" placeholder="Number of Staff" v-model="staffNeededNumber">
-
-        <br>
-        <br>
-        Application Closing Date <input type="date" placeholder="Closing Date" v-model="closingDate">
-
-        <br>
-        <br>
-        Skills Required
-        <table border="1">
-        <tr>
-            <th colspan="2">Skill</th>
-        </tr>
-        <tr v-if="!skills.length"><td><i>No skills selected yet.</i></td></tr>
-        <tr v-else v-for="(skill, index) in skills" :key="index">
-            <td>{{ index+1 }}</td>
-            <td>{{ skill }}</td>
-            <td><button @click="removeSkill(index)">Remove</button></td>
-        </tr>
-        </table>
-
-
-        <br>
-        <br>
-        Add Skill
-        <select v-model="skillSelected" @change="addSkill()">
-            <option value="" disabled selected>Find Skill by Name</option>
-            <option v-for="(skill,index) in allskills" :key="index" :value="skill">
-                {{ skill }}
-            </option>
-        </select>
-
-
-        <br>
-        <br>
-        <button @click="updateRole">Update Role</button>
-
-        <br><br>
-        <router-link to="/">BrowseRoles</router-link>
-
-        <RouterView></RouterView>
+        </div> 
     </div>
+
+
+
 </template>
 
 <style scoped>
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #000000;
+    background-color: #EBEBEB;
+    margin-top: 60px;
+}
+
+h4 {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: transparent;
+}
+
+.section {
+    margin: 20px 0px;
+}
+
+.role-name {
+    border: none; 
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.role-desc {
+    border: none; 
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 14px;
+    height: 200px;
+    width: 100%;
+}
+
+.custom-button {
+    width: 130px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.custom-input {
+    border: none; 
+}
+
+.custom-dropdown {
+    background-color: white;
+    border: none; 
+    border-radius: 8px;
+    padding: 5px;
+}
+
 </style>

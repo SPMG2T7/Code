@@ -146,8 +146,7 @@ export default {
                         <input type="text" class="role-name" placeholder="Role Name" v-model="roleName">
                     </div>
                     <div class="col-md-3 text-end">
-                        <button type="button" class="btn btn-success btn-apply custom-button">CREATE</button>
-                        <!-- <button @click="createRole">Create Role</button> -->
+                        <button type="button" class="btn btn-success btn-apply custom-button" @click="createRole">CREATE</button>
                     </div>
                 </div>
             </div>
@@ -230,9 +229,6 @@ export default {
                     </div>
                 </div>
             </div>
-    
-        <router-link to="/">Browse All Roles</router-link>
-        <RouterView></RouterView>
 
         </div> 
     </div>
@@ -262,7 +258,6 @@ h4 {
 .role-name {
     border: none; 
     border-radius: 12px;
-    font-style: italic;
     padding: 10px;
     font-size: 24px;
     font-weight: bold;
@@ -272,7 +267,6 @@ h4 {
     border: none; 
     border-radius: 12px;
     padding: 10px;
-    font-style: italic;
     font-size: 14px;
     height: 200px;
     width: 100%;
@@ -286,7 +280,6 @@ h4 {
 
 .custom-input {
     border: none; 
-    font-style: italic;
 }
 
 .custom-dropdown {
