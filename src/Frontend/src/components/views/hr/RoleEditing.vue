@@ -44,6 +44,12 @@ export default {
             return formattedDate;
         },
         updateRole() {    
+
+            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
+                
+                alert("Please fill in all fields, otherwise role listing cannot be updated!");
+            }
+            else {
             
             const params = {
                         "role_id":this.role_id,
@@ -65,13 +71,15 @@ export default {
                 })
 
                 .then(response => {
-                    console.log(response);
+                    alert("Role was created successfully!");
+                    window.location.assign('/');
                 })
 
                 .catch(error => {
                     console.error('Error:', error);
+                    alert("Role was not created due to an error on our server's part. Please try again!");
                 });
-
+            }
         },
 
         addSkill() {

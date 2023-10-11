@@ -78,7 +78,7 @@
 
                             <!-- IF: ADMIN -->
 
-                            <div v-if="access_rights == 2" class="col-md-3 text-end">
+                            <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
                                 <a href=""><button type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
                                 <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
                             </div>
@@ -156,7 +156,7 @@
 
                             <!-- IF: ADMIN -->
 
-                            <div v-if="access_rights == 2" class="col-md-3 text-end">
+                            <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
                                 <a href=""><button type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
                                 <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
                             </div>
@@ -369,7 +369,7 @@ export default {
 
         setRoleId(role_id) {
             sessionStorage.setItem('role_id', role_id);
-            console.log(sessionStorage.getItem('role_id'));
+            // console.log(sessionStorage.getItem('role_id'));
         },
         // START TO APPLY ROLE FOR MODAL
 
@@ -405,7 +405,7 @@ export default {
     },
 
     created() {
-        console.log(this.staffId, this.accessId)
+        // console.log(this.staffId, this.accessId)
 
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
