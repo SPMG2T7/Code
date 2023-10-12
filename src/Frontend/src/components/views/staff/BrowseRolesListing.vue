@@ -71,19 +71,19 @@
                     <div class="container-fluid listing">
                         <div class="row justify-content-between" style="margin: 20px 0px">
 
+                            <!-- IF: STAFF -->
                             <div class="col-md-9">
-                                <h3>{{ role.role_name }}</h3>
+                                <h3 v-if="access_rights == 1" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
+                                <h3 v-else @click="redirecttoEdit(role.role_id)">{{ role.role_name }}</h3>
                                 <p>{{ role.no_of_pax }} staff needed</p>
                             </div>
 
                             <!-- IF: ADMIN -->
-
                             <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
-                                <a href=""><button type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
-                                <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
+                                <a><button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
+                                <a><button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button></a>
+                                
                             </div>
-
-                            <!-- </IF> -->
 
                             <!-- IF: STAFF -->
 
@@ -98,8 +98,6 @@
 
                                 <p>Closing in {{ role.days_left }} days</p>
                             </div>
-
-                            <!-- </IF> -->
 
                         </div>
 
@@ -149,22 +147,20 @@
                     <div class="container-fluid rounded" style="width: 100%; margin: 30px 0px; border: 1px solid black">
                         <div class="row" style="margin: 20px 0px">
                         
+                            <!-- IF: STAFF -->
                             <div class="col-md-9">
-                                <h3>{{ role.role_name }}</h3>
+                                <h3 v-if="access_rights == 1" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
+                                <h3 v-else @click="redirecttoEdit(role.role_id)">{{ role.role_name }}</h3>
                                 <p>{{ role.no_of_pax }} staff needed</p>
                             </div>
 
                             <!-- IF: ADMIN -->
-
                             <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
-                                <a href=""><button type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
-                                <a href="/RoleEditing"><button type="button" class="btn btn-apply custom-button apply-button buttonspacing" @click="setRoleId(role.role_id)">Edit Role</button></a>
+                                <a><button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
+                                <a><button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button></a>
                             </div>
 
-                            <!-- </IF> -->
-
                             <!-- IF: STAFF -->
-
                             <div v-else class="col-md-2 justify-content-center">
                                 <button type="button" class="btn btn-apply custom-button apply-button"
                                     v-if="!role.applied" data-bs-toggle="modal"
@@ -175,8 +171,6 @@
                                     disabled>APPLIED</button>
                                 <p>Closing in {{ role.days_left }} days</p>
                             </div>
-
-                            <!-- </IF> -->
 
                         </div>
 
@@ -367,10 +361,6 @@ export default {
                 })
         },
 
-        setRoleId(role_id) {
-            sessionStorage.setItem('role_id', role_id);
-            // console.log(sessionStorage.getItem('role_id'));
-        },
         // START TO APPLY ROLE FOR MODAL
 
         applyRole(roleID) {
@@ -402,6 +392,27 @@ export default {
             }
         },
         // END TO APPLY ROLE FOR MODAL
+
+        redirectToIndivRoleListing(roleId) {
+            sessionStorage.setItem('role_id', roleId)
+            this.$router.push('IndivRoleListing')
+        },
+
+        redirecttoEdit(roleId) {
+            sessionStorage.setItem('role_id', roleId)
+            this.$router.push('RoleEditing')
+        },
+
+        redirectToViewAllApplicants(roleId) {
+            sessionStorage.setItem('role_id', roleId)
+            this.$router.push('ViewAllApplicants')
+        },
+
+        redirectToRoleEdit(roleId) {
+            sessionStorage.setItem('role_id', roleId)
+            this.$router.push('RoleEditing')
+        }
+
     },
 
     created() {

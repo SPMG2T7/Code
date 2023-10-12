@@ -11,7 +11,7 @@ export default {
         return {
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
-            roleId: 3,
+            roleId: sessionStorage.getItem('role_id'),
             responseData: null,
             staffName: "",
             currentRole: "",
@@ -25,8 +25,7 @@ export default {
     methods: {
         fetchData() {
             axios
-                // .get('http://127.0.0.1:5000/application/' + this.roleId + '_' + this.staffId)
-                .get('http://127.0.0.1:5000/application/3_123457')
+                .get('http://127.0.0.1:5000/application/' + this.roleId + '_' + this.staffId)
                 .then(response => {
 
                     this.responseData_appData = response.data.data.application_data;
@@ -44,9 +43,6 @@ export default {
                     this.unmatchedSkills = this.staffSkills.filter(
                         (skill) => !this.roleSkills.includes(skill)
                     );
-
-                    console.log(this.comments)
-                    console.log(this.responseData_staffData)
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -62,12 +58,8 @@ export default {
     },
     mounted: function () {
         this.fetchData();
-
-        console.log(this.unmatchedSkills)
     },
     created() {
-        console.log(this.staffId, this.accessId)
-
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
