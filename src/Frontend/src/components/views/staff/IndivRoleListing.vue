@@ -10,7 +10,7 @@ export default {
     data() {
         return {
             staffId: sessionStorage.getItem('staff_id'),
-            roleID: null,
+            roleID: sessionStorage.getItem('role_id'),
             accessId: sessionStorage.getItem('access_id'),
             responseData_staff: [],
             roles: [],
@@ -20,9 +20,6 @@ export default {
         };
     },
     computed: {
-        getRoleID() {
-            return this.$route.query.roleID
-        },
         percentageMatchingSkills() {
             const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
             const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
@@ -39,9 +36,9 @@ export default {
                     const index = this.roles.findIndex(role => role.role_id == this.roleID);                    
                     this.roles = this.roles[index]
                     this.roleSkills = this.roles.skills_required
-                    console.log(this.roles.applied)
-                    console.log(this.roles[3])
-                    console.log(this.roles[index])
+                    // console.log(this.roles.applied)
+                    // console.log(this.roles[3])
+                    // console.log(this.roles[index])
 
                 })
                 .catch(error => {
@@ -91,7 +88,6 @@ export default {
     },
     mounted: function () {
         this.fetchRoles();
-        this.roleID = this.getRoleID; // REMOVE THIS IF YOU ARE PASSING ROLE_ID VIA SESSION
     },
     created() {
         console.log(this.staffId, this.accessId)

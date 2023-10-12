@@ -11,7 +11,7 @@ export default {
         return {
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
-            roleId: 2,
+            roleId: sessionStorage.getItem('role_id'),
             responseData_staff: null,
             responseData_role: null, 
             roleName: "",
@@ -21,7 +21,6 @@ export default {
     methods: {
         fetchData() {
             // const id = this.getID
-            console.log(this.staffId);
             const url = 'http://127.0.0.1:5000/role_application/get_all/' + this.roleId
             axios
                 .get(url)
@@ -35,18 +34,29 @@ export default {
                         this.staffName = this.responseData_staff[i].first_name + " " + this.responseData_staff[i].last_name;
                         this.staffSkills = this.responseData_staff[i].staff_skills
                         this.department = this.responseData_staff[i].department
-                        const row = [this.staffName, this.staffSkills, this.department]
+                        const row = [this.staffName, this.staffSkills, this.department, this.responseData_staff[i].staff_id]
                         this.staff_list.push(row)
                     }
 
                     this.roleName = this.responseData_role.role_name
 
-                    console.log(this.responseData_role)
-                    console.log(this.staff_list)
+                    // console.log(this.responseData_role)
+                    // console.log(this.staff_list)
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+        },
+        
+        redirectToIndivApplicant(roleId, staffId) {
+            sessionStorage.setItem('role_id', roleId)
+            sessionStorage.setItem('staff_id', staffId)
+            this.$router.push('IndivApplicant')
+
+        },
+
+        redirectToEdit() {
+            this.$router.push('RoleEditing')
         },
     },
     computed: {
@@ -62,7 +72,7 @@ export default {
 
     },
     created() {
-        console.log(this.staffId, this.accessId)
+        // console.log(this.staffId, this.accessId)
 
         if (!this.staffId && !this.accessId) {
             // Staff is not logged in, redirect to login page
@@ -85,7 +95,7 @@ export default {
                         <h1>{{ roleName }}</h1>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
+                        <button @click="redirectToEdit()" type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
                     </div>
                 </div>
             </div>
@@ -109,7 +119,7 @@ export default {
                             <td>{{ staff[0] }}</td>
                             <td>{{ percentageMatchingSkills }}% </td>
                             <td>{{ staff[2] }}</td>
-                            <td><a class="btn" href="/IndivApplicant" role="button">
+                            <td><a class="btn" @click="redirectToIndivApplicant(this.roleId,staff[3])" role="button">
                                 <i class="fa-solid fa-caret-right"></i>
                             </a></td>
                         </tr>

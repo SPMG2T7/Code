@@ -8,14 +8,11 @@ export default {
     },
     data() {
         return {
-            staffId: sessionStorage.getItem('staff_id'),
             roleID: null,
-            accessId: sessionStorage.getItem('access_id'),
             staffDetails: [],
+            staffId: sessionStorage.getItem('staff_id'),
+            accessId: sessionStorage.getItem('access_id'),
         };
-    },
-    computed: {
-       
     },
     methods: {
         // the function that helps us call the endpoint and retrieve the data
@@ -32,7 +29,7 @@ export default {
 
         resetSession() {
             sessionStorage.clear();
-            location.reload();
+            this.$router.push('/Login')
         },
 
         redirectBrowse() {
@@ -56,7 +53,7 @@ export default {
         this.fetchData();
     },
     created() {
-        console.log(this.staffId, this.accessId)
+        // console.log(this.staffId, this.accessId)
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
