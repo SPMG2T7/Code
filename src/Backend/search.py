@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 
 load_dotenv()
-SEARCH_MASTER_KEY = getenv('SEARCH_MASTER_KEY')
+SEARCH_MASTER_KEY = getenv('MEILI_MASTER_KEY')
 
 # Start-Connecting to MeiliSearch
 client = meilisearch.Client('http://host.docker.internal:7700', SEARCH_MASTER_KEY)
