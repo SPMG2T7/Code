@@ -45,7 +45,7 @@ export default {
         },
         updateRole() {    
 
-            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
+            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
                 
                 alert("Please fill in all fields, otherwise role listing cannot be updated!");
             }
@@ -72,7 +72,7 @@ export default {
 
                 .then(response => {
                     console.log(response);
-                    alert("Role was created successfully!");
+                    alert("Role was updated successfully!");
                     window.location.assign('/');
                 })
 
@@ -98,7 +98,7 @@ export default {
             const mynewallskills = JSON.parse(JSON.stringify(this.allskills));
 
             this.truthy = false;
-            for (const i in mynewallskills) {
+            for (let i in mynewallskills) {
                 const thisskill = mynewallskills[i];
                 if (thisskill == y[0]) {
                     this.truthy = true;
