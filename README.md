@@ -25,3 +25,4 @@
 !!! IMPORTANT !!!
 1. If testing backend functions and you are too lazy to use the docker portion, look for the keyword 'MeiliSearch' in app.py and comment those sections out before resuming with your code.
 2. If you encounter an error with the search function relating to "No index 'Role' found", try to run the docker-compose down command and then run the docker-compose up command again.
+3. If you encounter an error called "MeilisearchCommunicationError", try to run docker compose up again. This issue arises when the docker MeiliSearch container starts slower than the flask app resulting in it referring to a non-existent container.
