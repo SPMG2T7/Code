@@ -29,7 +29,7 @@ const routes = [
         component: ViewAllApplicants
     },
     {
-        path: '/IndivRoleListing',
+        path: '/IndivRoleListing/:role_id',
         name: "Individual Role Listing",
         component: IndivRoleListing
     },
@@ -39,7 +39,7 @@ const routes = [
         component: LoginPage
     },
     {
-        path: '/RoleEditing',
+        path: '/RoleEditing/:role_id',
         name: "Role Editing",
         component: RoleEditing
     }
