@@ -11,7 +11,7 @@ export default {
         return {
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
-            roleId: sessionStorage.getItem('role_id'),
+            roleId: null,
             responseData_staff: null,
             responseData_role: null, 
             roleName: "",
@@ -68,6 +68,7 @@ export default {
 
     },
     mounted: function () {
+        this.roleId = this.$route.params.role_id;
         this.fetchData();
 
     },
