@@ -44,7 +44,7 @@
 
             <!-- If there are roles, and no search or filter applied -->
 
-            <ul class="role-list" v-if="roles.length && !search_query_values.length">
+            <ul class="role-list" v-if="roles.length">
 
                 <li v-for="role in sortedRoles" :key="role.role_id">
 
@@ -71,36 +71,40 @@
                     <div class="container-fluid listing">
                         <div class="row justify-content-between" style="margin: 20px 0px">
 
-                            <!-- IF: STAFF -->
-                            <div class="col-md-9">
-                                <h3 v-if="access_rights == 1" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
+                            <!-- Display Role listing details (left) -->
+
+                            <div class="col-9">
+                                <h3 v-if="access_rights == 2" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
                                 <h3 v-else @click="redirecttoEdit(role.role_id)">{{ role.role_name }}</h3>
                                 <p>{{ role.no_of_pax }} staff needed</p>
-                            </div>
-
-                            <!-- IF: ADMIN -->
-                            <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
-                                <a><button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
-                                <a><button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button></a>
                                 
                             </div>
 
-                            <!-- IF: STAFF -->
 
-                            <div v-else class="col-3 justify-content-center">
-                                <button type="button" class="btn btn-apply custom-button apply-button"
-                                    v-if="!role.applied" data-bs-toggle="modal"
+                            <!-- Role Listing buttons -->
+
+                            <!-- check whats the purpose of justify content center here  -->
+                            <div v-if="access_rights == 2" class="col-3 text-end justify-content-center">
+                                <button type="button" class="btn btn-apply custom-button apply-button" v-if="!role.applied" data-bs-toggle="modal"
                                     :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
 
-                                <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied"
+                                <button type="button" class="btn btn-secondary btn-apply custom-button" v-else
                                     data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
                                     disabled>APPLIED</button>
 
                                 <p>Closing in {{ role.days_left }} days</p>
                             </div>
 
+                            <!-- check what is vstack class  -->
+                            <div v-else class="col-3 float-right vstack">
+                                <button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button>
+                                <button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button>
+                            </div>
+
+
                         </div>
 
+                        <!-- look to change modal implementation subsequently   -->
                         <!-- START OF MODAL -->
                         <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -134,90 +138,10 @@
                             </div>
                         </div>
                         <!-- END OF MODAL -->
+                        
                     </div>
                 
                 </li>
-            </ul>
-
-            <!-- If there are roles, there are filtered skills, and there are roles within the filtered skills -->
-            <ul class="role-list" v-else-if="roles.length && search_query_values.length && filtered_roles.length">
-
-                <li v-for="role in filtered_roles" :key="role.role_id">
-
-                    <div class="container-fluid rounded" style="width: 100%; margin: 30px 0px; border: 1px solid black">
-                        <div class="row" style="margin: 20px 0px">
-                        
-                            <!-- IF: STAFF -->
-                            <div class="col-md-9">
-                                <h3 v-if="access_rights == 1" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
-                                <h3 v-else @click="redirecttoEdit(role.role_id)">{{ role.role_name }}</h3>
-                                <p>{{ role.no_of_pax }} staff needed</p>
-                            </div>
-
-                            <!-- IF: ADMIN -->
-                            <div v-if="access_rights == 2" class="col-md-3 text-end vstack">
-                                <a><button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button></a>
-                                <a><button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button></a>
-                            </div>
-
-                            <!-- IF: STAFF -->
-                            <div v-else class="col-md-2 justify-content-center">
-                                <button type="button" class="btn btn-apply custom-button apply-button"
-                                    v-if="!role.applied" data-bs-toggle="modal"
-                                    :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
-
-                                <button type="button" class="btn btn-secondary btn-apply custom-button" v-if="role.applied"
-                                    data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
-                                    disabled>APPLIED</button>
-                                <p>Closing in {{ role.days_left }} days</p>
-                            </div>
-
-                        </div>
-
-                        <!-- START OF MODAL -->
-                        <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
-                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
-                                            role.role_name }}</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="message-text" class="col-form-label">Any Comments?</label>
-                                                <textarea class="form-control" :id="'message-text-' + role.role_id"></textarea>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
-                                            application</button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- END OF MODAL -->
-
-                    </div>
-
-                </li>
-            </ul>
-
-            <!-- If there are roles, there are filter skills, and there are NO roles within the filtered skills -->
-            <ul class="role-list" v-else-if="roles.length && search_query_values.length && !filtered_roles.length">
-
-                <p class="noroles">No roles available</p>
-
             </ul>
 
             <!-- If there are no roles -->
@@ -247,7 +171,6 @@ export default {
             allskills:[],
             newskills:[],
             skillSelected:'',
-            filtered_roles: [],
             access_rights:'',
             roleId:'',
             applied: [],
@@ -267,7 +190,6 @@ export default {
         this.getSkills();
         this.skillSelected='';
         this.roleId='';
-        this.filtered_roles=[];
         this.access_rights=sessionStorage.getItem('access_id');
         this.searchBar='';
         this.search_query_values=[];
@@ -289,31 +211,59 @@ export default {
 
         addFilter() {
 
+            // push the new filtered skill into the filter_skills array
             const selectedSkill = this.skillSelected;
             this.filter_skills.push(selectedSkill);
 
+            // remove the filtered skill from the allskills array
             const index = this.allskills.indexOf(selectedSkill);
             this.allskills.splice(index, 1);
 
+            // perform filtering of the results
             this.filterSkills();
             
-
         },
 
         removeFilter(index){
 
+            // push the removed filtered skill into the allskills array
             this.allskills.push(this.filter_skills[index]);
+
+            // remove the removed filtered skill from the filter_skills array
             this.filter_skills.splice(index,1);
 
-            if (this.filter_skills.length) {
-                this.filterSkills();
-
-            }
-            else {
-                this.filtered_roles=[];
-            }
+            // perform filtering of the results
+            this.filterSkills();
 
         },
+
+        filterSkills() {
+
+            this.search_query_values = Array.from(this.filter_skills)
+            this.search_query_values.push(this.searchBar);
+            console.log(this.search_query_values);
+
+            const params = {
+                "search_query": this.search_query_values
+            };
+
+            axios
+                .post('http://127.0.0.1:5000/search/',{
+                    "params": params
+                })
+
+                .then(response => {
+
+                    const roles=response.data.data;
+                    console.log(roles)
+                    this.roles=roles;
+                })
+
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+            },
+
     
         getSkills() {
                 axios
@@ -332,34 +282,6 @@ export default {
                     });
             },
 
-        filterSkills() {
-
-            if(this.searchBar.length) {
-                this.search_query_values=this.filter_skills.concat(this.searchBar.split(" "));
-            }
-            else {
-                this.search_query_values=this.filter_skills;
-            }
-
-            const params = {
-                "search_query": this.search_query_values
-            };
-
-            axios
-                .post('http://127.0.0.1:5000/search/',{
-                    "params": params
-                })
-
-                .then(response => {
-
-                    const roles=response.data.data;
-                    this.filtered_roles=roles;
-                })
-
-                .catch(error => {
-                    console.error('Error:', error);
-                })
-        },
 
         // START TO APPLY ROLE FOR MODAL
 
