@@ -20,7 +20,7 @@ export default {
             closingDate:'',
             roleLocation:'',
             roleDepartment:'',
-            role_id:'',
+            role_id:null,
             truthy:''
         };
     },
@@ -173,7 +173,7 @@ export default {
         this.allskills=[];
         this.newskills=[];
         this.getSkills();
-        this.role_id=sessionStorage.getItem('role_id');
+        this.role_id=this.$route.params.role_id;
         console.log(this.role_id);
         this.getThisRole();
         this.truthy='';
