@@ -31,13 +31,24 @@ export default {
     async getAllStaffName() {
       try {
         const response = await axios.get('http://127.0.0.1:5000/staff/get_all');
+
+        
         for (const staff of response.data.data.staffs) {
+
+          // access right 1 is admin, 2 is user, 3 manager, 4 is HR
+          console.log(staff)
           if (staff.access_rights == '1') {
-            this.access_right = 'Staff'
-          } else {
-            this.access_right = 'Human Resources'
+            staff.access_right = 'Admin'
+          } else if (staff.access_rights == '2') {
+            staff.access_right = 'Staff'
+          } else if (staff.access_rights == '3') {
+            staff.access_right = 'Manager'
           }
-          this.staff_names.push([`${staff.first_name} (${this.access_right})`, [staff.staff_id, staff.access_rights]]);
+          else{
+            staff.access_right = 'Human Resources'
+          }
+          
+          this.staff_names.push([`${staff.first_name} (${staff.access_right})`, [staff.staff_id, staff.access_rights]]);
         }
       } catch (error) {
         console.error('Error fetching staffs:', error);
