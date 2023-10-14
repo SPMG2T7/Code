@@ -24,7 +24,7 @@ const routes = [
         component: IndivApplicant
     },
     {
-        path: '/ViewAllApplicants',
+        path: '/ViewAllApplicants/:role_id',
         name: "View All Applicants",
         component: ViewAllApplicants
     },

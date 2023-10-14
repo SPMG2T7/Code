@@ -74,7 +74,6 @@
                             <!-- Display Role listing details (left) -->
 
                             <div class="col-9">
-                                <!-- <h3 v-if="access_rights == 2" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3> -->
                                 <h3 v-if="access_rights == 2" ><router-link style="text-decoration: none; color:black" :to="{ name: 'Individual Role Listing', params: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
                                 <h3 v-else ><router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', params: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
                 
@@ -97,10 +96,10 @@
                                 <p>Closing in {{ role.days_left }} days</p>
                             </div>
 
-                            <!-- check what is vstack class  -->
                             <div v-else class="col-3 float-right vstack">
-                                <button @click='redirectToViewAllApplicants(role.role_id)' type="button" class="btn viewbutton custom-button buttonspacing">View Applicants</button>
-                                <button @click='redirectToRoleEdit(role.role_id)' type="button" class="btn btn-apply custom-button apply-button buttonspacing">Edit Role</button>
+
+                                <button type="button" class="btn viewbutton custom-button buttonspacing"><router-link style="text-decoration: none; color:black" :to="{ name: 'View All Applicants', params: { role_id: role.role_id } }"> View Applicants </router-link></button>
+                                <button type="button" class="btn btn-apply custom-button apply-button buttonspacing"><router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', params: { role_id: role.role_id } }"> Edit Role </router-link></button>
                             </div>
 
 
@@ -317,25 +316,10 @@ export default {
         },
         // END TO APPLY ROLE FOR MODAL
 
-        redirectToIndivRoleListing(roleId) {
-            sessionStorage.setItem('role_id', roleId)
-            this.$router.push('IndivRoleListing')
-        },
-
-        redirecttoEdit(roleId) {
-            sessionStorage.setItem('role_id', roleId)
-            this.$router.push('RoleEditing')
-        },
-
-        redirectToViewAllApplicants(roleId) {
-            sessionStorage.setItem('role_id', roleId)
-            this.$router.push('ViewAllApplicants')
-        },
-
-        redirectToRoleEdit(roleId) {
-            sessionStorage.setItem('role_id', roleId)
-            this.$router.push('RoleEditing')
-        }
+        // redirectToViewAllApplicants(roleId) {
+        //     sessionStorage.setItem('role_id', roleId)
+        //     this.$router.push('ViewAllApplicants')
+        // },
 
     },
 

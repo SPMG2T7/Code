@@ -174,7 +174,6 @@ export default {
         this.newskills=[];
         this.getSkills();
         this.role_id=this.$route.params.role_id;
-        console.log(this.role_id);
         this.getThisRole();
         this.truthy='';
     }
