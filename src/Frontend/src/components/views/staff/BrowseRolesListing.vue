@@ -31,7 +31,7 @@
         <table v-if="filter_skills.length" style="margin:5px auto">
             <tr>
                 <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid #EBEBEB;border-right:5px solid #EBEBEB; border-radius:10px">
-                {{skill}} <button @click="removeFilter(index)">x</button>
+                {{skill}} <button @click="removeFilter(index)" class="btn btn-sm btn-danger">x</button>
             </td>
             </tr>
         </table>
