@@ -10,7 +10,7 @@ export default {
     data() {
         return {
             staffId: sessionStorage.getItem('staff_id'),
-            roleID: sessionStorage.getItem('role_id'),
+            roleID: null,
             accessId: sessionStorage.getItem('access_id'),
             responseData_staff: [],
             roles: [],
@@ -86,7 +86,9 @@ export default {
         },
         // END TO APPLY ROLE FOR MODAL
     },
-    mounted: function () {
+    mounted() {
+        this.roleID = this.$route.params.role_id;
+        console.log(this.roleID);
         this.fetchRoles();
     },
     created() {

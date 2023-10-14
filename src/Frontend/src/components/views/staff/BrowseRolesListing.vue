@@ -74,8 +74,10 @@
                             <!-- Display Role listing details (left) -->
 
                             <div class="col-9">
-                                <h3 v-if="access_rights == 2" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3>
-                                <h3 v-else @click="redirecttoEdit(role.role_id)">{{ role.role_name }}</h3>
+                                <!-- <h3 v-if="access_rights == 2" @click="redirectToIndivRoleListing(role.role_id)">{{ role.role_name }}</h3> -->
+                                <h3 v-if="access_rights == 2" ><router-link style="text-decoration: none; color:black" :to="{ name: 'Individual Role Listing', params: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
+                                <h3 v-else ><router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', params: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
+                
                                 <p>{{ role.no_of_pax }} staff needed</p>
                                 
                             </div>
