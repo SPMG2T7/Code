@@ -8,20 +8,21 @@ from datetime import datetime, timezone
 from sqlalchemy import func
 import meilisearch
 
+app = Flask(__name__)
 
-# Loading from .env file
-load_dotenv()
-DB_URL = getenv('DB_URL')
+if __name__ == '__main__':
+    # Loading from .env file
+    load_dotenv()
+    DB_URL = getenv('DB_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 SEARCH_MASTER_KEY = getenv('SEARCH_MASTER_KEY')
-
 # Start-Connecting to MeiliSearch
 client = meilisearch.Client('http://127.0.0.1:7700', SEARCH_MASTER_KEY)
 # End-Connecting to MeiliSearch
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 CORS(app)
 
