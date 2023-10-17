@@ -33,19 +33,19 @@ export default {
         },
 
         redirectBrowse() {
-            window.location.assign('/');
+            this.$router.push('/');
         },
 
         redirectCreate() {
-            window.location.assign('/RoleCreation');
+            this.$router.push('/RoleCreation')
         },
 
         redirectProfile() {
-            window.location.assign('/Profile');
+            this.$router.push('/Profile')
         },
 
         redirectSettings() {
-            window.location.assign('/Settings');
+            this.$router.push('/Settings')
         }
 
     },
