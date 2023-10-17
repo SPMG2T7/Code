@@ -9,9 +9,9 @@ export default {
     },
     data() {
         return {
-            staffId: sessionStorage.getItem('staff_id'),
+            staffId: null,
             accessId: sessionStorage.getItem('access_id'),
-            roleId: sessionStorage.getItem('role_id'),
+            roleId: null,
             responseData: null,
             staffName: "",
             currentRole: "",
@@ -57,6 +57,10 @@ export default {
         }
     },
     mounted: function () {
+        this.staffId = this.$route.query.staff_id;
+        this.roleId = this.$route.query.role_id;
+        console.log(this.staffId);
+        console.log(this.roleId);
         this.fetchData();
     },
     created() {
