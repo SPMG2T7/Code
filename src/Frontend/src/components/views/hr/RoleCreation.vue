@@ -69,7 +69,7 @@ export default {
                 .then(response => {
                     console.log(response)
                     alert("Role was created successfully!");
-                    window.location.assign('/');
+                    this.$router.push('/')
                 })
 
                 .catch(error => {
