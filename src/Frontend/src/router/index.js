@@ -24,12 +24,12 @@ const routes = [
         component: IndivApplicant
     },
     {
-        path: '/ViewAllApplicants/:role_id',
+        path: '/ViewAllApplicants',
         name: "View All Applicants",
         component: ViewAllApplicants
     },
     {
-        path: '/IndivRoleListing/:role_id',
+        path: '/IndivRoleListing',
         name: "Individual Role Listing",
         component: IndivRoleListing
     },
@@ -39,7 +39,7 @@ const routes = [
         component: LoginPage
     },
     {
-        path: '/RoleEditing/:role_id',
+        path: '/RoleEditing',
         name: "Role Editing",
         component: RoleEditing
     }

@@ -49,14 +49,13 @@ export default {
         },
         
         redirectToIndivApplicant(roleId, staffId) {
-            sessionStorage.setItem('role_id', roleId)
-            sessionStorage.setItem('staff_id', staffId)
-            this.$router.push('IndivApplicant')
+            
+            this.$router.push({ path: '/IndivApplicant', query: { staff_id: staffId, role_id: roleId } })
 
         },
 
-        redirectToEdit() {
-            this.$router.push('RoleEditing')
+        redirectToEdit(roleId) {
+            this.$router.push({ path: '/RoleEditing', query: { role_id: roleId } })
         },
     },
     computed: {
@@ -68,7 +67,7 @@ export default {
 
     },
     mounted: function () {
-        this.roleId = this.$route.params.role_id;
+        this.roleId = this.$route.query.role_id;
         this.fetchData();
 
     },
@@ -96,7 +95,7 @@ export default {
                         <h1>{{ roleName }}</h1>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button @click="redirectToEdit()" type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
+                        <button @click="redirectToEdit(this.roleId)" type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
                     </div>
                 </div>
             </div>

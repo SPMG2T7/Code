@@ -173,7 +173,7 @@ export default {
         this.allskills=[];
         this.newskills=[];
         this.getSkills();
-        this.role_id=this.$route.params.role_id;
+        this.role_id=this.$route.query.role_id;
         this.getThisRole();
         this.truthy='';
     }
