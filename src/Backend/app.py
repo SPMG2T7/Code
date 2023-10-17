@@ -905,75 +905,62 @@ def get_role_applications(role_id):
 
     applications = Role_Applicant.query.filter_by(role_id=query_role_id).all()
 
-    if applications:
+    # get list of staff and their info
 
-        # get list of staff and their info
+    staff_list = []
 
-        staff_list = []
+    for application in applications:
+        
+        staff_id = application.staff_id
 
-        for application in applications:
+        staff = Staff.query.filter_by(staff_id=staff_id).first()
+        staff_data = {}
+
+        staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+        staff_data = {
+            "staff_id": staff.staff_id,
+            "first_name": staff.first_name,
+            "last_name": staff.last_name,
+            "email": staff.email,
+            "department": staff.department,
+            "current_role": staff.current_role,
+            "access_rights": staff.access_rights,
             
-            staff_id = application.staff_id
-
-            staff = Staff.query.filter_by(staff_id=staff_id).first()
-            staff_data = {}
-
-            staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
-            staff_data = {
-                "staff_id": staff.staff_id,
-                "first_name": staff.first_name,
-                "last_name": staff.last_name,
-                "email": staff.email,
-                "department": staff.department,
-                "current_role": staff.current_role,
-                "access_rights": staff.access_rights,
-                
-                "staff_skills": staff_skills
-            }
-            
-            staff_list.append(staff_data)
-
-        # get info of the role 
-
-        role = Role.query.filter_by(role_id=query_role_id).first()
-
-        skills_required = [skill.skill.skill_name for skill in role.skills_needed]
-        count_of_applicant = len(applications)
-
-        role_data = {
-            "role_id": role.role_id,
-            "role_name": role.role_name,
-            "role_description": role.role_description,
-            "listed_by": role.listed_by,
-            "no_of_pax": role.no_of_pax,
-            "department": role.department,
-            "location": role.location,
-            "days_left": days_left_from_unix(role.expiry_timestamp),
-            "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
-            # 1. Missing number of people that applied
-            # Select count(role_id) from role_applicant where role_id = ?
-            "count_applicant": count_of_applicant,
-            # 2. Skills required for this role (should be multiple)
-            "skills_required": skills_required
+            "staff_skills": staff_skills
         }
+        
+        staff_list.append(staff_data)
 
-        return jsonify(
-                {
-                    "code": 200,
-                    "data": {'role_data': role_data,'staff_data':staff_list}
-                }
-            ),200
+    # get info of the role 
 
+    role = Role.query.filter_by(role_id=query_role_id).first()
 
-    else:
+    skills_required = [skill.skill.skill_name for skill in role.skills_needed]
+    count_of_applicant = len(applications)
 
-        return jsonify(
+    role_data = {
+        "role_id": role.role_id,
+        "role_name": role.role_name,
+        "role_description": role.role_description,
+        "listed_by": role.listed_by,
+        "no_of_pax": role.no_of_pax,
+        "department": role.department,
+        "location": role.location,
+        "days_left": days_left_from_unix(role.expiry_timestamp),
+        "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+        # 1. Missing number of people that applied
+        # Select count(role_id) from role_applicant where role_id = ?
+        "count_applicant": count_of_applicant,
+        # 2. Skills required for this role (should be multiple)
+        "skills_required": skills_required
+    }
+
+    return jsonify(
             {
-                "code": 204,
-                "message": "No applications found for this role."
+                "code": 200,
+                "data": {'role_data': role_data,'staff_data':staff_list}
             }
-        ), 204
-
+        ),200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
