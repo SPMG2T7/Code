@@ -36,7 +36,6 @@ export default {
         for (const staff of response.data.data.staffs) {
 
           // access right 1 is admin, 2 is user, 3 manager, 4 is HR
-          console.log(staff)
           if (staff.access_rights == '1') {
             staff.access_right = 'Admin'
           } else if (staff.access_rights == '2') {
