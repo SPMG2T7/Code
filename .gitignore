@@ -9,3 +9,6 @@ node_modules
 
 # Ignore python cache file
 *.pyc
+
+# Ignore vscode settings
+.vscode
