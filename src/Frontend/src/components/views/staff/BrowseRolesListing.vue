@@ -241,7 +241,9 @@ export default {
         filterSkills() {
 
             this.search_query_values = Array.from(this.filter_skills)
-            this.search_query_values.push(this.searchBar);
+            if (this.searchBar != '') {
+                this.search_query_values.push(this.searchBar);
+            }
             console.log(this.search_query_values);
 
             const params = {

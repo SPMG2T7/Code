@@ -42,7 +42,7 @@ export default {
         },
         
         createRole() {    
-            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
+            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleDepartment.length || !this.roleLocation.length || !this.closingDate.length ) {
                 
                 alert("Please fill in all fields, otherwise role listing cannot be created!");
             }
