@@ -218,6 +218,7 @@ export default {
                                 <td><em>No skills selected yet.</em></td>
                             </tr>
                             <tr v-else v-for="(skill, index) in skills" :key="index">
+                                <td>{{ index + 1 }}</td>
                                 <td>{{ skill }}</td>
                                 <td><button type="button" class="btn btn-secondary"
                                         @click="removeSkill(index)">Remove</button></td>
@@ -261,19 +262,9 @@ h4 {
 }
 
 .role-name {
-    /* border: none;
     border-radius: 12px;
-    padding: 10px;
-    font-size: 24px;
-    font-weight: bold; */
-    /* width: 20%; */
-    max-width: inherit !important;
-
-}
-
-.input-group {
-    /* width: 60% !important; */
-
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .role-desc {
