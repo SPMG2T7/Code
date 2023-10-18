@@ -9,17 +9,20 @@ from sqlalchemy import func
 import meilisearch
 
 app = Flask(__name__)
+# Loading from .env file
+load_dotenv()
 
 if __name__ == '__main__':
-    # Loading from .env file
-    load_dotenv()
     DB_URL = getenv('DB_URL')
     app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+    SEARCH_INDEX='roles'
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+    SEARCH_INDEX='test'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 SEARCH_MASTER_KEY = getenv('SEARCH_MASTER_KEY')
+
 # Start-Connecting to MeiliSearch
 client = meilisearch.Client('http://127.0.0.1:7700', SEARCH_MASTER_KEY)
 # End-Connecting to MeiliSearch
@@ -314,49 +317,6 @@ def find_by_staff_id(staff_id):
         }
     ), 404
 
-# Retrieving all access data
-
-
-@app.route("/access_rights/get_all")
-def get_all_access():
-    access_list = Access_Rights.query.all()
-    if len(access_list) != 0:
-
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "accesses": [access.json() for access in access_list]
-                }
-            }
-        ),200
-    return jsonify(
-        {
-            "code": 204,
-            "message": "There are no access rights"
-        }
-    ), 204
-
-# Retrieving specific access data
-
-
-@app.route("/access_rights/<int:access_id>")
-def find_by_access_id(access_id):
-    access = Access_Rights.query.filter_by(access_id=access_id).first()
-    if access:
-        return jsonify(
-            {
-                "code": 200,
-                "data": access.json()
-            }
-        ),200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Access not found."
-        }
-    ), 404
-
 # Retrieving all role data
 @app.route("/roles/get_all")
 def get_all_roles():
@@ -397,10 +357,10 @@ def get_all_roles():
         ),200
     return jsonify(
         {
-            "code": 204,
+            "code": 404,
             "message": "There are no roles"
         }
-    ), 204
+    ), 404
 
 # Retrieve two list of applied and not applied for roles by staff
 @app.route("/roles/get_all_by_staff/<int:staff_id>")
@@ -476,10 +436,10 @@ def get_all_roles_by_staff(staff_id):
     
     return jsonify(
         {
-            "code": 204,
+            "code": 404,
             "message": "There are no roles"
         }
-    ), 204
+    ), 404
 
 
 # Retrieving specific access data
@@ -568,7 +528,7 @@ def create_role():
         db.session.commit()
         
         # Start-Adding to MeiliSearch
-        client.index('roles').add_documents([
+        client.index(SEARCH_INDEX).add_documents([
             {
                 "role_id": role.role_id,
                 "role_name": role_name,
@@ -620,10 +580,10 @@ def get_all_skills():
         ),200
     return jsonify(
         {
-            "code": 204,
+            "code": 404,
             "message": "There are no skills"
         }
-    ), 204
+    ), 404
 
 # Retrieving specific skill data
 @app.route("/skills/<int:skill_id>")
@@ -649,7 +609,7 @@ def search():
     req = request.get_json()
     search_query = req['params']['search_query']
     if len(search_query) == 1:
-        search_result = client.index('roles').search(search_query[0])
+        search_result = client.index(SEARCH_INDEX).search(search_query[0])
         if len(search_result["hits"]) != 0:
             return jsonify(
                 {
@@ -668,7 +628,7 @@ def search():
         searches = []
         for query in search_query:
             # print(query)
-            searches.append({'indexUid': 'roles', 'q': query})
+            searches.append({'indexUid': SEARCH_INDEX, 'q': query})
         # print(searches)
         search_result = client.multi_search(searches)
         if len(search_result["results"]) != 0:
@@ -905,62 +865,75 @@ def get_role_applications(role_id):
 
     applications = Role_Applicant.query.filter_by(role_id=query_role_id).all()
 
-    # get list of staff and their info
+    if applications:
 
-    staff_list = []
+        # get list of staff and their info
 
-    for application in applications:
-        
-        staff_id = application.staff_id
+        staff_list = []
 
-        staff = Staff.query.filter_by(staff_id=staff_id).first()
-        staff_data = {}
-
-        staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
-        staff_data = {
-            "staff_id": staff.staff_id,
-            "first_name": staff.first_name,
-            "last_name": staff.last_name,
-            "email": staff.email,
-            "department": staff.department,
-            "current_role": staff.current_role,
-            "access_rights": staff.access_rights,
+        for application in applications:
             
-            "staff_skills": staff_skills
-        }
-        
-        staff_list.append(staff_data)
+            staff_id = application.staff_id
 
-    # get info of the role 
+            staff = Staff.query.filter_by(staff_id=staff_id).first()
+            staff_data = {}
 
-    role = Role.query.filter_by(role_id=query_role_id).first()
-
-    skills_required = [skill.skill.skill_name for skill in role.skills_needed]
-    count_of_applicant = len(applications)
-
-    role_data = {
-        "role_id": role.role_id,
-        "role_name": role.role_name,
-        "role_description": role.role_description,
-        "listed_by": role.listed_by,
-        "no_of_pax": role.no_of_pax,
-        "department": role.department,
-        "location": role.location,
-        "days_left": days_left_from_unix(role.expiry_timestamp),
-        "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
-        # 1. Missing number of people that applied
-        # Select count(role_id) from role_applicant where role_id = ?
-        "count_applicant": count_of_applicant,
-        # 2. Skills required for this role (should be multiple)
-        "skills_required": skills_required
-    }
-
-    return jsonify(
-            {
-                "code": 200,
-                "data": {'role_data': role_data,'staff_data':staff_list}
+            staff_skills = [skill.skill.skill_name for skill in staff.staff_skills]
+            staff_data = {
+                "staff_id": staff.staff_id,
+                "first_name": staff.first_name,
+                "last_name": staff.last_name,
+                "email": staff.email,
+                "department": staff.department,
+                "current_role": staff.current_role,
+                "access_rights": staff.access_rights,
+                
+                "staff_skills": staff_skills
             }
-        ),200
+            
+            staff_list.append(staff_data)
+
+        # get info of the role 
+
+        role = Role.query.filter_by(role_id=query_role_id).first()
+
+        skills_required = [skill.skill.skill_name for skill in role.skills_needed]
+        count_of_applicant = len(applications)
+
+        role_data = {
+            "role_id": role.role_id,
+            "role_name": role.role_name,
+            "role_description": role.role_description,
+            "listed_by": role.listed_by,
+            "no_of_pax": role.no_of_pax,
+            "department": role.department,
+            "location": role.location,
+            "days_left": days_left_from_unix(role.expiry_timestamp),
+            "expiry_date": convert_unix_to_custom_format(role.expiry_timestamp),
+            # 1. Missing number of people that applied
+            # Select count(role_id) from role_applicant where role_id = ?
+            "count_applicant": count_of_applicant,
+            # 2. Skills required for this role (should be multiple)
+            "skills_required": skills_required
+        }
+
+        return jsonify(
+                {
+                    "code": 200,
+                    "data": {'role_data': role_data,'staff_data':staff_list}
+                }
+            ),200
+
+
+    else:
+
+        return jsonify(
+            {
+                "code": 404,
+                "message": "No applications found for this role."
+            }
+        ), 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
