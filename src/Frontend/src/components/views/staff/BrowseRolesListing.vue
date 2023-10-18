@@ -91,16 +91,16 @@
                             <!-- check whats the purpose of justify content center here  -->
                             <div v-if="access_rights == 2" class="col-4 text-end justify-content-center">
                                 <button type="button" class="btn btn-apply custom-button apply-button" v-if="!role.applied"
-                                    data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
+                                    data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id">APPLY</button>
 
                                 <button type="button" class="btn btn-secondary btn-apply custom-button" v-else
-                                    data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
+                                    data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id"
                                     disabled>APPLIED</button>
 
-                                <p>Closing in {{ role.days_left }} days</p>
+                                    <p :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
                             </div>
 
-                            <div v-else class="col-4 col-md-4 text-end">
+                            <div v-else class="col-4 col-md-4 text-end justify-content-center">
 
                                 <button type="button" class="btn viewbutton buttonspacing"><router-link
                                         style="text-decoration: none; color:black"
@@ -111,6 +111,9 @@
                                         style="text-decoration: none; color:black"
                                         :to="{ name: 'Role Editing', query: { role_id: role.role_id } }"> Edit Role
                                     </router-link></button>
+                                <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
+                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
+                                </p>
                             </div>
 
 
@@ -118,7 +121,7 @@
 
                         <!-- look to change modal implementation subsequently   -->
                         <!-- START OF MODAL -->
-                        <div class="modal fade" :id="'exampleModal-' + role.role_id" tabindex="-1"
+                        <div class="modal fade" :id="'applyModal-' + role.role_id" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
 
@@ -294,10 +297,7 @@ export default {
                     console.error('Error:', error);
                 });
         },
-
-
         // START TO APPLY ROLE FOR MODAL
-
         applyRole(roleID) {
             const commentsTextBox = document.getElementById('message-text-' + roleID).value;
 
@@ -328,11 +328,6 @@ export default {
         },
         // END TO APPLY ROLE FOR MODAL
 
-        // redirectToViewAllApplicants(roleId) {
-        //     sessionStorage.setItem('role_id', roleId)
-        //     this.$router.push('ViewAllApplicants')
-        // },
-
     },
 
     created() {
@@ -346,11 +341,19 @@ export default {
 
         // this is to sort the roles by applied and not applied
         sortedRoles() {
-            return this.roles.slice().sort((a, b) => {
-                if (a.applied === false && b.applied === true) return -1;
-                if (a.applied === true && b.applied === false) return 1;
-                return 0;
-            });
+            let filteredRoles = this.roles
+                .slice()
+                .sort((a, b) => {
+                    if (a.applied === false && b.applied === true) return -1;
+                    if (a.applied === true && b.applied === false) return 1;
+                    return 0;
+                });
+
+            if (this.access_rights == 2) {
+                filteredRoles = this.roles.filter(role => role.days_left >= 0)
+            }
+
+            return filteredRoles
         },
     }
 };
@@ -416,7 +419,7 @@ h3 {
 }
 
 .buttonspacing {
-    margin: 5px 5px
+    margin: 10px 0px 5px 5px
 }
 
 .viewbutton {
@@ -438,5 +441,9 @@ h3 {
     display: flex;
     justify-content: space-between;
 
+}
+
+.redTextCSS {
+    color: red;
 }
 </style>
