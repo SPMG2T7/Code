@@ -83,7 +83,7 @@ export default {
 
                         <div class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdownMenuButton">
                             <span class="dropdown-item" @click="redirectBrowse()">Browse Role Listings</span>
-                            <span v-if="this.accessId == 1 || this.accessId == 2 || this.accessId == 3" class="dropdown-item" @click="redirectCreate()">+ Create Role Listing</span>
+                            <span v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="dropdown-item" @click="redirectCreate()">+ Create Role Listing</span>
                         </div>
 
                     </li>
