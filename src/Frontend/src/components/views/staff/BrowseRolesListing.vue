@@ -74,10 +74,10 @@
                             <!-- Display Role listing details (left) -->
 
                             <div class="col-8 col-md-6">
-                                <h3 v-if="access_rights == 2"><router-link style="text-decoration: none; color:black"
+                                <h3 v-if="access_rights == 2"><router-link class="viewApplicant-btn"
                                         :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">{{
                                             role.role_name }} </router-link></h3>
-                                <h3 v-else><router-link style="text-decoration: none; color:black"
+                                <h3 v-else><router-link class="viewApplicant-btn"
                                         :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">{{ role.role_name
                                         }} </router-link></h3>
 
@@ -97,13 +97,13 @@
                                     data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id"
                                     disabled>APPLIED</button>
 
-                                    <p :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
+                                <p :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
                             </div>
 
                             <div v-else class="col-4 col-md-4 text-end justify-content-center">
 
                                 <button type="button" class="btn viewbutton buttonspacing"><router-link
-                                        style="text-decoration: none; color:black"
+                                        class="viewApplicant-btn"
                                         :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }"> View
                                         Applicants </router-link></button>
                                 <button type="button"
@@ -115,8 +115,6 @@
                                 <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
                                 </p>
                             </div>
-
-
                         </div>
 
                         <!-- look to change modal implementation subsequently   -->
@@ -254,11 +252,8 @@ export default {
         },
 
         filterSkills() {
-
             this.search_query_values = Array.from(this.filter_skills)
             this.search_query_values.push(this.searchBar);
-            console.log(this.search_query_values);
-
             const params = {
                 "search_query": this.search_query_values
             };
@@ -267,19 +262,14 @@ export default {
                 .post('http://127.0.0.1:5000/search/', {
                     "params": params
                 })
-
                 .then(response => {
-
                     const roles = response.data.data;
-                    console.log(roles)
                     this.roles = roles;
                 })
-
                 .catch(error => {
                     console.error('Error:', error);
                 })
         },
-
 
         getSkills() {
             axios
@@ -331,14 +321,11 @@ export default {
     },
 
     created() {
-        // console.log(this.staffId, this.accessId)
-
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
     },
     computed: {
-
         // this is to sort the roles by applied and not applied
         sortedRoles() {
             let filteredRoles = this.roles
@@ -349,10 +336,10 @@ export default {
                     return 0;
                 });
 
+            // this is to filter out the roles that have closed based on ACCESS RIGHTS
             if (this.access_rights == 2) {
                 filteredRoles = this.roles.filter(role => role.days_left >= 0)
             }
-
             return filteredRoles
         },
     }
@@ -390,17 +377,6 @@ h3 {
     margin: 0;
     /* Remove default margin */
 }
-
-/* 
-.custom-button {
-    color: #000000;
-    font-weight: bold;
-}
-
-.apply-button {
-    background-color: #8BC100;
-    width: 130px;
-} */
 
 .listing {
     width: 100%;
@@ -445,5 +421,10 @@ h3 {
 
 .redTextCSS {
     color: red;
+}
+
+.viewApplicant-btn {
+    text-decoration: none;
+    color: black
 }
 </style>
