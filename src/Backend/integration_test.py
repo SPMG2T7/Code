@@ -20,9 +20,8 @@ class TestApp(flask_testing.TestCase):
         db.drop_all()
 
 
-class TestGetAllStaff(TestApp):
+class TestGetStaff(TestApp):
     # Testing for the endpoint /staff/get_all
-    
     def test_get_all_staff(self):
         access_rights1 = Access_Rights(access_id=1, type="Admin")
         access_rights2 = Access_Rights(access_id=2, type="User")
@@ -54,55 +53,55 @@ class TestGetAllStaff(TestApp):
             '/staff/get_all', content_type='application/json')
 
         self.assertEqual(response.json["data"]["staffs"], [
-                    {
-                        "access_rights": 1,
-                        "current_role": "Software Engineer",
-                        "department": "IT",
-                        "email": "JohnTan@gmail.com",
-                        "first_name": "John",
-                        "last_name": "Tan",
-                        "staff_id": 1,
-                        "staff_skills": [
-                            
-                        ]
-                    },
-                    {
-                        "access_rights": 2,
-                        "current_role": "Ops Engineer",
-                        "department": "OT",
-                        "email": "TonyLin@gmail.com",
-                        "first_name": "Tony",
-                        "last_name": "Lim",
-                        "staff_id": 2,
-                        "staff_skills": [
-                            
-                        ]
-                    },
-                    {
-                        "access_rights": 2,
-                        "current_role": "Software Junior",
-                        "department": "IT",
-                        "email": "ZongWei@gmail.com",
-                        "first_name": "Zong",
-                        "last_name": "Wei",
-                        "staff_id": 3,
-                        "staff_skills": [
-                            
-                        ]
-                    },
-                    {
-                    "access_rights": 3,
-                    "current_role": "Sales manager",
-                    "department": "Sales",
-                    "email": "Poppy@gmail.com",
-                    "first_name": "Poppy",
-                    "last_name": "Lim",
-                    "staff_id": 4,
-                    "staff_skills": [
-                    ]
-                },
+            {
+                "access_rights": 1,
+                "current_role": "Software Engineer",
+                "department": "IT",
+                "email": "JohnTan@gmail.com",
+                "first_name": "John",
+                "last_name": "Tan",
+                "staff_id": 1,
+                "staff_skills": [
+
                 ]
-            )
+            },
+            {
+                "access_rights": 2,
+                "current_role": "Ops Engineer",
+                "department": "OT",
+                "email": "TonyLin@gmail.com",
+                "first_name": "Tony",
+                "last_name": "Lim",
+                "staff_id": 2,
+                "staff_skills": [
+
+                ]
+            },
+            {
+                "access_rights": 2,
+                "current_role": "Software Junior",
+                "department": "IT",
+                "email": "ZongWei@gmail.com",
+                "first_name": "Zong",
+                "last_name": "Wei",
+                "staff_id": 3,
+                "staff_skills": [
+
+                ]
+            },
+            {
+                "access_rights": 3,
+                "current_role": "Sales manager",
+                "department": "Sales",
+                "email": "Poppy@gmail.com",
+                "first_name": "Poppy",
+                "last_name": "Lim",
+                "staff_id": 4,
+                "staff_skills": [
+                ]
+            },
+        ]
+        )
 
     def test_get_all_staff_empty(self):
         response = self.client.get(
@@ -110,9 +109,7 @@ class TestGetAllStaff(TestApp):
 
         self.assertEqual(response.json["message"], 'There are no staffs')
 
-class TestGetSpecificStaff(TestApp):
     # Testing for the endpoint /staff/<int:staff_id>
-     
     def test_get_specific_staff(self):
         access_rights1 = Access_Rights(access_id=1, type="Admin")
         access_rights2 = Access_Rights(access_id=2, type="User")
@@ -135,7 +132,7 @@ class TestGetSpecificStaff(TestApp):
         staff4 = Staff(staff_id=4, first_name="Poppy", last_name="Lim",
                        email="Poppy@gmail.com", department="Sales", current_role="Sales manager",
                        access_rights=3)
-        
+
         db.session.add(staff1)
         db.session.add(staff2)
         db.session.add(staff3)
@@ -144,24 +141,308 @@ class TestGetSpecificStaff(TestApp):
 
         response = self.client.get(
             '/staff/1', content_type='application/json')
-        
+
         self.assertEqual(response.json[0]['data'], {
-                'access_rights': 1,
-                'current_role': 'Software Engineer',
-                'department': 'IT',
-                'email': 'JohnTan@gmail.com',
-                'first_name': 'John',
-                'last_name': 'Tan',
-                'staff_id': 1,
-                'staff_skills': []
-            }
+            'access_rights': 1,
+            'current_role': 'Software Engineer',
+            'department': 'IT',
+            'email': 'JohnTan@gmail.com',
+            'first_name': 'John',
+            'last_name': 'Tan',
+            'staff_id': 1,
+            'staff_skills': []
+        }
         )
 
     def test_get_specific_staff_not_found(self):
         response = self.client.get(
             '/staff/5', content_type='application/json')
-        
+
         self.assertEqual(response.json["message"], 'Staff not found.')
+
+
+class TestGetRoles(TestApp):
+    # Testing for the endpoint /role/get_all
+    def test_get_all_role_listing(self):
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        role3 = Role(role_name="Software Junior", role_description="Develop software", listed_by=1,
+                     no_of_pax=1, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role4 = Role(role_name="Sales manager", role_description="Manage sales", listed_by=3,
+                     no_of_pax=1, department="Sales", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.add(role3)
+        db.session.add(role4)
+        db.session.commit()
+
+        response = self.client.get(
+            '/roles/get_all', content_type='application/json')
+
+        self.assertEqual(response.json["data"]["roles"],
+                         [
+            {
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                                    "role_id": 1,
+                                    "role_name": "Software Engineer",
+                                    "skills_required": []
+            },
+            {
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "OT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 2,
+                "location": "Singapore",
+                "no_of_pax": 2,
+                "role_description": "Maintain servers",
+                                    "role_id": 2,
+                                    "role_name": "Ops Engineer",
+                                    "skills_required": []
+            },
+            {
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 1,
+                "role_description": "Develop software",
+                                    "role_id": 3,
+                                    "role_name": "Software Junior",
+                                    "skills_required": []
+            },
+            {
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "Sales",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 3,
+                "location": "Singapore",
+                "no_of_pax": 1,
+                "role_description": "Manage sales",
+                                    "role_id": 4,
+                                    "role_name": "Sales manager",
+                                    "skills_required": []
+            }
+        ]
+        )
+
+    def test_get_all_role_listing_empty(self):
+        response = self.client.get(
+            '/roles/get_all', content_type='application/json')
+
+        self.assertEqual(response.json["message"], 'There are no roles')
+
+    # Testing for the endpoint /roles/get_all_by_staff/<int:staff_id>
+    def test_get_all_role_listing_by_staff(self):
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        role3 = Role(role_name="Software Junior", role_description="Develop software", listed_by=1,
+                     no_of_pax=1, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role4 = Role(role_name="Sales manager", role_description="Manage sales", listed_by=3,
+                     no_of_pax=1, department="Sales", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.add(role3)
+        db.session.add(role4)
+        db.session.commit()
+
+        access_rights1 = Access_Rights(access_id=1, type="Admin")
+        access_rights2 = Access_Rights(access_id=2, type="User")
+        access_rights3 = Access_Rights(access_id=3, type="Manager")
+        db.session.add(access_rights1)
+        db.session.add(access_rights2)
+        db.session.add(access_rights3)
+        db.session.commit()
+
+        staff1 = Staff(staff_id=1, first_name="John", last_name="Tan",
+                       email="JohnTan@gmail.com", department="IT", current_role="Software Engineer",
+                       access_rights=1)
+        staff2 = Staff(staff_id=2, first_name="Tony", last_name="Lim",
+                       email="TonyLin@gmail.com", department="OT", current_role="Ops Engineer",
+                       access_rights=2)
+        db.session.add(staff1)
+        db.session.add(staff2)
+        db.session.commit()
+
+        role_applicant1 = Role_Applicant(
+            role_id=1, staff_id=1, comments="test", creation_timestamp=1695174041)
+        role_applicant2 = Role_Applicant(
+            role_id=1, staff_id=2, comments="test", creation_timestamp=1695174041)
+        db.session.add(role_applicant1)
+        db.session.add(role_applicant2)
+        db.session.commit()
+
+        response = self.client.get(
+            '/roles/get_all_by_staff/1', content_type='application/json')
+
+        self.assertEqual(response.json["data"]["roles"],
+                         [
+            {
+                "applied": True,
+                "count_applicant": 2,
+                "days_left": 43,
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                                    "role_id": 1,
+                                    "role_name": "Software Engineer",
+                                    "skills_required": [],
+            },
+            {
+                "applied": False,
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "OT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 2,
+                "location": "Singapore",
+                "no_of_pax": 2,
+                "role_description": "Maintain servers",
+                                    "role_id": 2,
+                                    "role_name": "Ops Engineer",
+                                    "skills_required": [],
+            },
+            {
+                "applied": False,
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 1,
+                "role_description": "Develop software",
+                                    "role_id": 3,
+                                    "role_name": "Software Junior",
+                                    "skills_required": [],
+            },
+            {
+                "applied": False,
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "Sales",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 3,
+                "location": "Singapore",
+                "no_of_pax": 1,
+                "role_description": "Manage sales",
+                                    "role_id": 4,
+                                    "role_name": "Sales manager",
+                                    "skills_required": [],
+            }
+        ]
+        )
+
+    def test_get_all_role_listing_by_staff_empty(self):
+        response = self.client.get(
+            '/roles/get_all_by_staff/1', content_type='application/json')
+
+        self.assertEqual(response.json["message"], 'There are no roles')
+
+    def test_get_role_by_id(self):
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        role3 = Role(role_name="Software Junior", role_description="Develop software", listed_by=1,
+                     no_of_pax=1, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role4 = Role(role_name="Sales manager", role_description="Manage sales", listed_by=3,
+                     no_of_pax=1, department="Sales", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.add(role3)
+        db.session.add(role4)
+        db.session.commit()
+
+        response = self.client.get(
+            '/roles/1', content_type='application/json')
+
+        self.assertEqual(response.json["data"], 
+            {
+                "count_applicant": 0,
+                "days_left": 43,
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                                    "role_id": 1,
+                                    "role_name": "Software Engineer",
+                                    "skills_required": []
+            },
+        )
+
+    def test_get_role_by_id_empty(self):
+        response = self.client.get(
+            '/roles/1', content_type='application/json')
+
+        self.assertEqual(response.json["message"], 'Role not found.')
+
+class TestCreateRole(TestApp):
+    # Testing for the endpoint /roles/create
+    def test_create_role(self):
+        requst_body = {
+            'params': {
+                'department': 'IT',
+                'expiry_timestamp': "Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)",
+                'role_name': 'Software Engineer',
+                'role_description': 'Develop software',
+                'listed_by': 1,
+                'no_of_pax': 3,
+                'location': 'Singapore',
+                'skills_required': []
+            }
+        }
+
+        response = self.client.post(
+            '/roles/create', data=json.dumps(requst_body), content_type='application/json')
+        
+        self.assertEqual(response.json['data'], {
+                'department': 'IT',
+                'expiry_date': 1702339200,
+                'listed_by': 1,
+                'location': 'Singapore',
+                'no_of_pax': 3,
+                'role_id': 1,
+                'role_name': 'Software Engineer',
+                'role_description': 'Develop software',
+            })
+
+    def test_create_role_error(self):
+        # Catches error will include incomplete request body
+        requst_body = {
+            'params': {
+                'department': 'IT',
+                'expiry_timestamp': "Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)",
+                'role_name': 'Software Engineer',
+                'role_description': 'Develop software',
+                'listed_by': 1,
+                'location': 'Singapore',
+                'skills_required': []
+            }
+        }
+        
+        with self.assertRaises(Exception):
+            self.client.post(
+            '/roles/create', data=json.dumps(requst_body), content_type='application/json')
 
 if __name__ == '__main__':
     unittest.main()
