@@ -14,12 +14,12 @@ export default {
             skillSelected: '',
             responseData: '',
             newskills: [],
-            roleName:'',
-            roleDescription:'',
-            staffNeededNumber:'',
-            closingDate:'',
-            roleLocation:'',
-            roleDepartment:'',
+            roleName: '',
+            roleDescription: '',
+            staffNeededNumber: '',
+            closingDate: '',
+            roleLocation: '',
+            roleDepartment: '',
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id')
         };
@@ -40,42 +40,42 @@ export default {
 
             return formattedDate;
         },
-        
-        createRole() {    
-            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length ) {
-                
+
+        createRole() {
+            if (!this.roleName.length || !this.roleDescription.length || !this.skills.length || !this.staffId.length || typeof this.staffNeededNumber != 'number' || !this.roleLocation.length || !this.closingDate.length) {
+
                 alert("Please fill in all fields, otherwise role listing cannot be created!");
             }
             else {
 
-            const params = {
-                        "role_name": this.roleName,
-                        "role_description": this.roleDescription,
-                        "skills_required": this.skills,
-                        "listed_by": this.staffId,
-                        "no_of_pax": this.staffNeededNumber,
-                        "department": this.roleDepartment,
-                        "location": this.roleLocation,
-                        "expiry_timestamp": this.convertDateFormat()
-                    }
+                const params = {
+                    "role_name": this.roleName,
+                    "role_description": this.roleDescription,
+                    "skills_required": this.skills,
+                    "listed_by": this.staffId,
+                    "no_of_pax": this.staffNeededNumber,
+                    "department": this.roleDepartment,
+                    "location": this.roleLocation,
+                    "expiry_timestamp": this.convertDateFormat()
+                }
 
-            axios
-                .post('http://127.0.0.1:5000/roles/create',{
+                axios
+                    .post('http://127.0.0.1:5000/roles/create', {
 
-                    "params": params
+                        "params": params
 
-                })
+                    })
 
-                .then(response => {
-                    console.log(response)
-                    alert("Role was created successfully!");
-                    this.$router.push('/')
-                })
+                    .then(response => {
+                        console.log(response)
+                        alert("Role was created successfully!");
+                        this.$router.push('/')
+                    })
 
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Role was not created due to an error on our server's part. Please try again!");
-                });
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Role was not created due to an error on our server's part. Please try again!");
+                    });
             }
 
         },
@@ -91,17 +91,15 @@ export default {
 
         removeSkill(index) {
             this.allskills.push(this.skills[index])
-            this.skills.splice(index,1)
-
+            this.skills.splice(index, 1)
         },
-
         getSkills() {
             axios
                 .get('http://127.0.0.1:5000/skills/get_all')
 
                 .then(response => {
                     this.responseData = response.data.data;
-                    this.newskills=this.responseData.skills;
+                    this.newskills = this.responseData.skills;
                     for (let i = 0; i < this.newskills.length; i++) {
                         this.allskills.push(this.newskills[i].skill_name);
                     }
@@ -114,15 +112,13 @@ export default {
 
     },
     mounted: function () {
-        this.skills=[];
-        this.allskills=[];
-        this.newskills=[];
+        this.skills = [];
+        this.allskills = [];
+        this.newskills = [];
         this.getSkills();
 
     },
     created() {
-        // console.log(this.staffId, this.accessId)
-
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
@@ -133,28 +129,27 @@ export default {
 <template>
     <div>
         <Nav />
-        <!-- <h1>HR_Role Creation</h1> -->
-
         <div class="container">
-
             <div class="title section">
                 <div class="row">
                     <div class="col-md-12">
                         <h1>Role Creation</h1>
-                        <br/>
+                        <br />
                     </div>
                 </div>
-            
+
                 <div class="row">
-                    <div class="col-md-9">
-                        <input type="text" class="role-name" placeholder="Role Name" v-model="roleName">
+
+                    <div class="mb-3 col-md-9">
+                        <input type="text" class="form-control role-name " placeholder="Role Name" v-model="roleName">
                     </div>
                     <div class="col-md-3 text-end">
-                        <button type="button" class="btn btn-success btn-apply custom-button" @click="createRole">CREATE</button>
+                        <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                            @click="createRole">CREATE</button>
                     </div>
                 </div>
             </div>
-            
+
             <div class="desc section">
                 <div class="row">
                     <div class="col-md-12">
@@ -164,69 +159,75 @@ export default {
                     </div>
                 </div>
             </div>
-    
+
             <div class="info section">
                 <div class="row">
-    
+
                     <div class="col-md-8" style="padding:0px">
                         <table class="table">
                             <div class="row">
                                 <div class="col-md-4">
                                     <h4>Role Location</h4>
                                 </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control custom-input" placeholder="Location" v-model="roleLocation"><br/>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control custom-input" placeholder="Location"
+                                        v-model="roleLocation"><br />
                                 </div>
                             </div>
-    
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <h4>Role Department</h4>
                                 </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control custom-input" placeholder="Department" v-model="roleDepartment"><br/>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control custom-input" placeholder="Department"
+                                        v-model="roleDepartment"><br />
                                 </div>
                             </div>
-    
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <h4>Number of Staff Needed</h4>
                                 </div>
-                                <div class="col-md-4">
-                                    <input type="number" class="form-control custom-input" placeholder="Number of Staff" v-model="staffNeededNumber"><br/>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control custom-input" placeholder="Number of Staff"
+                                        v-model="staffNeededNumber"><br />
                                 </div>
                             </div>
-    
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <h4>Application Closing Date</h4>
                                 </div>
-                                <div class="col-md-4">
-                                    <input type="date" class="form-control custom-input" placeholder="Closing Date" v-model="closingDate"><br/>
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control custom-input" placeholder="Closing Date"
+                                        v-model="closingDate"><br />
                                 </div>
                             </div>
-    
+
                         </table>
                     </div>
-    
+
                     <div class="col-md-4">
                         <h4>Skills Required</h4>
-                        <table>
-                        <tr>
-                            <th colspan="4" style="text-decoration:underline;">Skill</th>
-                        </tr>
-                        <tr v-if="!skills.length"><td><i>No skills selected yet.</i></td></tr>
-                        <tr v-else v-for="(skill, index) in skills" :key="index">
-                            <td>{{ index+1 }}</td>
-                            <td>{{ skill }}</td>
-                            <td><button @click="removeSkill(index)">Remove</button></td>
-                        </tr>
+                        <table class="table mt-4">
+                            <tr>
+                                <th scope="col" colspan="4" style="text-decoration:underline;">Skill(s)</th>
+                            </tr>
+                            <tr v-if="!skills.length">
+                                <td><em>No skills selected yet.</em></td>
+                            </tr>
+                            <tr v-else v-for="(skill, index) in skills" :key="index">
+                                <td>{{ skill }}</td>
+                                <td><button type="button" class="btn btn-secondary"
+                                        @click="removeSkill(index)">Remove</button></td>
+                            </tr>
                         </table>
-    
-                        <br><p>Add Skill</p>
-                        <select class="custom-dropdown" v-model="skillSelected" @change="addSkill()">
+
+                        <p style="font-weight: bold;">Add Skill</p>
+                        <select class="form-select form-select-md mb-3" v-model="skillSelected" @change="addSkill()">
                             <option value="" disabled selected>Find Skill by Name</option>
-                            <option v-for="(skill,index) in allskills" :key="index" :value="skill">
+                            <option v-for="(skill, index) in allskills" :key="index" :value="skill">
                                 {{ skill }}
                             </option>
                         </select>
@@ -234,7 +235,7 @@ export default {
                 </div>
             </div>
 
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -260,15 +261,23 @@ h4 {
 }
 
 .role-name {
-    border: none; 
+    /* border: none;
     border-radius: 12px;
     padding: 10px;
     font-size: 24px;
-    font-weight: bold;
+    font-weight: bold; */
+    /* width: 20%; */
+    max-width: inherit !important;
+
+}
+
+.input-group {
+    /* width: 60% !important; */
+
 }
 
 .role-desc {
-    border: none; 
+    border: none;
     border-radius: 12px;
     padding: 10px;
     font-size: 14px;
@@ -283,14 +292,13 @@ h4 {
 }
 
 .custom-input {
-    border: none; 
+    border: none;
 }
 
 .custom-dropdown {
     background-color: white;
-    border: none; 
+    border: none;
     border-radius: 8px;
     padding: 5px;
 }
-
 </style>
