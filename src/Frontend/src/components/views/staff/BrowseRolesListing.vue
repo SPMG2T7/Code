@@ -2,45 +2,45 @@
     <div>
         <Nav />
     </div>
-    
+
     <div>
 
         <!-- Search & Filter -->
 
-        <table class="center" style="margin-top:20px;margin-bottom:20px;margin-left:auto;margin-right:auto;">
-            <tr>
-                <td style="border-left:5px solid #EBEBEB;border-right:0px solid #EBEBEB;">
-                    <input type="text" v-model="searchBar" placeholder="Search" style="background-color:#E9C4DC;border-radius:10px;padding:2px 10px" v-on:keyup.enter="filterSkills()">
-                </td>
-                <td style="border-left:0px solid #EBEBEB;border-right:20px solid #EBEBEB;">
-                    <button @click="filterSkills()" style="border-radius: 10px">Search</button>
-                </td>
-                <td style="border-left:0px solid #EBEBEB;border-right:5px solid #EBEBEB;">
-                    <select v-model="skillSelected" @change="addFilter()" style="background-color:#E9C4DC;padding:5px 10px;border-radius:10px">
+        <div class="container container-style">
+            <div class="row">
+                <div class="col-md-4 text-left">
+                    <input type="text" class="form-control search-box" v-model="searchBar" placeholder="Search"
+                        v-on:keyup.enter="filterSkills">
+
+                </div>
+                <div class="col-md-4 text-left">
+                    <select v-model="skillSelected" @change="addFilter" class="form-select search-box">
                         <option value="" disabled selected>Find Skill by Name</option>
-                        <option v-for="(skill,index) in allskills" :key="index" :value="skill">
-                            {{ skill }}
-                        </option>
+                        <option v-for="(skill, index) in allskills" :key="index" :value="skill">{{ skill }}</option>
                     </select>
-                </td>
-            </tr>
-        </table>
+                </div>
 
-        <!-- Filtered Skills Display (if there are filtered skills) -->
-
-        <table v-if="filter_skills.length" style="margin:5px auto">
-            <tr>
-                <td v-for="(skill,index) in filter_skills" :key="index" :value="skill" style="padding:5px;background-color:#FDDEF2;border-left:5px solid #EBEBEB;border-right:5px solid #EBEBEB; border-radius:10px">
-                {{skill}} <button @click="removeFilter(index)" class="btn btn-sm btn-danger">x</button>
-            </td>
-            </tr>
-        </table>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" @click="filterSkills" style="border-radius: 10px">Search</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Listings Display -->
 
         <div class="container">
 
-        <!-- Roles Display -->
+            <!-- Filtered Skills Display (if there are filtered skills) -->
+
+            <div class="row ms-1" v-if="filter_skills.length">
+                <div class="col-md-3 skills-filter" v-for="(skill, index) in filter_skills" :key="index" :value="skill">
+                    <span>{{ skill }}</span>
+                    <button type="button" @click="removeFilter(index)" class="btn-close btn-sm btn-danger"></button>
+                </div>
+            </div>
+
+            <!-- Roles Display -->
 
             <!-- If there are roles, and no search or filter applied -->
 
@@ -73,21 +73,25 @@
 
                             <!-- Display Role listing details (left) -->
 
-                            <div class="col-9">
-                                <h3 v-if="access_rights == 2" ><router-link style="text-decoration: none; color:black" :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
-                                <h3 v-else ><router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">{{ role.role_name }} </router-link></h3>
-                
+                            <div class="col-8 col-md-6">
+                                <h3 v-if="access_rights == 2"><router-link style="text-decoration: none; color:black"
+                                        :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">{{
+                                            role.role_name }} </router-link></h3>
+                                <h3 v-else><router-link style="text-decoration: none; color:black"
+                                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">{{ role.role_name
+                                        }} </router-link></h3>
+
                                 <p>{{ role.no_of_pax }} staff needed</p>
-                                
+
                             </div>
 
 
                             <!-- Role Listing buttons -->
 
                             <!-- check whats the purpose of justify content center here  -->
-                            <div v-if="access_rights == 2" class="col-3 text-end justify-content-center">
-                                <button type="button" class="btn btn-apply custom-button apply-button" v-if="!role.applied" data-bs-toggle="modal"
-                                    :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
+                            <div v-if="access_rights == 2" class="col-4 text-end justify-content-center">
+                                <button type="button" class="btn btn-apply custom-button apply-button" v-if="!role.applied"
+                                    data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id">APPLY</button>
 
                                 <button type="button" class="btn btn-secondary btn-apply custom-button" v-else
                                     data-bs-toggle="modal" :data-bs-target="'#exampleModal-' + role.role_id"
@@ -96,10 +100,17 @@
                                 <p>Closing in {{ role.days_left }} days</p>
                             </div>
 
-                            <div v-else class="col-3 float-right vstack">
+                            <div v-else class="col-4 col-md-4 text-end">
 
-                                <button type="button" class="btn viewbutton custom-button buttonspacing"><router-link style="text-decoration: none; color:black" :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }"> View Applicants </router-link></button>
-                                <button type="button" class="btn btn-apply custom-button apply-button buttonspacing"><router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', query: { role_id: role.role_id } }"> Edit Role </router-link></button>
+                                <button type="button" class="btn viewbutton buttonspacing"><router-link
+                                        style="text-decoration: none; color:black"
+                                        :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }"> View
+                                        Applicants </router-link></button>
+                                <button type="button"
+                                    class="btn btn-apply custom-button apply-button buttonspacing"><router-link
+                                        style="text-decoration: none; color:black"
+                                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }"> Edit Role
+                                    </router-link></button>
                             </div>
 
 
@@ -124,13 +135,15 @@
                                         <form>
                                             <div class="mb-3">
                                                 <label for="message-text" class="col-form-label">Any Comments?</label>
-                                                <textarea class="form-control" :id="'message-text-' + role.role_id"></textarea>
+                                                <textarea class="form-control"
+                                                    :id="'message-text-' + role.role_id"></textarea>
                                             </div>
                                         </form>
                                     </div>
 
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
                                         <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
                                             application</button>
                                     </div>
@@ -139,19 +152,18 @@
                             </div>
                         </div>
                         <!-- END OF MODAL -->
-                        
+
                     </div>
-                
+
                 </li>
             </ul>
 
             <!-- If there are no roles -->
             <p v-else class="noroles">No roles available</p>
 
-    </div>
+        </div>
 
     </div>
-
 </template>
 
 <script>
@@ -168,32 +180,32 @@ export default {
         return {
             roles: [],
             isLoggedIn: false,
-            filter_skills:[],
-            allskills:[],
-            newskills:[],
-            skillSelected:'',
-            access_rights:'',
-            roleId:'',
+            filter_skills: [],
+            allskills: [],
+            newskills: [],
+            skillSelected: '',
+            access_rights: '',
+            roleId: '',
             applied: [],
             notApplied: [],
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
             searchBar: '',
-            search_query_values:[]
+            search_query_values: []
         };
     },
     // think of this as calling the function right when u load the page
     mounted() {
         this.fetchRoles();
-        this.allskills=[];
-        this.newskills=[];
-        this.filter_skills=[];
+        this.allskills = [];
+        this.newskills = [];
+        this.filter_skills = [];
         this.getSkills();
-        this.skillSelected='';
-        this.roleId='';
-        this.access_rights=sessionStorage.getItem('access_id');
-        this.searchBar='';
-        this.search_query_values=[];
+        this.skillSelected = '';
+        this.roleId = '';
+        this.access_rights = sessionStorage.getItem('access_id');
+        this.searchBar = '';
+        this.search_query_values = [];
     },
 
     methods: {
@@ -222,16 +234,16 @@ export default {
 
             // perform filtering of the results
             this.filterSkills();
-            
+
         },
 
-        removeFilter(index){
+        removeFilter(index) {
 
             // push the removed filtered skill into the allskills array
             this.allskills.push(this.filter_skills[index]);
 
             // remove the removed filtered skill from the filter_skills array
-            this.filter_skills.splice(index,1);
+            this.filter_skills.splice(index, 1);
 
             // perform filtering of the results
             this.filterSkills();
@@ -249,39 +261,39 @@ export default {
             };
 
             axios
-                .post('http://127.0.0.1:5000/search/',{
+                .post('http://127.0.0.1:5000/search/', {
                     "params": params
                 })
 
                 .then(response => {
 
-                    const roles=response.data.data;
+                    const roles = response.data.data;
                     console.log(roles)
-                    this.roles=roles;
+                    this.roles = roles;
                 })
 
                 .catch(error => {
                     console.error('Error:', error);
                 })
-            },
+        },
 
-    
+
         getSkills() {
-                axios
-                    .get('http://127.0.0.1:5000/skills/get_all')
+            axios
+                .get('http://127.0.0.1:5000/skills/get_all')
 
-                    .then(response => {
-                        this.responseData = response.data.data;
-                        this.newskills=this.responseData.skills;
-                        for (let i = 0; i < this.newskills.length; i++) {
-                            this.allskills.push(this.newskills[i].skill_name);
-                        }
-                    })
+                .then(response => {
+                    this.responseData = response.data.data;
+                    this.newskills = this.responseData.skills;
+                    for (let i = 0; i < this.newskills.length; i++) {
+                        this.allskills.push(this.newskills[i].skill_name);
+                    }
+                })
 
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            },
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
 
 
         // START TO APPLY ROLE FOR MODAL
@@ -376,6 +388,7 @@ h3 {
     /* Remove default margin */
 }
 
+/* 
 .custom-button {
     color: #000000;
     font-weight: bold;
@@ -383,8 +396,8 @@ h3 {
 
 .apply-button {
     background-color: #8BC100;
-    width:130px;
-}
+    width: 130px;
+} */
 
 .listing {
     width: 100%;
@@ -396,9 +409,9 @@ h3 {
 }
 
 .noroles {
-    margin:10px;
-    text-align:center;
-    font-weight:bold;
+    margin: 10px;
+    text-align: center;
+    font-weight: bold;
     font-size: 20px
 }
 
@@ -408,5 +421,22 @@ h3 {
 
 .viewbutton {
     background-color: #946383;
+    color: #000000;
+    font-weight: bold;
+}
+
+.search-box {
+    background-color: #E9C4DC;
+}
+
+.skills-filter {
+    background-color: #FDDEF2;
+    padding: 5px;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+
 }
 </style>
