@@ -75,6 +75,7 @@ export default {
                 .then(() => {
                     alert('You have successfully applied for the role!');
                     window.location.reload();
+                    // this.$router.push({ path: this.$route.path })
                 })
                 .catch((error) => {
                     if (error.response.status == 500) {
@@ -87,7 +88,7 @@ export default {
         // END TO APPLY ROLE FOR MODAL
     },
     mounted() {
-        this.roleID = this.$route.params.role_id;
+        this.roleID = this.$route.query.role_id;
         console.log(this.roleID);
         this.fetchRoles();
     },
