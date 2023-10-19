@@ -73,7 +73,7 @@ export default {
                     .then(response => {
                         console.log(response);
                         alert("Role was updated successfully!");
-                        window.location.reload();
+                        this.$router.go();
                     })
 
                     .catch(error => {
