@@ -41,11 +41,11 @@ export default {
         },
 
         redirectProfile() {
-            this.$router.push('/Profile')
+            this.$router.push('/')
         },
 
         redirectSettings() {
-            this.$router.push('/Settings')
+            this.$router.push('/')
         }
 
     },
@@ -73,24 +73,12 @@ export default {
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                <ul class="navbar-nav ms-left mb-2 mb-lg-0">
+            <div class="navbar-nav ms-left mb-2 mb-lg-0">
+            
+                <button class="btn btn-default listing" style="margin:0px 10px;" @click="redirectBrowse">Browse Role Listings</button>
+                <button v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="btn btn-default listing" @click="redirectCreate">+ Create New Role</button>
 
-                    <div class="nav-link p-0" data-bs-toggle="dropdown">
-                        <li class="nav-item profile-name">
-                            <button class="btn btn-default" style="margin:0px 10px; background: rgba(233, 196, 220, 0.3)">
-                                <span>Navigate To</span>
-                            </button>
-
-                        <div class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdownMenuButton">
-                            <span class="dropdown-item" @click="redirectBrowse()">Browse Role Listings</span>
-                            <span v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="dropdown-item" @click="redirectCreate()">+ Create Role Listing</span>
-                        </div>
-
-                    </li>
             </div>
-            </ul>
-
-
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item profile-name">
@@ -163,6 +151,10 @@ img {
 .profile-name {
     color: white;
     font-weight: bold;
+}
+
+.listing {
+    background: rgba(233, 196, 220, 0.3);
 }
 
 </style>
