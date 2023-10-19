@@ -61,10 +61,9 @@ export default {
     computed: {
         percentageMatchingSkills() {
             const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
-            const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
+            const percentage = ((matchingSkills.length / this.roleSkills.length) * 100).toFixed(2);
             return percentage;
         },
-
     },
     mounted: function () {
         this.roleId = this.$route.query.role_id;
@@ -126,8 +125,6 @@ export default {
                     </table>
                 </div>
             </div>
-
-            <router-link to="/">Browse All Roles</router-link>
             
         </div>
     </div>
