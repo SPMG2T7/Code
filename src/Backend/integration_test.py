@@ -639,21 +639,57 @@ class TestRole(TestApp):
 
     # Testing /roles/update
     def test_update_role(self):
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.commit()
+
         request_body = {
             'params': {
                 'department': 'IT',
-                'expiry_date': 1702339200,
+                'expiry_timestamp': 'Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)',
                 'listed_by': 1,
                 'location': 'Singapore',
                 'no_of_pax': 3,
                 'role_id': 1,
                 'role_name': 'Software Engineer',
                 'role_description': 'Develop software',
+                'skills_name': []
             }
         }
 
+        response = self.client.put(
+            '/roles/update', data=json.dumps(request_body), content_type='application/json')
+        
+        self.assertEqual(response.json['data'], {
+                        "department": "IT",
+                        "expiry_date": 1702339200,
+                        "listed_by": 1,
+                        "location": "Singapore",
+                        "no_of_pax": 3,
+                        "role_description": "Develop software",
+                        "role_id": 1,
+                        "role_name": "Software Engineer"
+                    }
+            )
+
     def test_update_role_error(self):
-        pass
+        request_body = {
+            'params': {
+                'department': 'IT',
+                'expiry_timestamp': 'Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)',
+                'listed_by': 1,
+                'location': 'Singapore',
+                'no_of_pax': 3,
+                'role_id': 1,
+                'role_name': 'Software Engineer',
+                'role_description': 'Develop software',
+                'skills_name': []
+            }
+        }
+        with self.assertRaises(Exception):
+            self.client.put(
+                '/roles/update', data=json.dumps(request_body), content_type='application/json')
 
 class TestGetRoleApplicant(TestApp):
     # Testing /role_application/get_all/<int:role_id>
