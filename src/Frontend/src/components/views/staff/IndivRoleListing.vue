@@ -122,10 +122,10 @@ export default {
                 </div>
                 <div class="col-2 d-flex align-items-center justify-content-end">
                     <button v-if="!roles.applied" type="button" class="btn btn-primary custom-button apply-button"
-                        data-bs-toggle="modal" data-bs-target="#exampleModal">Apply</button>
+                        data-bs-toggle="modal" data-bs-target="#applyModal">Apply</button>
 
                     <button v-if="roles.applied" type="button" class="btn btn-secondary btn-apply custom-button"
-                        data-bs-toggle="modal" data-bs-target="#exampleModal" disabled>APPLIED</button>
+                        data-bs-toggle="modal" data-bs-target="#applyModal" disabled>APPLIED</button>
                 </div>
             </div>
         </div>
@@ -155,12 +155,12 @@ export default {
         </table>
 
         <!-- START OF MODAL -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
 
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
+                        <h1 class="modal-title fs-5" id="applyModalLabel">New Application for {{
                             roles.role_name }}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
