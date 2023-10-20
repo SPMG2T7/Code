@@ -15,11 +15,11 @@
 
                 </div>
                 <div class="col-md-4 text-left">
-                    <button class="btn btn-primary" @click="filterSkills" style="border-radius: 10px">Search</button>
+                    <button class="btn btn-primary apply-button custom-button" @click="filterSkills" style="border-radius: 10px">Search</button>
                 </div>
 
                 <div class="col-md-4 text-end">
-                    
+
                     <select v-model="skillSelected" @change="addFilter" class="form-select search-box">
                         <option value="" disabled selected>Find Skill by Name</option>
                         <option v-for="(skill, index) in allskills" :key="index" :value="skill">{{ skill }}</option>
@@ -114,7 +114,7 @@
                                     <div class="modal-body">
                                         <form>
                                             <div class="mb-3">
-                                                <label for="message-text" class="col-form-label">Any Comments?</label>
+                                                <label for="message-text" class="col-form-label">Any Additional Remarks? (Optional)</label>
                                                 <textarea class="form-control"
                                                     :id="'message-text-' + role.role_id"></textarea>
                                             </div>
@@ -243,17 +243,17 @@ export default {
 
             if (this.search_query_values.length) {
 
-            axios
-                .post('http://127.0.0.1:5000/search/', {
-                    "params": params
-                })
-                .then(response => {
-                    const roles = response.data.data;
-                    this.roles = roles;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                })
+                axios
+                    .post('http://127.0.0.1:5000/search/', {
+                        "params": params
+                    })
+                    .then(response => {
+                        const roles = response.data.data;
+                        this.roles = roles;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    })
 
             }
 
@@ -282,30 +282,27 @@ export default {
         applyRole(roleID) {
             const commentsTextBox = document.getElementById('message-text-' + roleID).value;
 
-            if (commentsTextBox.length == 0) {
-                alert("Please enter a comment")
-            }
-            else {
-                axios
-                    .post('http://127.0.0.1:5000/roles/apply', {
-                        params: {
-                            role_id: roleID,
-                            staff_id: this.staffId,
-                            comments: commentsTextBox,
-                        },
-                    })
-                    .then(() => {
-                        alert('You have successfully applied for the role!');
-                        window.location.reload();
-                    })
-                    .catch((error) => {
-                        if (error.response.status == 500) {
-                            alert(error.message);
-                        } else {
-                            alert('An error occured');
-                        }
-                    });
-            }
+
+            axios
+                .post('http://127.0.0.1:5000/roles/apply', {
+                    params: {
+                        role_id: roleID,
+                        staff_id: this.staffId,
+                        comments: commentsTextBox,
+                    },
+                })
+                .then(() => {
+                    alert('You have successfully applied for the role!');
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    if (error.response.status == 500) {
+                        alert(error.message);
+                    } else {
+                        alert('An error occured');
+                    }
+                });
+
         },
         // END TO APPLY ROLE FOR MODAL
 
