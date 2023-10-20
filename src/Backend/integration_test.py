@@ -2,7 +2,7 @@ import flask_testing
 import unittest
 import json
 from app import app, db, Access_Rights, Staff, Role, Skill, Role_Skill, Staff_Skill, Role_Applicant
-
+from unittest.mock import patch
 
 class TestApp(flask_testing.TestCase):
     app.config['TESTING'] = True
@@ -185,7 +185,7 @@ class TestGetRoles(TestApp):
                          [
             {
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -198,7 +198,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "OT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 2,
@@ -211,7 +211,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -224,7 +224,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "Sales",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 3,
@@ -294,7 +294,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": True,
                 "count_applicant": 2,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -308,7 +308,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "OT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 2,
@@ -322,7 +322,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -336,7 +336,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "Sales",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 3,
@@ -377,7 +377,7 @@ class TestGetRoles(TestApp):
         self.assertEqual(response.json["data"], 
             {
                 "count_applicant": 0,
-                "days_left": 42,
+                "days_left": 41,
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -409,7 +409,7 @@ class TestCreateRole(TestApp):
                 'no_of_pax': 3,
                 'location': 'Singapore',
                 'skills_required': []
-            }
+            },
         }
 
         response = self.client.post(
@@ -512,7 +512,8 @@ class TestGetSkills(TestApp):
         self.assertEqual(response.json['message'], "Skill not found." )
 
 class TestSearch(TestApp):
-    # Testing for the endpoint /search
+    # Testing for the endpoint /search      
+
     def test_search_single_word(self):
         request_body = {
             'params': {
@@ -525,7 +526,7 @@ class TestSearch(TestApp):
         
         self.assertEqual(response.json["data"], [ {
                         "count_applicant": 0,
-                        "days_left": 53,
+                        "days_left": 52,
                         "department": "IT",
                         "expiry_date": "12-Dec-2023",
                         "listed_by": 1,
@@ -550,7 +551,117 @@ class TestSearch(TestApp):
         
         self.assertEqual(response.json['message'], "There are no results matching your query" )
 
-    
+    def test_search_multi_word(self):
+        request_body = {
+            'params': {
+                'search_query': ['Software', 'Engineer']
+            }
+        }
+
+        response = self.client.post(
+            '/search/', data=json.dumps(request_body), content_type='application/json')
+
+        self.assertEqual(response.json["data"], [ {
+                        "count_applicant": 0,
+                        "days_left": 52,
+                        "department": "IT",
+                        "expiry_date": "12-Dec-2023",
+                        "listed_by": 1,
+                        "location": "Singapore",
+                        "no_of_pax": 3,
+                        "role_description": "Develop software",
+                        "role_id": 1,
+                        "role_name": "Software Engineer",
+                        "skills_required": [
+                        ]
+                    }
+            ])
+
+    def test_search_multi_word_no_result(self):
+        request_body = {
+            'params': {
+                'search_query': ['nowords1', 'nowords2']
+            }
+        }
+
+        response = self.client.post(
+            '/search/', data=json.dumps(request_body), content_type='application/json')
+        
+        self.assertEqual(len(response.json['data']), 0 )
+
+class TestGetApplication(TestApp):
+    # Testing /application/<int:role_id>_<int:staff_id>
+    def testing_get_application(self):
+        pass
+
+    def testing_get_application_empty_application(self):
+        pass
+
+    def testing_get_application_no_role_found(self):
+        pass
+
+    def testing_get_application_no_staff_found(self):
+        pass
+
+class TestRole(TestApp):
+    # Testing /roles/apply
+    @patch('time.time', return_value=1701388795)
+    def test_apply_role(self, mock_time):
+        request_body = {
+            'params': {
+                'role_id': 1,
+                'staff_id': 1,
+                'comments': 'test'
+            }
+        }
+
+        response = self.client.post(
+            '/roles/apply', data=json.dumps(request_body), content_type='application/json')
+        
+        self.assertEqual(response.json['data'], {
+            "comments": "test",
+            "creation_timestamp": 1701388795,
+            "role_id": 1,
+            "staff_id": 1
+        })
+
+    def test_apply_role_error(self):
+        request_body = {
+            'params': {
+                'role_id': 1,
+                'comments': 'test'
+            }
+        }
+
+        with self.assertRaises(Exception):
+            self.client.post(
+            '/roles/apply', data=json.dumps(request_body), content_type='application/json')
+
+    # Testing /roles/update
+    def test_update_role(self):
+        request_body = {
+            'params': {
+                'department': 'IT',
+                'expiry_date': 1702339200,
+                'listed_by': 1,
+                'location': 'Singapore',
+                'no_of_pax': 3,
+                'role_id': 1,
+                'role_name': 'Software Engineer',
+                'role_description': 'Develop software',
+            }
+        }
+
+    def test_update_role_error(self):
+        pass
+
+class TestGetRoleApplicant(TestApp):
+    # Testing /role_application/get_all/<int:role_id>
+    def test_get_all_role_applicant(self):
+        pass
+
+    def test_get_all_role_applicant_empty(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

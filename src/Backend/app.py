@@ -836,6 +836,20 @@ def update_role():
 
             # Commit the session to update the updated values to the database
             db.session.commit()
+            print(convert_unix_to_custom_format(convert_to_unix_timestamp(expiry_timestamp)))
+            print("updating role", role_id)
+            client.index(SEARCH_INDEX).update_documents(
+                [{
+                    'role_id': role_id,
+                    'role_name': role_name,
+                    'role_description': role_description,
+                    'no_of_pax': no_of_pax,
+                    'department': department,
+                    'location': location,
+                    "expiry_date": convert_unix_to_custom_format(convert_to_unix_timestamp(expiry_timestamp))
+                }],
+                primary_key="role_id",
+            )
         
     except Exception as e:
         error_message = str(e)
