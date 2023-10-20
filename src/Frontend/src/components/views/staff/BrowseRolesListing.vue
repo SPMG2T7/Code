@@ -15,7 +15,8 @@
 
                 </div>
                 <div class="col-md-4 text-left">
-                    <button class="btn btn-primary apply-button custom-button" @click="filterSkills" style="border-radius: 10px">Search</button>
+                    <button class="btn btn-primary apply-button custom-button" @click="filterSkills"
+                        style="border-radius: 10px">Search</button>
                 </div>
 
                 <div class="col-md-4 text-end">
@@ -75,8 +76,9 @@
                                 <button type="button" class="btn btn-secondary btn-apply custom-button" v-else
                                     data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id"
                                     disabled>APPLIED</button>
+                                <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
 
-                                <p :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
+                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
                             </div>
 
                             <div v-else class="col-4 col-md-4 text-end justify-content-center">
@@ -91,6 +93,8 @@
                                         :to="{ name: 'Role Editing', query: { role_id: role.role_id } }"> Edit Role
                                     </router-link></button>
                                 <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
+                                <p v-else-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today
+                                </p>
                                 <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
                                 </p>
                             </div>
@@ -114,7 +118,8 @@
                                     <div class="modal-body">
                                         <form>
                                             <div class="mb-3">
-                                                <label for="message-text" class="col-form-label">Any Additional Remarks? (Optional)</label>
+                                                <label for="message-text" class="col-form-label">Any Additional Remarks?
+                                                    (Optional)</label>
                                                 <textarea class="form-control"
                                                     :id="'message-text-' + role.role_id"></textarea>
                                             </div>
@@ -414,5 +419,4 @@ h3 {
 .viewApplicant-btn {
     text-decoration: none;
     color: black
-}
-</style>
+}</style>
