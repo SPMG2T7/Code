@@ -35,11 +35,10 @@ export default {
                         this.staffSkills = this.responseData_staff[i].staff_skills
                         this.department = this.responseData_staff[i].department
                         const row = [this.staffName, this.staffSkills, this.department, this.responseData_staff[i].staff_id]
-                        this.staff_list.push(row)
+                        this.staff_list.push(row);
                     }
 
                     this.roleName = this.responseData_role.role_name
-
                     // console.log(this.responseData_role)
                     // console.log(this.staff_list)
                 })
@@ -49,7 +48,6 @@ export default {
         },
         
         redirectToIndivApplicant(roleId, staffId) {
-            
             this.$router.push({ path: '/IndivApplicant', query: { staff_id: staffId, role_id: roleId } })
 
         },
@@ -57,13 +55,15 @@ export default {
         redirectToEdit(roleId) {
             this.$router.push({ path: '/RoleEditing', query: { role_id: roleId } })
         },
+
+        percentageMatchingSkills(staff_skills_list) {
+            const matchingSkills = this.roleSkills.filter(skill => staff_skills_list.includes(skill));
+            const percentage = (matchingSkills.length / this.roleSkills.length) * 100;
+            return Math.round(percentage)
+        },
     },
     computed: {
-        percentageMatchingSkills() {
-            const matchingSkills = this.roleSkills.filter(skill => this.staffSkills.includes(skill));
-            const percentage = ((matchingSkills.length / this.roleSkills.length) * 100).toFixed(2);
-            return percentage;
-        },
+        
     },
     mounted: function () {
         this.roleId = this.$route.query.role_id;
@@ -94,7 +94,7 @@ export default {
                         <h1>{{ roleName }}</h1>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button @click="redirectToEdit(this.roleId)" type="button" class="btn btn-success btn-apply custom-button">EDIT ROLE</button>
+                        <button @click="redirectToEdit(this.roleId)" type="button" class="btn apply-button custom-button">EDIT ROLE</button>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@ export default {
                         <tr v-for="(staff, indx) in this.staff_list" :value=staff[1] :key=staff[0]>
                             <td>{{ indx+1 }}</td>
                             <td>{{ staff[0] }}</td>
-                            <td>{{ percentageMatchingSkills }}% </td>
+                            <td>{{ percentageMatchingSkills(staff[1]) }}% </td>
                             <td>{{ staff[2] }}</td>
                             <td><a class="btn" @click="redirectToIndivApplicant(this.roleId,staff[3])" role="button">
                                 <i class="fa-solid fa-caret-right"></i>
