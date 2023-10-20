@@ -15,14 +15,15 @@
 
                 </div>
                 <div class="col-md-4 text-left">
+                    <button class="btn btn-primary" @click="filterSkills" style="border-radius: 10px">Search</button>
+                </div>
+
+                <div class="col-md-4 text-end">
+                    
                     <select v-model="skillSelected" @change="addFilter" class="form-select search-box">
                         <option value="" disabled selected>Find Skill by Name</option>
                         <option v-for="(skill, index) in allskills" :key="index" :value="skill">{{ skill }}</option>
                     </select>
-                </div>
-
-                <div class="col-md-4 text-end">
-                    <button class="btn btn-primary" @click="filterSkills" style="border-radius: 10px">Search</button>
                 </div>
             </div>
         </div>
@@ -42,31 +43,9 @@
 
             <!-- Roles Display -->
 
-            <!-- If there are roles, and no search or filter applied -->
-
             <ul class="role-list" v-if="roles.length">
 
                 <li v-for="role in sortedRoles" :key="role.role_id">
-
-                    <!-- PLS IGNORE THIS AND DONT DELETE!!! trying to fix an issue w the button display...
-                        <div>
-
-                        <table style="width:100%;border:1px solid black">
-                            <tr style="width:100%">
-                                <td class="ms-0 me-2"> 
-                                    <h3>{{ role.role_name }}</h3>
-                                    <p>{{ role.no_of_pax }} staff needed</p>
-                                </td>
-                                <td class="ms-2 me-0 my-2" style="float:right">
-                                    <div v-if="access_rights == 2">
-                                        <a href=""><button>View Applicants</button></a>
-                                        <a href="/RoleEditing"><button @click="setRoleId(role.role_id)">Edit Role</button></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                    </div> -->
 
                     <div class="container-fluid listing">
                         <div class="row justify-content-between" style="margin: 20px 0px">
@@ -262,6 +241,8 @@ export default {
                 "search_query": this.search_query_values
             };
 
+            if (this.search_query_values.length) {
+
             axios
                 .post('http://127.0.0.1:5000/search/', {
                     "params": params
@@ -273,6 +254,12 @@ export default {
                 .catch(error => {
                     console.error('Error:', error);
                 })
+
+            }
+
+            else {
+                this.fetchRoles();
+            }
         },
 
         getSkills() {
