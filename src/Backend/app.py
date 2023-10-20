@@ -34,7 +34,7 @@ CORS(app)
 
 def days_left_from_unix(unix_timestamp):
     current_time = int(time.time())
-    seconds_left = unix_timestamp - current_time
+    seconds_left = (unix_timestamp + 86400) - current_time
     days_left = seconds_left // (60 * 60 * 24)
     return days_left
 
