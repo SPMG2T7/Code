@@ -836,8 +836,6 @@ def update_role():
 
             # Commit the session to update the updated values to the database
             db.session.commit()
-            print(convert_unix_to_custom_format(convert_to_unix_timestamp(expiry_timestamp)))
-            print("updating role", role_id)
             client.index(SEARCH_INDEX).update_documents(
                 [{
                     'role_id': role_id,
