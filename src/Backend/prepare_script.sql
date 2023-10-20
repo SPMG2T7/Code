@@ -693,7 +693,8 @@ The Engineering and Maintenance Principal/Engineer carries the responsibility of
 INSERT INTO role VALUES (21,"Solutioning Director","The Solutioning Director defines and articulates the organisation's strategy for securing technical wins with prospective clients. He/She focuses on developing key growth pre-sales strategies, tactics and action plans required to achieve revenue and/or sales targets. He advises the team on developing prototypes to ensure feasibility of solutions, and oversees the delivery of in-depth presentations and product demonstrations to clients. He solves complex problems and evaluates clients needs with different perspectives. He works in a fast-paced and dynamic environment, and travels frequently to clients' premises for technical sales pitches and meetings. He is familiar with client relationship management and sales tools. He possesses deep product and technical knowledge, and is knowledgeable of the trends, developments and challenges of the industry domain. The Pre-Sales Director is target-driven and client centric, and has the ability to foster collaboration between stakeholders. He has a deep understanding of key business industries and knowledge of products and services in the market. He is strongly committed to developing talent and inspires his team members to pursue a common vision.",1,3,"IT","Indonesia",1701388800);
 INSERT INTO role VALUES (22,"Support Engineer","The Support Engineer undertakes complex projects related to system provisioning, installations, configurations as well as monitoring and maintenance of systems. He/She applies highly developed specialist knowledge and skills in systems administration and works toward continuous optimisation of system performance. He implements system improvements and instructs other IT staff in the resolution of most complex issues. He is required to be on standby with on-call availability with varied shifts including nights, weekends and holidays to resolve systems related incidents. He works in a team setting and is proficient in Infrastructure systems and Network related tools and techniques required by the organisation. He is also familiar with the relevant platforms on which the database is deployed on. The Support Team is able to quickly and effectively solve issues as they arise. He is able to methodically identify the cause of the issue, evaluate it and develop a solution in collaboration with the team. He is able to communicate effectively and displays high service level standards.",1,3,"IT","Malaysia",1701388800);
 
-
+-- Dummy data for role test
+INSERT INTO role VALUES (23, 'Inactive Role', 'This description is for testing of case 113', 1,3,"IT","Singapore",1640995200);
 
 -- Insert dummy data for skill table
 
@@ -3696,6 +3697,8 @@ INSERT INTO role_skill VALUES (22,62);
 INSERT INTO role_skill VALUES (22,64);
 INSERT INTO role_skill VALUES (22,72);
 INSERT INTO role_skill VALUES (22,74);
+INSERT INTO role_skill VALUES (23,1);
+INSERT INTO role_skill VALUES (23,21);
 
 
 -- Insert dummy data for role_applicant table
