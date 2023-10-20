@@ -846,7 +846,8 @@ def update_role():
                     'no_of_pax': no_of_pax,
                     'department': department,
                     'location': location,
-                    "expiry_date": convert_unix_to_custom_format(convert_to_unix_timestamp(expiry_timestamp))
+                    "expiry_date": convert_unix_to_custom_format(convert_to_unix_timestamp(expiry_timestamp)),
+                    "days_left": days_left_from_unix(convert_to_unix_timestamp(expiry_timestamp))
                 }],
                 primary_key="role_id",
             )
