@@ -1,7 +1,7 @@
 import flask_testing
 import unittest
 import json
-from app import app, db, Access_Rights, Staff, Role, Skill, Role_Skill, Staff_Skill, Role_Applicant
+from app import app, db, Access_Rights, Staff, Role, Skill, Role_Skill, Staff_Skill, Role_Applicant, days_left_from_unix
 from unittest.mock import patch
 
 class TestApp(flask_testing.TestCase):
@@ -185,7 +185,7 @@ class TestGetRoles(TestApp):
                          [
             {
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -198,7 +198,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "OT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 2,
@@ -211,7 +211,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -224,7 +224,7 @@ class TestGetRoles(TestApp):
             },
             {
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "Sales",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 3,
@@ -294,7 +294,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": True,
                 "count_applicant": 2,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -308,7 +308,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "OT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 2,
@@ -322,7 +322,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -336,7 +336,7 @@ class TestGetRoles(TestApp):
             {
                 "applied": False,
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "Sales",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 3,
@@ -377,7 +377,7 @@ class TestGetRoles(TestApp):
         self.assertEqual(response.json["data"], 
             {
                 "count_applicant": 0,
-                "days_left": 41,
+                "days_left": days_left_from_unix(1701388800),
                 "department": "IT",
                 "expiry_date": "01-Dec-2023",
                 "listed_by": 1,
@@ -402,7 +402,7 @@ class TestCreateRole(TestApp):
         requst_body = {
             'params': {
                 'department': 'IT',
-                'expiry_timestamp': "Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)",
+                'expiry_timestamp': "Mon Dec 01 2023 00:00:00 GMT+0000 (UTC)",
                 'role_name': 'Software Engineer',
                 'role_description': 'Develop software',
                 'listed_by': 1,
@@ -417,7 +417,7 @@ class TestCreateRole(TestApp):
         
         self.assertEqual(response.json['data'], {
                 'department': 'IT',
-                'expiry_date': 1702339200,
+                'expiry_date': 1701388800,
                 'listed_by': 1,
                 'location': 'Singapore',
                 'no_of_pax': 3,
@@ -526,9 +526,9 @@ class TestSearch(TestApp):
         
         self.assertEqual(response.json["data"], [ {
                         "count_applicant": 0,
-                        "days_left": 52,
+                        "days_left": days_left_from_unix(1701388800),
                         "department": "IT",
-                        "expiry_date": "12-Dec-2023",
+                        "expiry_date": "01-Dec-2023",
                         "listed_by": 1,
                         "location": "Singapore",
                         "no_of_pax": 3,
@@ -563,9 +563,9 @@ class TestSearch(TestApp):
 
         self.assertEqual(response.json["data"], [ {
                         "count_applicant": 0,
-                        "days_left": 52,
+                        "days_left": days_left_from_unix(1701388800),
                         "department": "IT",
-                        "expiry_date": "12-Dec-2023",
+                        "expiry_date": "01-Dec-2023",
                         "listed_by": 1,
                         "location": "Singapore",
                         "no_of_pax": 3,
@@ -592,16 +592,136 @@ class TestSearch(TestApp):
 class TestGetApplication(TestApp):
     # Testing /application/<int:role_id>_<int:staff_id>
     def testing_get_application(self):
-        pass
+        staff1 = Staff(staff_id=1, first_name="John", last_name="Tan",
+                       email="JohnTan@gmail.com", department="IT", current_role="Software Engineer",
+                       access_rights=1)
+        staff2 = Staff(staff_id=2, first_name="Tony", last_name="Lim",
+                       email="TonyLin@gmail.com", department="OT", current_role="Ops Engineer",
+                       access_rights=2)
+        db.session.add(staff1)
+        db.session.add(staff2)
+        db.session.commit()
+
+        role_applicant1 = Role_Applicant(
+            role_id=1, staff_id=1, comments="test", creation_timestamp=1695174041)
+        role_applicant2 = Role_Applicant(
+            role_id=1, staff_id=2, comments="test", creation_timestamp=1695174041)
+        db.session.add(role_applicant1)
+        db.session.add(role_applicant2)
+        db.session.commit()
+
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
+        response = self.client.get(
+            '/application/1_1', content_type='application/json')
+        
+        self.assertEqual(response.json['data'], {
+            'application_data': {
+                'comments': 'test',
+                'creation_timestamp': 1695174041,
+            },
+            'role_data': {
+                "count_applicant": 2,
+                "days_left": days_left_from_unix(1701388800),
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                "role_id": 1,
+                "role_name": "Software Engineer",
+                "skills_required": [],
+            },
+            'staff_data': {
+                "access_rights": 1,
+                "current_role": "Software Engineer",
+                "department": "IT",
+                "email": "JohnTan@gmail.com",
+                "first_name": "John",
+                "last_name": "Tan",
+                "staff_id": 1,
+                "staff_skills": [
+
+                ]
+            },
+        })
 
     def testing_get_application_empty_application(self):
-        pass
+        staff1 = Staff(staff_id=1, first_name="John", last_name="Tan",
+                       email="JohnTan@gmail.com", department="IT", current_role="Software Engineer",
+                       access_rights=1)
+        staff2 = Staff(staff_id=2, first_name="Tony", last_name="Lim",
+                       email="TonyLin@gmail.com", department="OT", current_role="Ops Engineer",
+                       access_rights=2)
+        db.session.add(staff1)
+        db.session.add(staff2)
+        db.session.commit()
+
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
+        response = self.client.get(
+            '/application/1_1', content_type='application/json')
+        
+        self.assertEqual(response.json['message'], 'Application not found.' )
 
     def testing_get_application_no_role_found(self):
-        pass
+        staff1 = Staff(staff_id=1, first_name="John", last_name="Tan",
+                       email="JohnTan@gmail.com", department="IT", current_role="Software Engineer",
+                       access_rights=1)
+        staff2 = Staff(staff_id=2, first_name="Tony", last_name="Lim",
+                       email="TonyLin@gmail.com", department="OT", current_role="Ops Engineer",
+                       access_rights=2)
+        db.session.add(staff1)
+        db.session.add(staff2)
+        db.session.commit()
+
+        role_applicant1 = Role_Applicant(
+            role_id=1, staff_id=1, comments="test", creation_timestamp=1695174041)
+        role_applicant2 = Role_Applicant(
+            role_id=1, staff_id=2, comments="test", creation_timestamp=1695174041)
+        db.session.add(role_applicant1)
+        db.session.add(role_applicant2)
+        db.session.commit()
+
+        response = self.client.get(
+            '/application/1_1', content_type='application/json')
+        
+        self.assertEqual(response.json['message'], 'Role not found.' )
 
     def testing_get_application_no_staff_found(self):
-        pass
+        role_applicant1 = Role_Applicant(
+            role_id=1, staff_id=1, comments="test", creation_timestamp=1695174041)
+        role_applicant2 = Role_Applicant(
+            role_id=1, staff_id=2, comments="test", creation_timestamp=1695174041)
+        db.session.add(role_applicant1)
+        db.session.add(role_applicant2)
+        db.session.commit()
+
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
+        response = self.client.get(
+            '/application/1_1', content_type='application/json')
+
+        self.assertEqual(response.json['message'], 'Staff not found.' )
 
 class TestRole(TestApp):
     # Testing /roles/apply
@@ -647,7 +767,7 @@ class TestRole(TestApp):
         request_body = {
             'params': {
                 'department': 'IT',
-                'expiry_timestamp': 'Mon Dec 12 2023 00:00:00 GMT+0000 (UTC)',
+                'expiry_timestamp': 'Mon Dec 01 2023 00:00:00 GMT+0000 (UTC)',
                 'listed_by': 1,
                 'location': 'Singapore',
                 'no_of_pax': 3,
@@ -663,7 +783,7 @@ class TestRole(TestApp):
         
         self.assertEqual(response.json['data'], {
                         "department": "IT",
-                        "expiry_date": 1702339200,
+                        "expiry_date": 1701388800,
                         "listed_by": 1,
                         "location": "Singapore",
                         "no_of_pax": 3,
@@ -700,40 +820,43 @@ class TestGetRoleApplicant(TestApp):
         staff2 = Staff(staff_id=2, first_name="Tony", last_name="Lim",
                        email="TonyLin@gmail.com", department="OT", current_role="Ops Engineer",
                        access_rights=2)
-
         db.session.add(staff1)
         db.session.add(staff2)
         db.session.commit()
 
-        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
-                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
-        db.session.add(role1)
-        db.session.commit()
-
         role_applicant1 = Role_Applicant(
             role_id=1, staff_id=1, comments="test", creation_timestamp=1695174041)
-        role_applicant2 = Role_Applicant(role_id=1, staff_id=2, comments="test",creation_timestamp=1695174041)
-        
+        role_applicant2 = Role_Applicant(
+            role_id=1, staff_id=2, comments="test", creation_timestamp=1695174041)
         db.session.add(role_applicant1)
         db.session.add(role_applicant2)
         db.session.commit()
-        
+
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+
         response = self.client.get(
             '/role_application/get_all/1', content_type='application/json')
+
         self.assertEqual(response.json["data"], {
             'role_data': {
-                    "count_applicant": 2,
-                    "days_left": 41,
-                    "department": "IT",
-                    "expiry_date": "01-Dec-2023",
-                    "listed_by": 1,
-                    "location": "Singapore",
-                    "no_of_pax": 3,
-                    "role_description": "Develop software",
-                    "role_id": 1,
-                    "role_name": "Software Engineer",
-                    "skills_required": []
-                },
+                "count_applicant": 2,
+                "days_left": days_left_from_unix(1701388800),
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                "role_id": 1,
+                "role_name": "Software Engineer",
+                "skills_required": [],
+            },
             'staff_data': [
                 {
                     "access_rights": 1,
@@ -744,6 +867,7 @@ class TestGetRoleApplicant(TestApp):
                     "last_name": "Tan",
                     "staff_id": 1,
                     "staff_skills": [
+
                     ]
                 },
                 {
@@ -755,16 +879,40 @@ class TestGetRoleApplicant(TestApp):
                     "last_name": "Lim",
                     "staff_id": 2,
                     "staff_skills": [
+
                     ]
-                }
-            ],
+                },
+            ]
         })
 
 
     def test_get_all_role_applicant_empty(self):
-        with self.assertRaises(Exception):
-            self.client.get(
-                '/role_application/get_all/1', content_type='application/json')
+        role1 = Role(role_name="Software Engineer", role_description="Develop software", listed_by=1,
+                     no_of_pax=3, department="IT", location="Singapore", expiry_timestamp=1701388800)
+        role2 = Role(role_name="Ops Engineer", role_description="Maintain servers", listed_by=2,
+                     no_of_pax=2, department="OT", location="Singapore", expiry_timestamp=1701388800)
+        db.session.add(role1)
+        db.session.add(role2)
+        db.session.commit()
+        response = self.client.get(
+            '/role_application/get_all/1', content_type='application/json')
+
+        self.assertEqual(response.json["data"], {
+            'role_data': {
+                "count_applicant": 0,
+                "days_left": days_left_from_unix(1701388800),
+                "department": "IT",
+                "expiry_date": "01-Dec-2023",
+                "listed_by": 1,
+                "location": "Singapore",
+                "no_of_pax": 3,
+                "role_description": "Develop software",
+                "role_id": 1,
+                "role_name": "Software Engineer",
+                "skills_required": [],
+            },
+            'staff_data': []
+        })
 
 if __name__ == '__main__':
     unittest.main()
