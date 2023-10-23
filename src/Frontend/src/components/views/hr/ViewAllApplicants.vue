@@ -6,14 +6,14 @@ export default {
     name: "App",
     components: {
         Nav
-    }, 
+    },
     data() {
         return {
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
             roleId: null,
             responseData_staff: null,
-            responseData_role: null, 
+            responseData_role: null,
             roleName: "",
             staff_list: [],
         }
@@ -29,8 +29,8 @@ export default {
                     this.responseData_role = response.data.data.role_data;
                     this.responseData_staff = response.data.data.staff_data;
                     this.roleSkills = this.responseData_role.skills_required
-                    
-                    for (let i=0; i < this.responseData_staff.length; i++){
+
+                    for (let i = 0; i < this.responseData_staff.length; i++) {
                         this.staffName = this.responseData_staff[i].first_name + " " + this.responseData_staff[i].last_name;
                         this.staffSkills = this.responseData_staff[i].staff_skills
                         this.department = this.responseData_staff[i].department
@@ -40,13 +40,13 @@ export default {
 
                     this.roleName = this.responseData_role.role_name
                     // console.log(this.responseData_role)
-                    // console.log(this.staff_list)
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         },
-        
+
         redirectToIndivApplicant(roleId, staffId) {
             this.$router.push({ path: '/IndivApplicant', query: { staff_id: staffId, role_id: roleId } })
 
@@ -63,7 +63,7 @@ export default {
         },
     },
     computed: {
-        
+
     },
     mounted: function () {
         this.roleId = this.$route.query.role_id;
@@ -87,20 +87,21 @@ export default {
         <Nav />
 
         <div class="container">
-            
+
             <div class="title section">
                 <div class="row">
                     <div class="col-md-9">
                         <h1>{{ roleName }}</h1>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button @click="redirectToEdit(this.roleId)" type="button" class="btn apply-button custom-button">EDIT ROLE</button>
+                        <button @click="redirectToEdit(this.roleId)" type="button"
+                            class="btn apply-button custom-button">EDIT ROLE</button>
                     </div>
                 </div>
             </div>
-                    
+
             <div class="applicants section">
-                <div class="row">
+                <div v-if="this.staff_list.length != 0" class="row">
                     <h4>Applicant Overview</h4>
                     <table class="table-responsive">
                         <thead>
@@ -114,18 +115,19 @@ export default {
                         </thead>
 
                         <tr v-for="(staff, indx) in this.staff_list" :value=staff[1] :key=staff[0]>
-                            <td>{{ indx+1 }}</td>
+                            <td>{{ indx + 1 }}</td>
                             <td>{{ staff[0] }}</td>
                             <td>{{ percentageMatchingSkills(staff[1]) }}% </td>
                             <td>{{ staff[2] }}</td>
-                            <td><a class="btn" @click="redirectToIndivApplicant(this.roleId,staff[3])" role="button">
-                                <i class="fa-solid fa-caret-right"></i>
-                            </a></td>
+                            <td><a class="btn" @click="redirectToIndivApplicant(this.roleId, staff[3])" role="button">
+                                    <i class="fa-solid fa-caret-right"></i>
+                                </a></td>
                         </tr>
                     </table>
                 </div>
+                <h3 v-else class="text-center">No Applicants Applied</h3>
             </div>
-            
+
         </div>
     </div>
 </template>
@@ -162,7 +164,8 @@ tr {
     border: 1px lightgray solid;
 }
 
-thead, th {
+thead,
+th {
     background-color: lightgray;
     padding: 10px;
 }
@@ -172,5 +175,4 @@ td {
 }
 
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css');
-
 </style>

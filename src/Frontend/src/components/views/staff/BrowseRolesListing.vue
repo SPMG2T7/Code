@@ -10,12 +10,12 @@
         <div class="container container-style">
             <div class="row">
                 <div class="col-md-4 text-left">
-                    <input type="text" class="form-control search-box" v-model="searchBar" placeholder="Search"
+                    <input type="text" class="form-control search-box" v-model="searchBar" placeholder="Search for Roles, Description, Skills"
                         v-on:keyup.enter="filterSkills">
 
                 </div>
                 <div class="col-md-4 text-left">
-                    <button class="btn btn-primary apply-button custom-button" @click="filterSkills"
+                    <button class="btn btn-apply apply-button custom-button" @click="filterSkills"
                         style="border-radius: 10px">Search</button>
                 </div>
 
