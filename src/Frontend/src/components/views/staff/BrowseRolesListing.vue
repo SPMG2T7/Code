@@ -81,15 +81,14 @@
 
                             <div v-else class="col-4 col-md-4 text-end justify-content-center">
 
-                                <button type="button" class="btn viewbutton buttonspacing"><router-link
-                                        class="viewApplicant-btn"
-                                        :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }"> View
-                                        Applicants </router-link></button>
-                                <button type="button"
-                                    class="btn btn-apply custom-button apply-button buttonspacing"><router-link
-                                        style="text-decoration: none; color:black"
-                                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }"> Edit Role
-                                    </router-link></button>
+                                <router-link class="viewApplicant-btn" :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }">
+                                    <button type="button" class="btn viewbutton buttonspacing"> View Applicants </button> 
+                                </router-link>
+                                
+                                <router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
+                                        <button type="button" class="btn btn-apply custom-button apply-button buttonspacing"> Edit Role </button>
+                                </router-link>
+                                
                                 <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
                                 <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
                                 </p>
