@@ -619,11 +619,11 @@ def search():
             ), 200
         return jsonify(
             {
-                "code": 404,
+                "code": 200,
                 "data": [],
                 "message": "There are no results matching your query"
             }
-        ), 404
+        ), 200
     else:
         searches = []
         for query in search_query:
@@ -647,11 +647,11 @@ def search():
             ), 200
         return jsonify(
             {
-                "code": 404,
+                "code": 200,
                 "data": [],
                 "message": "There are no results matching your query"
             }
-        ), 404
+        ), 200
 
 # Retrieve a specific application 
 @app.route("/application/<int:role_id>_<int:staff_id>", methods=["GET"])
