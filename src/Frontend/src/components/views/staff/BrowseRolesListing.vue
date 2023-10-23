@@ -199,7 +199,16 @@ export default {
             const apiUrl = 'http://127.0.0.1:5000/roles/get_all_by_staff/' + this.staffId;
             axios.get(apiUrl)
                 .then(response => {
-                    this.roles = response.data.data.roles;
+
+                    // Check if the response is empty array
+                    if (response.data.data.roles.length == 0) {
+                        this.roles = [];
+                    }
+
+                    // response is not empty
+                    else{
+                        this.roles = response.data.data.roles;
+                    }
 
                 })
                 .catch(error => {
