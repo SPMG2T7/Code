@@ -76,7 +76,7 @@ export default {
             <div class="navbar-nav ms-left mb-2 mb-lg-0">
             
                 <p class="hover-underline-animation" style="margin:0px 10px;" @click="redirectBrowse">Browse Role Listings</p>
-                <p v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="hover-underline-animation" @click="redirectCreate">+ Create New Role</p>
+                <p v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="hover-underline-animation" @click="redirectCreate">Create New Role</p>
 
             </div>
 
@@ -89,7 +89,7 @@ export default {
                     <div class="nav-link p-0" data-bs-toggle="dropdown">
                         <li class="nav-item">
                             <button id="imgButton" class="btn btn-default">
-                                <img src="../../assets/profile.jpeg" />
+                                <img src="../../assets/profile.png" />
                             </button>
 
 
