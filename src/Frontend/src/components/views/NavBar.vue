@@ -75,8 +75,8 @@ export default {
 
             <div class="navbar-nav ms-left mb-2 mb-lg-0">
             
-                <button class="btn btn-default listing" style="margin:0px 10px;" @click="redirectBrowse">Browse Role Listings</button>
-                <button v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="btn btn-default listing" @click="redirectCreate">+ Create New Role</button>
+                <p class="hover-underline-animation" style="margin:0px 10px;" @click="redirectBrowse">Browse Role Listings</p>
+                <p v-if="this.accessId == 1 || this.accessId == 3 || this.accessId == 4" class="hover-underline-animation" @click="redirectCreate">+ Create New Role</p>
 
             </div>
 
@@ -155,6 +155,33 @@ img {
 
 .listing {
     background: rgba(233, 196, 220, 0.3);
+}
+
+.hover-underline-animation:hover {
+    cursor:pointer;
+}
+
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000000;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
 
 </style>

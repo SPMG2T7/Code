@@ -247,6 +247,7 @@ export default {
 
             // push the removed filtered skill into the allskills array
             this.allskills.push(this.filter_skills[index]);
+            this.allskills.sort();
 
             // remove the removed filtered skill from the filter_skills array
             this.filter_skills.splice(index, 1);
@@ -275,7 +276,14 @@ export default {
                     })
                     .then(response => {
                         const roles = response.data.data;
-                        this.roles = roles;
+                        var found = [];
+                        var item;
+                        for (let i = 0; i < roles.length; i++) {
+                            // Object.keys(this.roles).forEach(x => obj = this.roles[x].role_id === roles[role_id] ? objDict[x].applied: applied);
+                            item = Object.entries(this.roles).find(a => a[1]['role_id'] === roles[i]['role_id'])
+                            found.push(item[1])
+                        }
+                        this.roles = found;
                     })
                     .catch(error => {
                         console.error('Error:', error);
