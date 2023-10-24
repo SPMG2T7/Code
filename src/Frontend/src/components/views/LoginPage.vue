@@ -1,21 +1,23 @@
 <template>
-  <div class="login-container">
-    <div class="logo-container">
-      <img src="../../assets/gojobs_logo.png" />
-    </div>
-    <h3>Welcome to GoJobs Portal!</h3><br/>
-    <form @submit.prevent=handleSubmit>
-      <div class="form-group">
-        <label for="staff_name">Select User:</label>
-        <select v-model="staff_select" id="staff_name" class="form-control">
-          <option value="" selected disabled>Please select one:</option>
-          <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
-            {{ staff[0] }}
-          </option>
-        </select>
+  <div class="background">
+    <div class="login-container">
+      <div class="logo-container">
+        <img src="../../assets/gojobs_logo.png" />
       </div>
-      <button type="submit" class="btn apply-button">Log In</button>
-    </form>
+      <h3>Welcome to GoJobs Portal!</h3><br/>
+      <form @submit.prevent=handleSubmit>
+        <div class="form-group">
+          <label for="staff_name">Select User:</label>
+          <select v-model="staff_select" id="staff_name" class="form-control">
+            <option value="" selected disabled>Please select one:</option>
+            <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
+              {{ staff[0] }}
+            </option>
+          </select>
+        </div>
+        <button type="submit" class="btn apply-button">Log In</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -73,6 +75,15 @@ export default {
 </script>
 
 <style scoped>
+.background {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(150deg,#8BC100, rgb(227, 212, 212), #946383);
+  overflow: hidden;
+}
+
 .login-container {
   background-color: white;
   min-width: 500px;
@@ -84,6 +95,7 @@ export default {
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
+  box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.2);
 }
 
 .logo-container {
@@ -133,4 +145,5 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
+
 </style>
