@@ -47,6 +47,9 @@ class TestAccessRights(unittest.TestCase):
         
         def setUp(self):
             self.acesss_one = Access_Rights(5, "Tester")
+        
+        def tearDown(self):
+             self.access_one = None
 
         def test_json(self):
             self.assertDictEqual(self.acesss_one.json(), {"access_id": 5, "type": "Tester"})
@@ -55,6 +58,9 @@ class TestStaff(unittest.TestCase):
         
         def setUp(self):
             self.staff_tester = Staff(1, "John", "Doe", "IT", "Tester", "test@email.com", 3)
+
+        def tearDown(self):
+             self.staff_tester = None
 
         def test_json(self):
             self.assertDictEqual(self.staff_tester.json(), 
@@ -74,6 +80,9 @@ class TestRole(unittest.TestCase):
         def setUp(self):
             self.role_tester = Role("Tester", "Test Software", 1, 1, "IT", "Singapore", 1701388800)
 
+        def tearDown(self):
+             self.role_tester = None
+
         def test_json(self):
             self.assertDictEqual(self.role_tester.json(), 
                 {
@@ -92,6 +101,9 @@ class TestSkill(unittest.TestCase):
         def setUp(self):
             self.skill_tester = Skill(1, 'Python', 'Programming Language')
 
+        def tearDown(self):
+             self.skill_tester = None
+
         def test_json(self):
             self.assertDictEqual(self.skill_tester.json(), 
                 {
@@ -105,6 +117,9 @@ class TestRoleSkill(unittest.TestCase):
         def setUp(self):
             self.role_skill_tester = Role_Skill(1, 2)
 
+        def tearDown(self):
+             self.role_skill_tester = None
+
         def test_json(self):
             self.assertDictEqual(self.role_skill_tester.json(), 
                 {
@@ -117,6 +132,9 @@ class TestStaffSkill(unittest.TestCase):
         def setUp(self):
             self.staff_skill_tester = Staff_Skill(1001, 2)
 
+        def tearDown(self):
+             self.staff_skill_tester = None
+
         def test_json(self):
             self.assertDictEqual(self.staff_skill_tester.json(), 
                 {
@@ -128,6 +146,9 @@ class TestRoleApplicant(unittest.TestCase):
     
         def setUp(self):
             self.role_applicant_tester = Role_Applicant(1, 1001, 'Pending', 1701388800)
+
+        def tearDown(self):
+             self.role_applicant_tester = None
 
         def test_json(self):
             self.assertDictEqual(self.role_applicant_tester.json(), 
