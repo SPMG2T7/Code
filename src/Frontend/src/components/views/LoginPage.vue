@@ -1,17 +1,18 @@
 <template>
   <div class="login-container">
-    <h2>Login</h2>
+    <img src="../../assets/gojobs_logo.png" />
+    <h3>Welcome to GoJobs Portal!</h3><br/>
     <form @submit.prevent=handleSubmit>
       <div class="form-group">
         <label for="staff_name">Staff Name:</label>
-        <select v-model="staff_select" id="staff_name" class="form-control">
-          <option value="" selected>Please select one</option>
+        <select v-model="staff_select" id="staff_name" class="form-control" label="Staff Name">
+          <option value="" selected>Please select one:</option>
           <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
             {{ staff[0] }}
           </option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn apply-button">Login</button>
     </form>
   </div>
 </template>
@@ -69,12 +70,17 @@ export default {
 
 <style scoped>
 .login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  margin-top: 10px;
-  padding: 20px;
+  background-color: white;
+  min-width: 500px;
+  padding: 40px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
 
 .form-group {
@@ -86,13 +92,13 @@ export default {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  cursor: pointer;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
+.btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
 }
