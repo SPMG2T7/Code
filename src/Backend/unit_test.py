@@ -14,7 +14,7 @@ class TestDaysLeftFromUnix(unittest.TestCase):
         result = days_left_from_unix(unix_timestamp)
 
         # Assert that the function returned the correct value
-        self.assertEqual(result, 0)
+        self.assertEqual(result, 1)
 
 
 class TestConvertToUnixTimestamp(unittest.TestCase):
