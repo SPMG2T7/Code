@@ -47,70 +47,69 @@
             <ul class="role-list" v-if="roles.length">
 
                 <li v-for="role in sortedRoles" :key="role.role_id">
+                    
+                    <!-- Make the whole container clickable -->
+                    <router-link class="viewApplicant-btn" v-if="access_rights == 2"
+                        :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">
+                        <!-- {{ role.role_name }} -->
+                        <div class="container-fluid listing">
+                            <div class="row justify-content-between" style="margin: 20px 0px">
+                                <div class="col-8 col-md-6">
+                                    <h3>{{ role.role_name }}</h3>
+                                    <p>{{ role.no_of_pax }} staff needed</p>
+                                </div>
 
-                    <div class="container-fluid listing">
-                        <div class="row justify-content-between" style="margin: 20px 0px">
-
-                            <!-- Display Role listing details (left) -->
-
-                            <div class="col-8 col-md-6">
-                                <h3 v-if="access_rights == 2"><router-link class="viewApplicant-btn"
-                                        :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">{{
-                                            role.role_name }} </router-link></h3>
-                                <h3 v-else><router-link class="viewApplicant-btn"
-                                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">{{ role.role_name
-                                        }} </router-link></h3>
-
-                                <p>{{ role.no_of_pax }} staff needed</p>
-
+                                <div class="col-4 text-end justify-content-center">
+                                    <button @click="populateModal(role.role_id, role.role_name)"
+                                        class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
+                                        data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
+                                    <button disabled class="btn btn-secondary btn-apply custom-button" v-else>APPLIED</button>
+        
+                                    <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
+        
+                                    <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
+                                    </p>
+                                </div>
                             </div>
-                            
+                        </div>
+                    </router-link>
 
-                            <!-- Role Listing buttons -->
+                    <router-link class="viewApplicant-btn" v-else
+                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
+                        <div class="container-fluid listing">
+                            <div class="row justify-content-between" style="margin: 20px 0px">
+                                <div class="col-8 col-md-6">
+                                    <h3>{{ role.role_name }}</h3>
+                                    <p>{{ role.no_of_pax }} staff needed</p>
+                                </div>
 
-                            <!-- check whats the purpose of justify content center here  -->
-                            <div v-if="access_rights == 2" class="col-4 text-end justify-content-center">
-
-                                <button @click="populateModal(role.role_id, role.role_name)"
-                                    class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
-                                    data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
-                                <button disabled class="btn btn-secondary btn-apply custom-button" v-else>APPLIED</button>
-
-                                <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
-
-                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
-                                </p>
-                            </div>
-
-                            <div v-else class="col-4 col-md-4 text-end justify-content-center">
-
+                                <div class="col-4 col-md-4 text-end justify-content-center">
                                 <router-link class="viewApplicant-btn"
                                     :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }">
                                     <button type="button" class="btn viewbutton buttonspacing"> View Applicants </button>
                                 </router-link>
-
+    
                                 <router-link style="text-decoration: none; color:black"
                                     :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
                                     <button type="button" class="btn btn-apply custom-button apply-button buttonspacing">
                                         Edit Role </button>
                                 </router-link>
-
+    
                                 <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
                                 <p v-else-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today
                                 </p>
                                 <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
                                 </p>
+                                </div>
                             </div>
                         </div>
-
-                    </div>
+                    </router-link>
 
                 </li>
             </ul>
 
             <!-- If there are no roles -->
             <p v-else class="noroles">No roles available</p>
-
 
             <!-- START OF MODAL -->
             <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
