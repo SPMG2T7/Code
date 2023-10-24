@@ -247,6 +247,7 @@ export default {
 
             // push the removed filtered skill into the allskills array
             this.allskills.push(this.filter_skills[index]);
+            this.allskills.sort();
 
             // remove the removed filtered skill from the filter_skills array
             this.filter_skills.splice(index, 1);
