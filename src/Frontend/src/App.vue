@@ -22,4 +22,8 @@
 .apply-button {
     background-color: #8BC100 !important;
 }
+
+.redTextCSS {
+    color: red;
+}
 </style>
