@@ -149,7 +149,7 @@ img {
 }
 
 .profile-name {
-    color: white;
+    color: black;
     font-weight: bold;
 }
 
