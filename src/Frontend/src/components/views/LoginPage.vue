@@ -1,18 +1,20 @@
 <template>
   <div class="login-container">
-    <img src="../../assets/gojobs_logo.png" />
+    <div class="logo-container">
+      <img src="../../assets/gojobs_logo.png" />
+    </div>
     <h3>Welcome to GoJobs Portal!</h3><br/>
     <form @submit.prevent=handleSubmit>
       <div class="form-group">
-        <label for="staff_name">Staff Name:</label>
-        <select v-model="staff_select" id="staff_name" class="form-control" label="Staff Name">
-          <option value="" selected>Please select one:</option>
+        <label for="staff_name">Select User:</label>
+        <select v-model="staff_select" id="staff_name" class="form-control">
+          <option value="" selected disabled>Please select one:</option>
           <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
             {{ staff[0] }}
           </option>
         </select>
       </div>
-      <button type="submit" class="btn apply-button">Login</button>
+      <button type="submit" class="btn apply-button">Log In</button>
     </form>
   </div>
 </template>
@@ -48,7 +50,9 @@ export default {
             staff.access_right = 'Human Resources'
           }
           
-          this.staff_names.push([`${staff.first_name} (${staff.access_right})`, [staff.staff_id, staff.access_rights]]);
+          // this.staff_names.push([`${staff.first_name} ${staff.last_name} (${staff.access_right})`, [staff.staff_id, staff.access_rights]]);
+          this.staff_names.push([`[${staff.access_right}] ${staff.first_name} ${staff.last_name}`, [staff.staff_id, staff.access_rights]]);
+
         }
       } catch (error) {
         console.error('Error fetching staffs:', error);
@@ -77,10 +81,37 @@ export default {
   border-radius: 10px;
   text-align: center;
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
 
+.logo-container {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.8s; /* Add a smooth transition on hover */
+}
+
+.logo-container:hover {
+  animation: shake 0.8s infinite; /* Start the shake animation on hover */
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0); /* Initial position */
+  }
+  25% {
+    transform: translateX(-5px); /* Move left */
+  }
+  50% {
+    transform: translateX(5px); /* Move right */
+  }
+  75% {
+    transform: translateX(-5px); /* Move left again */
+  }
+  100% {
+    transform: translateX(0); /* Back to the initial position */
+  }
 }
 
 .form-group {
