@@ -64,7 +64,7 @@
                                 <p>{{ role.no_of_pax }} staff needed</p>
 
                             </div>
-
+                            
 
                             <!-- Role Listing buttons -->
 
@@ -382,9 +382,7 @@ export default {
 
 p {
     padding: 0;
-    /* Remove default padding */
     margin: 0;
-    /* Remove default margin */
 }
 
 h3 {
@@ -394,11 +392,8 @@ h3 {
 
 .role-list {
     list-style: none;
-    /* Remove bullet points */
     padding: 0;
-    /* Remove default padding */
     margin: 0;
-    /* Remove default margin */
 }
 
 .listing {
@@ -439,7 +434,6 @@ h3 {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-
 }
 
 .redTextCSS {
