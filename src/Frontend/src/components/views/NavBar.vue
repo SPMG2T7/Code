@@ -15,7 +15,6 @@ export default {
         };
     },
     methods: {
-        // the function that helps us call the endpoint and retrieve the data
         fetchData() {
             axios
                 .get("http://127.0.0.1:5000/staff/" + this.staffId)
@@ -53,7 +52,6 @@ export default {
         this.fetchData();
     },
     created() {
-        // console.log(this.staffId, this.accessId)
         if (!this.staffId && !this.accessId) {
             this.$router.push('/Login');
         }
@@ -82,7 +80,6 @@ export default {
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item profile-name">
-                        <!-- Welcome, {{ name }} ({{ balance_points }} Points) -->
                         Welcome, {{ staffDetails.first_name}}!
                     </li>
 
