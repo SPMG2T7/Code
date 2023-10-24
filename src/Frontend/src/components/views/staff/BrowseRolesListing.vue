@@ -351,20 +351,38 @@ export default {
     computed: {
         // this is to sort the roles by applied and not applied
         sortedRoles() {
-            let filteredRoles = this.roles
-                .slice()
-                .sort((a, b) => {
-                    if (a.applied === false && b.applied === true) return -1;
-                    if (a.applied === true && b.applied === false) return 1;
-                    return 0;
-                });
+    let filteredRoles = this.roles
+        .slice()
+        .sort((a, b) => {
+            // Compare by 'days_left' first (negative values first)
+            if (a.days_left < -1 && b.days_left >= -1) return -1;
+            if (a.days_left >= -1 && b.days_left < -1) return 1;
 
-            // this is to filter out the roles that have closed based on ACCESS RIGHTS
-            if (this.access_rights == 2) {
-                filteredRoles = this.roles.filter(role => role.days_left >= 0)
+            // If 'days_left' is the same, compare by 'applied' status
+            if (a.days_left === b.days_left) {
+                // Compare by 'applied' status first
+                if (a.applied == true && b.applied == false) return -1;
+                if (a.applied == false && b.applied == true) return 1;
+
+                // If 'applied' status is the same, compare by 'role_name' in alphabetical order
+                if (a.applied == b.applied) {
+                    return a.role_name.localeCompare(b.role_name);
+                }
             }
-            return filteredRoles
-        },
+        });
+
+    // Filter out the roles that have closed based on ACCESS RIGHTS
+    if (this.access_rights == 2) {
+        filteredRoles = filteredRoles.filter(role => role.days_left >= 0);
+    }
+
+    return filteredRoles;
+}
+
+
+
+
+
     }
 };
 </script>
@@ -436,11 +454,10 @@ h3 {
     justify-content: space-between;
 }
 
-.redTextCSS {
-    color: red;
-}
+
 
 .viewApplicant-btn {
     text-decoration: none;
     color: black
-}</style>
+}
+</style>

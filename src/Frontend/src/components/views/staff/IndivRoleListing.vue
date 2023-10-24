@@ -33,7 +33,7 @@ export default {
             axios.get(apiUrl)
                 .then(response => {
                     this.roles = response.data.data.roles;
-                    const index = this.roles.findIndex(role => role.role_id == this.roleID);                    
+                    const index = this.roles.findIndex(role => role.role_id == this.roleID);
                     this.roles = this.roles[index]
                     this.roleSkills = this.roles.skills_required
                     // console.log(this.roles.applied)
@@ -114,10 +114,12 @@ export default {
                     <h1>{{ roles.role_name }}</h1>
                 </div>
                 <div class="col-2 d-flex align-items-center text-center justify-content-center">
-                    
+
                     <div class="align-items-center ">
                         <p class="h6">{{ roles.no_of_pax }} staff needed</p>
-                        Closing in {{ roles.days_left }} days
+                        <p v-if="roles.days_left == 0" :class="{ redTextCSS: roles.days_left < 5 }">Closing today</p>
+
+                        <p v-else :class="{ redTextCSS: roles.days_left < 5 }">Closing in {{ roles.days_left }} days</p>
                     </div>
                 </div>
                 <div class="col-2 d-flex align-items-center justify-content-end">
