@@ -251,6 +251,10 @@ export default {
     margin-top: 60px;
 }
 
+h1 {
+    margin-top: 20px;
+}
+
 h4 {
     font-weight: bold;
     font-size: 18px;
