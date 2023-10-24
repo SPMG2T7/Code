@@ -36,7 +36,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: 'Create env file'
       run: |
-          echo "${{ secrets.SEARCH_ENV_FILE }}" > search.env
+          echo "${{ secrets.SEARCH_ENV_FILE }}" > src/Backend/search.env
     - name: Docker Compose Action
       uses: isbang/compose-action@v1.5.1
       with: 
