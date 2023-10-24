@@ -4,6 +4,7 @@
 1. .env file (Refer to Telegram Pinned)
 2. search.env file (Refer to Telegram Pinned)
 3. prepare_script.sql (Refer to Telegram Pinned)
+4. requirements.txt
 
 ### To setup frontend
 1. Navigate to src/Frontend/feature2/ondeh-ondeh/src
@@ -14,7 +15,7 @@
 ### To setup backend
 1. Copy the respective .env file based on OS to the root directory of the repo (Refer to Telegram Pinned)
 2. Start your WAMP/MAMP, execute the prepare_script.sql
-3. Install the library dotenv by running 'pip install python-dotenv'
+3. Install the library needed for backend by running 'pip install -r requirements.txt'
 4. Copy the .env file to /
 5. Copy the search.env & .env file to /src/Backend
 6. Go to src/Backend folder, run 'python app.py' to start the backend, if there are 'No Modules' error, just run 'pip install <module_name>' based on the error of module name shown
