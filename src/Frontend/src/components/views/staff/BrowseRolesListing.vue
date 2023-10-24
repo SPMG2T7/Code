@@ -10,8 +10,8 @@
         <div class="container container-style">
             <div class="row">
                 <div class="col-md-4 text-left">
-                    <input type="text" class="form-control search-box" v-model="searchBar" placeholder="Search for Roles, Description, Skills"
-                        v-on:keyup.enter="filterSkills">
+                    <input type="text" class="form-control search-box" v-model="searchBar"
+                        placeholder="Search for Roles, Description, Skills" v-on:keyup.enter="filterSkills">
 
                 </div>
                 <div class="col-md-4 text-left">
@@ -70,27 +70,31 @@
 
                             <!-- check whats the purpose of justify content center here  -->
                             <div v-if="access_rights == 2" class="col-4 text-end justify-content-center">
-                                <button type="button" class="btn btn-apply custom-button apply-button" v-if="!role.applied"
-                                    data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id">APPLY</button>
 
-                                <button type="button" class="btn btn-secondary btn-apply custom-button" v-else
-                                    data-bs-toggle="modal" :data-bs-target="'#applyModal-' + role.role_id"
-                                    disabled>APPLIED</button>
+                                <button @click="populateModal(role.role_id, role.role_name)"
+                                    class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
+                                    data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
+                                <button disabled class="btn btn-secondary btn-apply custom-button" v-else>APPLIED</button>
+
                                 <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
 
-                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days </p>
+                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
+                                </p>
                             </div>
 
                             <div v-else class="col-4 col-md-4 text-end justify-content-center">
 
-                                <router-link class="viewApplicant-btn" :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }">
-                                    <button type="button" class="btn viewbutton buttonspacing"> View Applicants </button> 
+                                <router-link class="viewApplicant-btn"
+                                    :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }">
+                                    <button type="button" class="btn viewbutton buttonspacing"> View Applicants </button>
                                 </router-link>
-                                
-                                <router-link style="text-decoration: none; color:black" :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
-                                        <button type="button" class="btn btn-apply custom-button apply-button buttonspacing"> Edit Role </button>
+
+                                <router-link style="text-decoration: none; color:black"
+                                    :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
+                                    <button type="button" class="btn btn-apply custom-button apply-button buttonspacing">
+                                        Edit Role </button>
                                 </router-link>
-                                
+
                                 <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
                                 <p v-else-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today
                                 </p>
@@ -99,44 +103,6 @@
                             </div>
                         </div>
 
-                        <!-- look to change modal implementation subsequently   -->
-                        <!-- START OF MODAL -->
-                        <div class="modal fade" :id="'applyModal-' + role.role_id" tabindex="-1"
-                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">New Application for {{
-                                            role.role_name }}</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="message-text" class="col-form-label">Any Additional Remarks?
-                                                    (Optional)</label>
-                                                <textarea class="form-control"
-                                                    :id="'message-text-' + role.role_id"></textarea>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="button" @click='applyRole(role.role_id)' class="btn btn-primary">Send
-                                            application</button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- END OF MODAL -->
-
                     </div>
 
                 </li>
@@ -144,6 +110,40 @@
 
             <!-- If there are no roles -->
             <p v-else class="noroles">No roles available</p>
+
+
+            <!-- START OF MODAL -->
+            <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="applyModalLabel">Apply for {{
+                                selected_role_name }}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">Any Additional Remarks?
+                                        (Optional)</label>
+                                    <textarea class="form-control" id="message-text"></textarea>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" @click='applyRole(selected_role_id)' class="btn btn-primary">Send
+                                application</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END OF MODAL -->
 
         </div>
 
@@ -175,7 +175,11 @@ export default {
             staffId: sessionStorage.getItem('staff_id'),
             accessId: sessionStorage.getItem('access_id'),
             searchBar: '',
-            search_query_values: []
+            search_query_values: [],
+
+            // for the modal selection
+            selected_role_id: null,
+            selected_role_name: null,
         };
     },
     // think of this as calling the function right when u load the page
@@ -193,6 +197,15 @@ export default {
     },
 
     methods: {
+
+        // function to help with modal rendering 
+        populateModal(role_id, role_name) {
+
+            this.selected_role_id = role_id;
+            this.selected_role_name = role_name;
+
+        },
+
         // the function that helps us call the endpoint and retrieve the data
         fetchRoles() {
             const apiUrl = 'http://127.0.0.1:5000/roles/get_all_by_staff/' + this.staffId;
@@ -205,7 +218,7 @@ export default {
                     }
 
                     // response is not empty
-                    else{
+                    else {
                         this.roles = response.data.data.roles;
                     }
 
@@ -293,7 +306,8 @@ export default {
         },
         // START TO APPLY ROLE FOR MODAL
         applyRole(roleID) {
-            const commentsTextBox = document.getElementById('message-text-' + roleID).value;
+
+            const commentsTextBox = document.getElementById('message-text').value;
 
 
             axios
