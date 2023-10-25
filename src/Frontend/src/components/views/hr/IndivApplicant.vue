@@ -83,7 +83,7 @@ export default {
             <div class="row">
                 <div class="col-1">
                     <!-- <img src="your-image.jpg" alt="Image" class="img-fluid"> -->
-                    <img class="img-responsive rounded" src="../../../assets/profile.jpeg" />
+                    <img class="img-responsive rounded" src="../../../assets/profile.png" />
                 </div>
                 <div class="col-11 d-flex align-items-center text-center">
                     <h1>{{ staffName }}</h1>

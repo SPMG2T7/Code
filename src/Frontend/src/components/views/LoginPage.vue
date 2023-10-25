@@ -1,19 +1,23 @@
 <template>
-  <div class="login-container">
-    <img src="../../assets/gojobs_logo.png" />
-    <h3>Welcome to GoJobs Portal!</h3><br/>
-    <form @submit.prevent=handleSubmit>
-      <div class="form-group">
-        <label for="staff_name">Staff Name:</label>
-        <select v-model="staff_select" id="staff_name" class="form-control" label="Staff Name">
-          <option value="" selected>Please select one:</option>
-          <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
-            {{ staff[0] }}
-          </option>
-        </select>
+  <div class="background">
+    <div class="login-container">
+      <div class="logo-container">
+        <img src="../../assets/gojobs_logo.png" />
       </div>
-      <button type="submit" class="btn apply-button">Login</button>
-    </form>
+      <h3>Welcome to GoJobs Portal!</h3><br/>
+      <form @submit.prevent=handleSubmit>
+        <div class="form-group">
+          <label for="staff_name">Select User:</label>
+          <select v-model="staff_select" id="staff_name" class="form-control">
+            <option value="" selected disabled>Please select one:</option>
+            <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
+              {{ staff[0] }}
+            </option>
+          </select>
+        </div>
+        <button type="submit" class="btn apply-button">Log In</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -48,7 +52,9 @@ export default {
             staff.access_right = 'Human Resources'
           }
           
-          this.staff_names.push([`${staff.first_name} (${staff.access_right})`, [staff.staff_id, staff.access_rights]]);
+          // this.staff_names.push([`${staff.first_name} ${staff.last_name} (${staff.access_right})`, [staff.staff_id, staff.access_rights]]);
+          this.staff_names.push([`[${staff.access_right}] ${staff.first_name} ${staff.last_name}`, [staff.staff_id, staff.access_rights]]);
+
         }
       } catch (error) {
         console.error('Error fetching staffs:', error);
@@ -69,6 +75,15 @@ export default {
 </script>
 
 <style scoped>
+.background {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(150deg,#8BC100, rgb(227, 212, 212), #946383);
+  overflow: hidden;
+}
+
 .login-container {
   background-color: white;
   min-width: 500px;
@@ -77,10 +92,38 @@ export default {
   border-radius: 10px;
   text-align: center;
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
+  box-shadow: 0 2px 22px 0 rgba(0, 0, 0, 0.2);
+}
 
+.logo-container {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.8s; /* Add a smooth transition on hover */
+}
+
+.logo-container:hover {
+  animation: shake 0.8s infinite; /* Start the shake animation on hover */
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0); /* Initial position */
+  }
+  25% {
+    transform: translateX(-5px); /* Move left */
+  }
+  50% {
+    transform: translateX(5px); /* Move right */
+  }
+  75% {
+    transform: translateX(-5px); /* Move left again */
+  }
+  100% {
+    transform: translateX(0); /* Back to the initial position */
+  }
 }
 
 .form-group {
@@ -102,4 +145,5 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
+
 </style>

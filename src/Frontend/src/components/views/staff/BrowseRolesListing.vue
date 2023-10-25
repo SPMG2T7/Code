@@ -47,70 +47,69 @@
             <ul class="role-list" v-if="roles.length">
 
                 <li v-for="role in sortedRoles" :key="role.role_id">
+                    
+                    <!-- Make the whole container clickable -->
+                    <router-link class="viewApplicant-btn" v-if="access_rights == 2"
+                        :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">
+                        <!-- {{ role.role_name }} -->
+                        <div class="container-fluid listing">
+                            <div class="row justify-content-between" style="margin: 20px 0px">
+                                <div class="col-8 col-md-6">
+                                    <h3>{{ role.role_name }}</h3>
+                                    <p>{{ role.no_of_pax }} staff needed</p>
+                                </div>
 
-                    <div class="container-fluid listing">
-                        <div class="row justify-content-between" style="margin: 20px 0px">
-
-                            <!-- Display Role listing details (left) -->
-
-                            <div class="col-8 col-md-6">
-                                <h3 v-if="access_rights == 2"><router-link class="viewApplicant-btn"
-                                        :to="{ name: 'Individual Role Listing', query: { role_id: role.role_id } }">{{
-                                            role.role_name }} </router-link></h3>
-                                <h3 v-else><router-link class="viewApplicant-btn"
-                                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">{{ role.role_name
-                                        }} </router-link></h3>
-
-                                <p>{{ role.no_of_pax }} staff needed</p>
-
+                                <div class="col-4 text-end justify-content-center">
+                                    <button @click="populateModal(role.role_id, role.role_name)"
+                                        class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
+                                        data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
+                                    <button disabled class="btn btn-secondary btn-apply custom-button" v-else>APPLIED</button>
+        
+                                    <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
+        
+                                    <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
+                                    </p>
+                                </div>
                             </div>
+                        </div>
+                    </router-link>
 
+                    <router-link class="viewApplicant-btn" v-else
+                        :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
+                        <div class="container-fluid listing">
+                            <div class="row justify-content-between" style="margin: 20px 0px">
+                                <div class="col-8 col-md-6">
+                                    <h3>{{ role.role_name }}</h3>
+                                    <p>{{ role.no_of_pax }} staff needed</p>
+                                </div>
 
-                            <!-- Role Listing buttons -->
-
-                            <!-- check whats the purpose of justify content center here  -->
-                            <div v-if="access_rights == 2" class="col-4 text-end justify-content-center">
-
-                                <button @click="populateModal(role.role_id, role.role_name)"
-                                    class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
-                                    data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
-                                <button disabled class="btn btn-secondary btn-apply custom-button" v-else>APPLIED</button>
-
-                                <p v-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today</p>
-
-                                <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
-                                </p>
-                            </div>
-
-                            <div v-else class="col-4 col-md-4 text-end justify-content-center">
-
+                                <div class="col-4 col-md-4 text-end justify-content-center">
                                 <router-link class="viewApplicant-btn"
                                     :to="{ name: 'View All Applicants', query: { role_id: role.role_id } }">
                                     <button type="button" class="btn viewbutton buttonspacing"> View Applicants </button>
                                 </router-link>
-
+    
                                 <router-link style="text-decoration: none; color:black"
                                     :to="{ name: 'Role Editing', query: { role_id: role.role_id } }">
                                     <button type="button" class="btn btn-apply custom-button apply-button buttonspacing">
                                         Edit Role </button>
                                 </router-link>
-
+    
                                 <p v-if="role.days_left < 0" class="redTextCSS">Entry Closed</p>
                                 <p v-else-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing today
                                 </p>
                                 <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days
                                 </p>
+                                </div>
                             </div>
                         </div>
-
-                    </div>
+                    </router-link>
 
                 </li>
             </ul>
 
             <!-- If there are no roles -->
             <p v-else class="noroles">No roles available</p>
-
 
             <!-- START OF MODAL -->
             <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
@@ -276,7 +275,14 @@ export default {
                     })
                     .then(response => {
                         const roles = response.data.data;
-                        this.roles = roles;
+                        var found = [];
+                        var item;
+                        for (let i = 0; i < roles.length; i++) {
+                            // Object.keys(this.roles).forEach(x => obj = this.roles[x].role_id === roles[role_id] ? objDict[x].applied: applied);
+                            item = Object.entries(this.roles).find(a => a[1]['role_id'] === roles[i]['role_id'])
+                            found.push(item[1])
+                        }
+                        this.roles = found;
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -344,20 +350,38 @@ export default {
     computed: {
         // this is to sort the roles by applied and not applied
         sortedRoles() {
-            let filteredRoles = this.roles
-                .slice()
-                .sort((a, b) => {
-                    if (a.applied === false && b.applied === true) return -1;
-                    if (a.applied === true && b.applied === false) return 1;
-                    return 0;
-                });
+    let filteredRoles = this.roles
+        .slice()
+        .sort((a, b) => {
+            // Compare by 'days_left' first (negative values first)
+            if (a.days_left < -1 && b.days_left >= -1) return -1;
+            if (a.days_left >= -1 && b.days_left < -1) return 1;
 
-            // this is to filter out the roles that have closed based on ACCESS RIGHTS
-            if (this.access_rights == 2) {
-                filteredRoles = this.roles.filter(role => role.days_left >= 0)
+            // If 'days_left' is the same, compare by 'applied' status
+            if (a.days_left === b.days_left) {
+                // Compare by 'applied' status first
+                if (a.applied == true && b.applied == false) return -1;
+                if (a.applied == false && b.applied == true) return 1;
+
+                // If 'applied' status is the same, compare by 'role_name' in alphabetical order
+                if (a.applied == b.applied) {
+                    return a.role_name.localeCompare(b.role_name);
+                }
             }
-            return filteredRoles
-        },
+        });
+
+    // Filter out the roles that have closed based on ACCESS RIGHTS
+    if (this.access_rights == 2) {
+        filteredRoles = filteredRoles.filter(role => role.days_left >= 0);
+    }
+
+    return filteredRoles;
+}
+
+
+
+
+
     }
 };
 </script>
@@ -375,9 +399,7 @@ export default {
 
 p {
     padding: 0;
-    /* Remove default padding */
     margin: 0;
-    /* Remove default margin */
 }
 
 h3 {
@@ -387,11 +409,8 @@ h3 {
 
 .role-list {
     list-style: none;
-    /* Remove bullet points */
     padding: 0;
-    /* Remove default padding */
     margin: 0;
-    /* Remove default margin */
 }
 
 .listing {
@@ -432,14 +451,12 @@ h3 {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-
 }
 
-.redTextCSS {
-    color: red;
-}
+
 
 .viewApplicant-btn {
     text-decoration: none;
     color: black
-}</style>
+}
+</style>
