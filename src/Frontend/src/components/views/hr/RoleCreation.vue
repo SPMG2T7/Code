@@ -265,35 +265,5 @@ h4 {
     margin: 20px 0px;
 }
 
-.role-name {
-    border-radius: 12px;
-    font-size: 20px;
-    font-weight: bold;
-}
 
-.role-desc {
-    border: none;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 14px;
-    height: 200px;
-    width: 100%;
-}
-
-.custom-button {
-    width: 130px;
-    color: #000000;
-    font-weight: bold;
-}
-
-.custom-input {
-    border: none;
-}
-
-.custom-dropdown {
-    background-color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 5px;
-}
 </style>

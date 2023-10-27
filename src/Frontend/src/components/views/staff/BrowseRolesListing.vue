@@ -455,8 +455,6 @@ h3 {
     justify-content: space-between;
 }
 
-
-
 .viewApplicant-btn {
     text-decoration: none;
     color: black

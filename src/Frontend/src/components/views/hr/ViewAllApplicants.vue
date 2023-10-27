@@ -154,12 +154,6 @@ h4 {
     margin: 20px 0px;
 }
 
-.custom-button {
-    width: 130px;
-    color: #000000;
-    font-weight: bold;
-}
-
 tr {
     border: 1px lightgray solid;
 }
