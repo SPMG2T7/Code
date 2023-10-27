@@ -60,7 +60,7 @@
                                 </div>
 
                                 <div class="col-4 text-end justify-content-center">
-                                    <button @click="populateModal(role.role_id, role.role_name)"
+                                    <button @click.prevent="populateModal(role.role_id, role.role_name)"
                                         class="btn btn-apply custom-button apply-button" data-bs-toggle="modal"
                                         data-bs-target="#applyModal" v-if="!role.applied">APPLY</button>
                                     <button disabled class="btn btn-secondary btn-apply custom-button"
