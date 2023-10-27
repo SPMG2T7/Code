@@ -170,7 +170,7 @@ export default {
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Any Comments?</label>
+                                <label for="message-text" class="col-form-label">Any Additional Remarks? (Optional)</label>
                                 <textarea class="form-control" id="message-text"></textarea>
                             </div>
                         </form>
