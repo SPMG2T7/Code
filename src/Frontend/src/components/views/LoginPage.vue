@@ -8,7 +8,7 @@
       <form @submit.prevent=handleSubmit>
         <div class="form-group">
           <label for="staff_name">Select User:</label>
-          <select v-model="staff_select" id="staff_name" class="form-control">
+          <select v-model="staff_select" id="staff_name" class="form-control" required>
             <option value="" selected disabled>Please select one:</option>
             <option v-for="staff in this.staff_names" :value=staff[1] :key=staff[0]>
               {{ staff[0] }}
