@@ -119,7 +119,8 @@ export default {
                         <p class="h6">{{ roles.no_of_pax }} staff needed</p>
                         <p v-if="roles.days_left == 0" :class="{ redTextCSS: roles.days_left < 5 }">Closing today</p>
 
-                        <p v-else :class="{ redTextCSS: roles.days_left < 5 }">Closing in {{ roles.days_left }} days</p>
+                        <p v-else-if="roles.days_left == 1" :class="{ redTextCSS: roles.days_left < 5 }">Closing in {{ roles.days_left }} day</p>
+                        <p v-else :class="{ redTextCSS: roles.days_left < 5 }">Closing in {{ roles.days_left }}days</p>
                     </div>
                 </div>
                 <div class="col-2 d-flex align-items-center justify-content-end">
