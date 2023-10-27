@@ -144,7 +144,7 @@ export default {
                         <input type="text" class="form-control role-name " placeholder="Role Name" v-model="roleName">
                     </div>
                     <div class="col-md-3 text-end">
-                        <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                        <button type="button" class="btn btn-apply custom-button apply-button"
                             @click="createRole">CREATE</button>
                     </div>
                 </div>

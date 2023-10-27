@@ -105,8 +105,10 @@
                                     <p v-else-if="role.days_left == 0" :class="{ redTextCSS: role.days_left < 5 }">Closing
                                         today
                                     </p>
-                                    <p v-else-if="role.days_left == 1" :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} day</p>
-                                    <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }} days</p>
+                                    <p v-else-if="role.days_left == 1" :class="{ redTextCSS: role.days_left < 5 }">Closing
+                                        in {{ role.days_left }} day</p>
+                                    <p v-else :class="{ redTextCSS: role.days_left < 5 }">Closing in {{ role.days_left }}
+                                        days</p>
                                 </div>
                             </div>
                         </div>
@@ -133,8 +135,7 @@
                         <div class="modal-body">
                             <form>
                                 <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">Any Additional Remarks?
-                                        (Optional)</label>
+                                    <label for="message-text" class="col-form-label">Any Additional Remarks? (Optional)</label>
                                     <textarea class="form-control" id="message-text"></textarea>
                                 </div>
                             </form>
@@ -359,32 +360,27 @@ export default {
             let filteredRoles = this.roles
                 .slice()
                 .sort((a, b) => {
-                    // Compare by 'days_left' first (negative values first)
-                    if (a.days_left < -1 && b.days_left >= -1) return -1;
-                    if (a.days_left >= -1 && b.days_left < -1) return 1;
+                    // First, sort by 'applied' in ascending order (false first, true last)
+                    if (a.applied === false && b.applied === true) return -1;
+                    if (a.applied === true && b.applied === false) return 1;
 
-                    // If 'days_left' is the same, compare by 'applied' status
-                    if (a.days_left === b.days_left) {
-                        // Compare by 'applied' status first
-                        if (a.applied == true && b.applied == false) return -1;
-                        if (a.applied == false && b.applied == true) return 1;
+                    // If 'applied' is the same, sort by role name in alphabetical order
+                    const nameA = a.role_name.toLowerCase();
+                    const nameB = b.role_name.toLowerCase();
+                    if (nameA < nameB) return -1;
+                    if (nameA > nameB) return 1;
 
-                        // If 'applied' status is the same, compare by 'role_name' in alphabetical order
-                        if (a.applied == b.applied) {
-                            return a.role_name.localeCompare(b.role_name);
-                        }
-                    }
+                    // If 'applied' and role names are the same, no change in order
+                    return 0;
                 });
 
-            // Filter out the roles that have closed based on ACCESS RIGHTS
+            // Filter out roles that have closed based on ACCESS RIGHTS
             if (this.access_rights == 2) {
                 filteredRoles = filteredRoles.filter(role => role.days_left >= 0);
             }
 
             return filteredRoles;
         }
-
-
 
 
 
@@ -464,4 +460,5 @@ h3 {
 .viewApplicant-btn {
     text-decoration: none;
     color: black
-}</style>
+}
+</style>
