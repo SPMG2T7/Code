@@ -124,7 +124,7 @@ export default {
                     </div>
                 </div>
                 <div class="col-2 d-flex align-items-center justify-content-end">
-                    <button v-if="!roles.applied" type="button" class="btn btn-primary custom-button apply-button"
+                    <button v-if="!roles.applied" type="button" class="btn custom-button apply-button"
                         data-bs-toggle="modal" data-bs-target="#applyModal">Apply</button>
 
                     <button v-if="roles.applied" type="button" class="btn btn-secondary btn-apply custom-button"

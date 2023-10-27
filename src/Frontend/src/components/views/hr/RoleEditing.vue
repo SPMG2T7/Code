@@ -206,7 +206,7 @@ export default {
                     <div class="col-md-4 text-end">
                         <button type="button" class="btn btn-danger btn-apply custom-button me-3"
                             @click="redirectBrowse()">CANCEL</button>
-                        <button type="button" class="btn btn-success btn-apply custom-button apply-button"
+                        <button type="button" class="btn btn-apply custom-button apply-button"
                             @click="updateRole">UPDATE</button>
                     </div>
                 </div>
