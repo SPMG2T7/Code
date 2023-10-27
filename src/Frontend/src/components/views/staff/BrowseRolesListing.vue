@@ -286,8 +286,7 @@ export default {
                         var found = [];
                         var item;
                         for (let i = 0; i < roles.length; i++) {
-                            // Object.keys(this.roles).forEach(x => obj = this.roles[x].role_id === roles[role_id] ? objDict[x].applied: applied);
-                            item = Object.entries(this.roles).find(a => a[1]['role_id'] === roles[i]['role_id'])
+                            item = Object.entries(this.roles).find(a => a[1]['role_id'] == roles[i]['role_id'])
                             found.push(item[1])
                         }
                         this.roles = found;
