@@ -4,7 +4,7 @@
       <div class="logo-container">
         <img src="../../assets/gojobs_logo.png" />
       </div>
-      <h3>Welcome to GoJobs Portal!</h3><br/>
+      <h3>Welcome to GoJobs Portal<br/>by All-In-One!</h3><br/>
       <form @submit.prevent=handleSubmit>
         <div class="form-group">
           <label for="staff_name">Select User:</label>
