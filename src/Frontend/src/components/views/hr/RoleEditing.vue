@@ -276,7 +276,7 @@ export default {
                                 <th scope="col" colspan="4" style="text-decoration:underline;">Skill(s)</th>
                             </tr>
                             <tr v-if="!skills.length">
-                                <td><em>No skills selected yet.</em></td>
+                                <td class="transparent-bg">No skills selected yet.</td>
                             </tr>
                             <tr v-else v-for="(skill, index) in skills" :key="index">
                                 <td>{{ index + 1 }}</td>
@@ -317,6 +317,16 @@ h4 {
 
 .section {
     margin: 20px 0px;
+}
+
+.transparent-bg {
+    background-color: transparent;
+    font-style: italic;
+}
+
+.transparent-bg {
+    background-color: transparent;
+    font-style: italic;
 }
 
 .role-name {
