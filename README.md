@@ -17,5 +17,6 @@ GitHub link: https://github.com/SPMG2T7/Code
 
 
 !!! IMPORTANT !!!
-1. If you encounter an error with the search function relating to "No index 'Role' found", try to run the docker-compose down command and then run the docker-compose up command again.
-2. If you encounter an error called "MeilisearchCommunicationError", try to run docker compose up again. This issue arises when the docker MeiliSearch container starts slower than the flask app resulting in it referring to a non-existent container.
+1. If you are on MacOS, please edit line 1 of src/.env and src/Backend/.env to include password e.g. DB_URL="mysql+pymysql://root:<PASSWORD>@localhost:3306/spm_g2t7"
+2. If you encounter an error with the search function relating to "No index 'Role' found", try to run the docker-compose down command and then run the docker-compose up command again.
+3. If you encounter an error called "MeilisearchCommunicationError", try to run docker compose up again. This issue arises when the docker MeiliSearch container starts slower than the flask app resulting in it referring to a non-existent container.
